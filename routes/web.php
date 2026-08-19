@@ -26,6 +26,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/settings/app', [SettingsController::class, 'index'])->name('settings.app');
     Route::post('/settings/app', [SettingsController::class, 'update'])->name('settings.app.update');
+    Route::post('/settings/social-accounts', [SettingsController::class, 'storeSocialAccount'])->name('settings.social.store');
+    Route::patch('/settings/social-accounts/{id}', [SettingsController::class, 'updateSocialAccount'])->name('settings.social.update');
+    Route::delete('/settings/social-accounts/{id}', [SettingsController::class, 'destroySocialAccount'])->name('settings.social.destroy');
+    Route::post('/settings/social-accounts/{id}/toggle', [SettingsController::class, 'toggleSocialAccount'])->name('settings.social.toggle');
+    Route::post('/settings/users', [SettingsController::class, 'storeUser'])->name('settings.users.store');
+    Route::post('/settings/test-webhook', [SettingsController::class, 'testWebhook'])->name('settings.webhook.test');
 });
 
 require __DIR__.'/settings.php';

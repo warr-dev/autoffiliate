@@ -27,3 +27,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Devcontainer credentials
+.devcontainer/ssh/*
+!.devcontainer/ssh/.gitignore

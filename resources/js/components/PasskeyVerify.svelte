@@ -5,8 +5,6 @@
     import KeyRound from 'lucide-svelte/icons/key-round';
     import { untrack } from 'svelte';
     import InputError from '@/components/InputError.svelte';
-    import { Button } from '@/components/ui/button';
-    import { Separator } from '@/components/ui/separator';
     import { Spinner } from '@/components/ui/spinner';
 
     type Props = {
@@ -39,23 +37,24 @@
 </script>
 
 {#if passkeyVerify.isSupported}
-    <div class="grid gap-2">
-        <Button
+    <div class="flex flex-col gap-2">
+        <button
             type="button"
-            variant="outline"
-            class="w-full"
+            class="w-full py-3 px-4 bg-gray-900/90 hover:bg-gray-800 border border-gray-800 hover:border-gray-700 text-gray-200 hover:text-white rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             onclick={passkeyVerify.verify}
             disabled={passkeyVerify.isLoading}
         >
             {#if passkeyVerify.isLoading}
-                <Spinner />
+                <Spinner class="w-4 h-4 text-indigo-400" />
             {:else}
-                <KeyRound class="h-4 w-4" />
+                <KeyRound class="h-4 w-4 text-indigo-400" />
             {/if}
-            {passkeyVerify.isLoading
-                ? (props.loadingLabel ?? 'Authenticating...')
-                : (props.label ?? 'Sign in with a passkey')}
-        </Button>
+            <span>
+                {passkeyVerify.isLoading
+                    ? (props.loadingLabel ?? 'Authenticating...')
+                    : (props.label ?? 'Sign in with a passkey')}
+            </span>
+        </button>
 
         {#if passkeyVerify.error}
             <div class="text-center">
@@ -64,12 +63,16 @@
         {/if}
     </div>
 
-    <div class="relative my-6">
+    <div class="relative my-2">
         <div class="absolute inset-0 flex items-center">
-            <Separator class="w-full" />
+            <div class="w-full border-t border-gray-800"></div>
         </div>
-        <div class="relative flex justify-center text-xs uppercase">
-            <span class="bg-background px-2 text-muted-foreground">
+        <div
+            class="relative flex justify-center text-[11px] uppercase tracking-wider"
+        >
+            <span
+                class="bg-gray-900/90 px-3 text-gray-500 rounded-full font-medium select-none"
+            >
                 {props.separator ?? 'Or continue with email'}
             </span>
         </div>

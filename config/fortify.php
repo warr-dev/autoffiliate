@@ -143,8 +143,14 @@ return [
     */
 
     'passkeys' => [
-        'relying_party_id' => parse_url(config('app.url'), PHP_URL_HOST),
-        'allowed_origins' => [config('app.url')],
+        'relying_party_id' => env('PASSKEYS_RELYING_PARTY_ID', isset($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : parse_url(config('app.url', 'http://localhost'), PHP_URL_HOST)),
+        'allowed_origins' => array_values(array_unique(array_filter([
+            config('app.url'),
+            'http://localhost:8000',
+            'http://127.0.0.1:8000',
+            'http://warpc:8000',
+            isset($_SERVER['HTTP_HOST']) ? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] : null,
+        ]))),
         'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET', config('app.key')),
         'timeout' => 60000,
     ],
@@ -161,7 +167,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Features::registration(),
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::twoFactorAuthentication([

@@ -68,7 +68,6 @@
         },
     ];
 
-
     const footerNavItems: NavItem[] = [
         {
             title: 'Repository',
