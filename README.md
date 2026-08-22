@@ -13,6 +13,33 @@ A modern, full-stack automated affiliate marketing management and content genera
 
 ---
 
+## 🏛️ System Architecture
+
+Detailed architecture, database ERD, and execution sequence diagrams are documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+```mermaid
+graph TD
+    Client["Client: Svelte 5 (Runes) + Tailwind v4 + Inertia v3"]
+    Nginx["Nginx Web Server / Gateway"]
+    Laravel["Laravel 13 Application Layer"]
+    Scheduler["Background Scheduler & Worker (workflows:run)"]
+    DB[("MariaDB / MySQL 8.0 & Redis 7")]
+    FB["Meta Graph API v20.0 (Facebook Pages)"]
+    AI["AI Engine (OpenAI, DeepSeek, Gemini)"]
+
+    Client <==>|Inertia JSON / State Bridge| Nginx
+    Nginx --> Laravel
+    Laravel --> DB
+    Laravel --> FB
+    Laravel --> AI
+
+    Scheduler --> DB
+    Scheduler --> FB
+    Scheduler --> AI
+```
+
+---
+
 ## 🔑 Default Credentials & Access
 
 ### 1. Default Web UI Admin Credentials
