@@ -31,3 +31,9 @@ yarn-error.log
 # Devcontainer credentials
 .devcontainer/ssh/*
 !.devcontainer/ssh/.gitignore
+
+# Reference project folder
+autoaff/
+storage/logs/*.log
+deploy.sh
+

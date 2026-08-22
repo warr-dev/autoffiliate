@@ -1,0 +1,41 @@
+name: CD - Deploy to Hostinger
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production Server
+    runs-on: ubuntu-latest
+    if: ${{ vars.HOSTINGER_SSH_HOST != '' || secrets.HOSTINGER_SSH_HOST != '' }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH to Hostinger
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_SSH_HOST }}
+          username: ${{ secrets.HOSTINGER_SSH_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT || 22 }}
+          script: |
+            cd /var/www/autoffiliate || cd ~/domains/${{ secrets.HOSTINGER_DOMAIN || 'autoffiliate' }}/public_html
+            php artisan down || true
+            git pull origin main
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+            npm ci
+            npm run build
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan wayfinder:generate
+            if command -v supervisorctl &> /dev/null; then
+                sudo supervisorctl restart all || true
+            fi
+            php artisan up
+            echo "🚀 Deployment successfully completed!"

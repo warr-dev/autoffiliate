@@ -1,6 +1,6 @@
 <script lang="ts">
-    import AppLayout from '@/layouts/AppLayout.svelte';
     import { router } from '@inertiajs/svelte';
+    import AppLayout from '@/layouts/AppLayout.svelte';
 
     let url = $state('');
     let loading = $state(false);
@@ -9,7 +9,11 @@
 
     function handleExtract(e: SubmitEvent) {
         e.preventDefault();
-        if (!url.trim()) return;
+
+        if (!url.trim()) {
+return;
+}
+
         loading = true;
         error = '';
 
@@ -94,16 +98,16 @@
                             {#if loading}
                                 Extracting...
                             {:else}
-                                Extract →
+                                Extract
                             {/if}
                         </button>
                     </div>
                 </div>
 
                 <div class="mb-6 space-y-2">
-                    <label
+                    <span
                         class="block text-xs font-semibold text-gray-400 uppercase tracking-wider"
-                        >AI Copywriting & Caption Style</label
+                        >AI Copywriting & Caption Style</span
                     >
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                         {#each [{ id: 'standard', label: '🔥 Standard Deal', desc: 'Classic deal alert post' }, { id: 'viral_ai', label: '✨ Viral AI Hook', desc: 'High conversion & engagement' }, { id: 'pinoy_taglish', label: '🇵🇭 Pinoy Tropa', desc: "Casual Taglish 'Budol' vibe" }, { id: 'specs_tech', label: '💻 Tech Specs', desc: 'Technical specs & breakdown' }, { id: 'review_story', label: '⭐ Personal Review', desc: 'Warm recommendation' }, { id: 'aesthetic', label: '🌸 Aesthetic Vibe', desc: 'Clean lifestyle presentation' }, { id: 'urgency_flash', label: '🚨 Flash Sale', desc: 'High-urgency voucher alert' }, { id: 'minimal', label: '📄 Minimalist', desc: 'Clean 3-line link callout' }] as style}

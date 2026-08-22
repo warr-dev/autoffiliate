@@ -53,7 +53,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -k -p \"[{name}]\" -n \"PHP,VITE\" -c \"blue,magenta\" \"php artisan serve --host=0.0.0.0 --port=8000\" \"npx vite --host\""
+            "npx concurrently -k -p \"[{name}]\" -n \"PHP,VITE,SCHEDULER\" -c \"blue,magenta,cyan\" \"php artisan serve --host=0.0.0.0 --port=8000\" \"npx vite --host\" \"php artisan schedule:work\""
         ],
 
 

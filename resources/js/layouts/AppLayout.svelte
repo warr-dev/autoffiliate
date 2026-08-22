@@ -20,7 +20,11 @@
 
     function isActive(href: string) {
         const path = page.url || '';
-        if (href === '/dashboard') return path === '/dashboard' || path === '/';
+
+        if (href === '/dashboard') {
+return path === '/dashboard' || path === '/';
+}
+
         return path.startsWith(href);
     }
 

@@ -1,8 +1,13 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
     import BookOpen from 'lucide-svelte/icons/book-open';
+    import FileText from 'lucide-svelte/icons/file-text';
     import FolderGit2 from 'lucide-svelte/icons/folder-git-2';
+    import History from 'lucide-svelte/icons/history';
     import LayoutGrid from 'lucide-svelte/icons/layout-grid';
+    import PlusCircle from 'lucide-svelte/icons/plus-circle';
+    import Settings from 'lucide-svelte/icons/settings';
+    import Zap from 'lucide-svelte/icons/zap';
     import type { Snippet } from 'svelte';
     import AppLogo from '@/components/AppLogo.svelte';
     import NavFooter from '@/components/NavFooter.svelte';
@@ -27,12 +32,7 @@
         children?: Snippet;
     } = $props();
 
-    import PlusCircle from 'lucide-svelte/icons/plus-circle';
-    import FileText from 'lucide-svelte/icons/file-text';
 
-    import History from 'lucide-svelte/icons/history';
-    import Zap from 'lucide-svelte/icons/zap';
-    import Settings from 'lucide-svelte/icons/settings';
 
     const mainNavItems: NavItem[] = [
         {

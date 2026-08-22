@@ -13,6 +13,7 @@ createInertiaApp({
         if (name === 'Welcome' || name.startsWith('auth/')) {
             return null;
         }
+
         return null;
     },
 
