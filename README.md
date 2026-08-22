@@ -305,3 +305,31 @@ To ensure optimal engagement, clean community presentation, and regulatory affil
 
 - **Action Buttons:** Standard, non-fancy, compact 28x28px (`w-7 h-7`) outline SVG icon buttons across all cards and tables (Edit pencil, Delete trash, Run triangle/spinner, Toggle power ring).
 - **Icons & Badges:** Subtle color-coded pill indicators (Emerald for active/published, Indigo for scheduled/approved, Amber for warning/draft, Red for failed/delete).
+
+---
+
+## ⚙️ Background Scheduling & Worker Pipeline
+
+Automated postings trigger seamlessly 24/7 even when no browser tabs are open:
+
+1. **Artisan Scheduler Command:** `php artisan workflows:run`
+   - Evaluates active rules in `Asia/Manila` time (`UTC+8`) against days, times, and execution intervals.
+   - Accepts `--force` flag for immediate test runs.
+2. **Queued Background Job:** [`ExecuteWorkflowRuleJob`](file:///home/war/projects/autoffiliate/app/Jobs/ExecuteWorkflowRuleJob.php)
+   - Dispatched asynchronously to execute the pipeline, log AI tokens, create draft records, and publish to Facebook Graph API.
+3. **Laravel Scheduler Registration:** Registered in [`routes/console.php`](file:///home/war/projects/autoffiliate/routes/console.php) to run `everyMinute()`.
+4. **Development Runner:** `composer run dev` runs `PHP`, `VITE`, and `SCHEDULER` (`php artisan schedule:work`) concurrently.
+
+---
+
+## 🚀 GitHub Actions CI/CD & Deployment
+
+- **CI Workflow ([`.github/workflows/ci.yml`](file:///home/war/projects/autoffiliate/.github/workflows/ci.yml)):**
+  - Triggered on pull requests and pushes to `main`.
+  - Sets up PHP 8.3 & Node.js 20 LTS with MySQL service container.
+  - Verifies TypeScript/Svelte types, compiles Vite assets, runs migrations, and executes test suite (`php artisan test`).
+- **CD Workflow ([`.github/workflows/deploy.yml`](file:///home/war/projects/autoffiliate/.github/workflows/deploy.yml)):**
+  - Automated SSH deployment to Hostinger VPS on push to `main`.
+  - Runs zero-downtime deployment: pulls git changes, optimizes Composer & NPM, runs migrations, rebuilds caches, and restarts Supervisor workers.
+- **Dedicated Deployment Guide:** Detailed Hostinger VPS & hPanel setup available in [`docs/HOSTINGER_DEPLOYMENT.md`](file:///home/war/projects/autoffiliate/docs/HOSTINGER_DEPLOYMENT.md) and [`/home/war/vault/hostinger-deployment-guide.md`](file:///home/war/vault/hostinger-deployment-guide.md).
+
