@@ -1,31 +1,76 @@
-name: CD - Deploy to Hostinger via SSH
+name: CI/CD Pipeline & Hostinger Deployment
 
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Build & Deploy to Hostinger
+  test-and-build:
+    name: 🧪 Quality Checks & Test Suite
     runs-on: ubuntu-latest
-    if: ${{ secrets.HOSTINGER_SSH_HOST != '' }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (Build Assets for Hostinger)
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3, bcmath, curl, zip, pcntl
+          coverage: none
+
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install NPM Dependencies & Build Assets
-        run: |
-          npm ci
-          npm run build
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Prepare Environment File & SQLite Database
+        run: |
+          cp .env.example .env
+          touch database/database.sqlite
+          php artisan key:generate
+          php artisan wayfinder:generate --with-form || true
+
+      - name: Lint & Type Checks
+        run: |
+          npm run lint:check
+          npm run types:check
+
+      - name: Build Frontend Assets (Vite)
+        run: npm run build
+
+      - name: Run Database Migrations
+        run: php artisan migrate --force
+
+      - name: Run Test Suite (PHPUnit / Pest)
+        run: php artisan test
+
+  deploy:
+    name: 🚀 Deploy to Hostinger via SSH
+    runs-on: ubuntu-latest
+    needs: test-and-build
+    # Only run deploy on push to main branch and when Hostinger SSH host secret is configured
+    if: github.ref == 'refs/heads/main' && secrets.HOSTINGER_SSH_HOST != ''
+
+    steps:
       - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -35,7 +80,6 @@ jobs:
           password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
           port: ${{ secrets.HOSTINGER_SSH_PORT || '65002' }}
           script: |
-            # Set target directory
             TARGET_DIR="${{ secrets.HOSTINGER_APP_PATH }}"
             if [ -z "$TARGET_DIR" ]; then
               if [ -d "/var/www/autoffiliate" ]; then
@@ -68,7 +112,6 @@ jobs:
             php artisan view:cache
             php artisan wayfinder:generate || true
 
-            # Restart Supervisor queue/scheduler workers if available
             if command -v supervisorctl &> /dev/null; then
               echo "🔄 Restarting background worker daemons..."
               sudo supervisorctl restart all || true

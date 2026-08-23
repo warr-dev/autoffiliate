@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { router } from '@inertiajs/svelte';
+	import { onMount } from 'svelte';
 	import AppLayout from '@/layouts/AppLayout.svelte';
 
 	let {
@@ -16,7 +16,10 @@
 	const API_BASE = '';
 
 	function getCsrfToken(): string {
-		if (typeof document === 'undefined') return '';
+		if (typeof document === 'undefined') {
+return '';
+}
+
 		return (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
 	}
 
@@ -1569,6 +1572,7 @@ return;
 		if (timesToSave.length === 0) {
 			timesToSave = ['08:00 AM'];
 		}
+
 			if (newRuleFrequency === 'interval') {
 			timesToSave = [`Every ${selectedInterval} Hours`];
 		}
@@ -1605,6 +1609,7 @@ return;
 						manualPrompt: manualCustomPrompt.trim()
 					};
 					savedRuleObject = updatedRule;
+
 					return updatedRule;
 				}
 
@@ -1644,6 +1649,7 @@ return;
 		// Sync rule to backend SQLite database for background server-side execution
 		if (savedRuleObject) {
 			const ruleObj: ScheduledRule = savedRuleObject;
+
 			try {
 				const token = localStorage.getItem('aiffiliate_token');
 				fetch(`${API_BASE}/api/workflows/rules`, {

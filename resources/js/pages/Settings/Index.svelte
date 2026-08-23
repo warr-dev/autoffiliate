@@ -318,6 +318,7 @@ fb_app_secret = exchangeAppSecret.trim();
             });
 
             const data = await res.json();
+
             if (res.ok && data.success) {
                 testPostStatuses[id] = {
                     loading: false,
@@ -884,6 +885,7 @@ return;
                                             onkeydown={(e) => {
                                                 if (e.key === 'Enter') {
                                                     e.preventDefault();
+
                                                     if (newTagInputAdd.trim()) {
                                                         newDefaultHashtags = addHashtagToList(newDefaultHashtags, newTagInputAdd);
                                                         newTagInputAdd = '';
@@ -1060,8 +1062,14 @@ return;
                                                         type="button"
                                                         onclick={() => handleAutoExchangeToken(newAccountId, (tok, pName, pId) => {
                                                             newAccessToken = tok;
-                                                            if (pName && !newName) newName = pName;
-                                                            if (pId && !newAccountId) newAccountId = pId;
+
+                                                            if (pName && !newName) {
+newName = pName;
+}
+
+                                                            if (pId && !newAccountId) {
+newAccountId = pId;
+}
                                                         })}
                                                         disabled={exchanging || !exchangeUserToken.trim()}
                                                         class="btn-secondary text-xs px-4 py-2 flex items-center gap-2 cursor-pointer"
@@ -1631,6 +1639,7 @@ return;
                                 onkeydown={(e) => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
+
                                         if (newGlobalTagInput.trim()) {
                                             default_hashtags = addHashtagToList(default_hashtags, newGlobalTagInput);
                                             newGlobalTagInput = '';
@@ -2090,6 +2099,7 @@ return;
                             onkeydown={(e) => {
                                 if (e.key === 'Enter') {
                                     e.preventDefault();
+
                                     if (editTagInput.trim()) {
                                         editDefaultHashtags = addHashtagToList(editDefaultHashtags, editTagInput);
                                         editTagInput = '';
@@ -2243,8 +2253,14 @@ return;
                                         type="button"
                                         onclick={() => handleAutoExchangeToken(editAccountId, (tok, pName, pId) => {
                                             editAccessToken = tok;
-                                            if (pName) editName = pName;
-                                            if (pId) editAccountId = pId;
+
+                                            if (pName) {
+editName = pName;
+}
+
+                                            if (pId) {
+editAccountId = pId;
+}
                                         })}
                                         disabled={exchanging || !exchangeUserToken.trim()}
                                         class="btn-secondary text-xs px-4 py-2 flex items-center gap-2 cursor-pointer"
