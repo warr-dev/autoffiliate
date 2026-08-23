@@ -351,12 +351,8 @@ Automated postings trigger seamlessly 24/7 even when no browser tabs are open:
 
 ## 🚀 GitHub Actions CI/CD & Deployment
 
-- **CI Workflow ([`.github/workflows/ci.yml`](file:///home/war/projects/autoffiliate/.github/workflows/ci.yml)):**
-  - Triggered on pull requests and pushes to `main`.
-  - Sets up PHP 8.3 & Node.js 20 LTS with MySQL service container.
-  - Verifies TypeScript/Svelte types, compiles Vite assets, runs migrations, and executes test suite (`php artisan test`).
-- **CD Workflow ([`.github/workflows/deploy.yml`](file:///home/war/projects/autoffiliate/.github/workflows/deploy.yml)):**
-  - Automated SSH deployment to Hostinger VPS on push to `main`.
-  - Runs zero-downtime deployment: pulls git changes, optimizes Composer & NPM, runs migrations, rebuilds caches, and restarts Supervisor workers.
-- **Dedicated Deployment Guide:** Detailed Hostinger VPS & hPanel setup available in [`docs/HOSTINGER_DEPLOYMENT.md`](file:///home/war/projects/autoffiliate/docs/HOSTINGER_DEPLOYMENT.md) and [`/home/war/vault/hostinger-deployment-guide.md`](file:///home/war/vault/hostinger-deployment-guide.md).
+- **Unified CI/CD Workflow ([`.github/workflows/ci-cd.yml`](.github/workflows/ci-cd.yml)):**
+  - **Job 1 (Quality Checks & Tests):** Runs on every pull request and push to `main`. Sets up PHP 8.3 & Node 20, verifies TypeScript/Svelte types, checks ESLint, compiles Vite assets, and runs SQLite test suite.
+  - **Job 2 (Hostinger SSH Deployment):** Triggers automatically on push to `main` when `HOSTINGER_SSH_HOST` secret is present. Connects via SSH, runs zero-downtime deployment (`git pull`, `composer install --no-dev`, `php artisan migrate`, cache optimization).
+- **Dedicated Deployment Guide:** Detailed Hostinger VPS & hPanel setup available in [`docs/HOSTINGER_DEPLOYMENT.md`](docs/HOSTINGER_DEPLOYMENT.md), [`docs/GITHUB_ACTIONS_DEPLOYMENT.md`](docs/GITHUB_ACTIONS_DEPLOYMENT.md), and [`/home/war/vault/hostinger-cicd-setup.md`](/home/war/vault/hostinger-cicd-setup.md).
 
