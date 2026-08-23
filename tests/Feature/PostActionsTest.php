@@ -57,7 +57,7 @@ test('user can create a custom post draft', function () {
 test('user can update post caption and tags', function () {
     $user = User::factory()->create();
     $post = Post::create([
-        'id' => 'post_' . Str::random(12),
+        'id' => 'post_'.Str::random(12),
         'product_title' => 'Mechanical Keyboard',
         'affiliate_url' => 'https://shopee.ph/keyboard-123',
         'caption' => 'Initial caption',
@@ -81,7 +81,7 @@ test('user can update post caption and tags', function () {
 test('user can approve a post draft', function () {
     $user = User::factory()->create();
     $post = Post::create([
-        'id' => 'post_' . Str::random(12),
+        'id' => 'post_'.Str::random(12),
         'product_title' => 'Fast Charging Power Bank',
         'affiliate_url' => 'https://shopee.ph/powerbank-456',
         'caption' => 'Ready to publish',
@@ -99,7 +99,7 @@ test('user can approve a post draft', function () {
 test('user can generate caption with different styles', function () {
     $user = User::factory()->create();
     $post = Post::create([
-        'id' => 'post_' . Str::random(12),
+        'id' => 'post_'.Str::random(12),
         'product_title' => 'Smart Watch Fitness Tracker',
         'product_price' => '₱1,299',
         'affiliate_url' => 'https://shopee.ph/smartwatch-789',
@@ -148,7 +148,7 @@ test('user can publish a post to Facebook and dispatch outbound webhook', functi
 
     $user = User::factory()->create();
     $post = Post::create([
-        'id' => 'post_' . Str::random(12),
+        'id' => 'post_'.Str::random(12),
         'product_title' => 'ANC Wireless Earbuds',
         'product_price' => '₱549',
         'affiliate_url' => 'https://shopee.ph/earbuds-999',
@@ -178,7 +178,7 @@ test('user can publish a post to Facebook and dispatch outbound webhook', functi
 test('user can delete a post draft', function () {
     $user = User::factory()->create();
     $post = Post::create([
-        'id' => 'post_' . Str::random(12),
+        'id' => 'post_'.Str::random(12),
         'product_title' => 'Item to Delete',
         'affiliate_url' => 'https://shopee.ph/item-to-delete',
         'status' => 'draft',
@@ -196,7 +196,7 @@ test('user can delete a post draft', function () {
 test('history page renders published and approved posts', function () {
     $user = User::factory()->create();
     Post::create([
-        'id' => 'post_' . Str::random(12),
+        'id' => 'post_'.Str::random(12),
         'product_title' => 'Published Item',
         'affiliate_url' => 'https://shopee.ph/published',
         'status' => 'published',

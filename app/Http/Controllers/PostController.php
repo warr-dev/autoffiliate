@@ -43,7 +43,7 @@ class PostController extends Controller
         ]);
 
         $post = Post::create([
-            'id' => 'post_' . Str::random(12),
+            'id' => 'post_'.Str::random(12),
             'product_title' => $validated['product_title'],
             'product_description' => $validated['product_description'] ?? null,
             'product_price' => $validated['product_price'] ?? null,
@@ -72,7 +72,7 @@ class PostController extends Controller
         ]);
 
         $post = Post::create([
-            'id' => 'post_' . Str::random(12),
+            'id' => 'post_'.Str::random(12),
             'product_title' => $validated['title'],
             'affiliate_url' => 'https://shopee.ph',
             'caption' => $validated['caption'],
@@ -126,12 +126,12 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         $targetAccountIds = $request->input('target_account_ids', []);
-        
+
         $accountsQuery = SocialAccount::where('platform', 'facebook')
             ->where('is_enabled', true)
             ->whereNotNull('access_token');
 
-        if (!empty($targetAccountIds)) {
+        if (! empty($targetAccountIds)) {
             $accountsQuery->whereIn('id', $targetAccountIds);
         }
 
@@ -142,11 +142,12 @@ class PostController extends Controller
             $defaultPageId = Setting::get('fb_page_id');
             $defaultToken = Setting::get('fb_page_token');
 
-            if (!$defaultToken || !$defaultPageId) {
+            if (! $defaultToken || ! $defaultPageId) {
                 $post->update(['status' => 'failed']);
                 if ($request->wantsJson()) {
                     return response()->json(['success' => false, 'error' => 'No active Facebook Page or Access Token configured.'], 400);
                 }
+
                 return back()->with('error', 'No active Facebook Page or Access Token configured.');
             }
         }
@@ -162,20 +163,20 @@ class PostController extends Controller
 
             $message = $post->caption;
 
-            $hasAffiliateLink = (!empty($post->affiliate_url) && $post->affiliate_url !== 'https://shopee.ph' && !str_starts_with($post->affiliate_url, 'https://facebook.com')) ||
+            $hasAffiliateLink = (! empty($post->affiliate_url) && $post->affiliate_url !== 'https://shopee.ph' && ! str_starts_with($post->affiliate_url, 'https://facebook.com')) ||
                 str_contains($message ?? '', 'shopee.ph') ||
                 str_contains($message ?? '', 'lazada') ||
                 str_contains($message ?? '', 'amzn.to');
 
-            if ($hasAffiliateLink && !empty($extraConfig['is_affiliate'])) {
+            if ($hasAffiliateLink && ! empty($extraConfig['is_affiliate'])) {
                 $disclosure = $extraConfig['disclosure'] ?? Setting::get('disclosure', 'Affiliate link. Price and availability may change anytime.');
-                if ($disclosure && !str_contains($message, $disclosure)) {
-                    $message .= "\n\n" . $disclosure;
+                if ($disclosure && ! str_contains($message, $disclosure)) {
+                    $message .= "\n\n".$disclosure;
                 }
             }
 
-            if ($post->tags && !str_contains($message, $post->tags)) {
-                $message .= "\n\n" . $post->tags;
+            if ($post->tags && ! str_contains($message, $post->tags)) {
+                $message .= "\n\n".$post->tags;
             }
 
             try {
@@ -215,9 +216,9 @@ class PostController extends Controller
             }
         }
 
-        $successfulPublishes = array_filter($publishedResults, fn($r) => !empty($r['facebook_post_id']));
+        $successfulPublishes = array_filter($publishedResults, fn ($r) => ! empty($r['facebook_post_id']));
 
-        if (!empty($successfulPublishes)) {
+        if (! empty($successfulPublishes)) {
             $post->update([
                 'status' => 'published',
                 'facebook_post_id' => $firstPostId,
@@ -277,10 +278,10 @@ class PostController extends Controller
         $customHashtags = $request->input('custom_hashtags', $post->tags);
 
         $defaultHashtags = Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH');
-        $hasAffiliateLink = !empty($post->affiliate_url) && $post->affiliate_url !== 'https://shopee.ph' && !str_starts_with($post->affiliate_url, 'https://facebook.com');
+        $hasAffiliateLink = ! empty($post->affiliate_url) && $post->affiliate_url !== 'https://shopee.ph' && ! str_starts_with($post->affiliate_url, 'https://facebook.com');
         $disclosure = $hasAffiliateLink ? Setting::get('disclosure', 'Affiliate link. Price and availability may change anytime.') : '';
 
-        $mergedTags = trim($customHashtags . ' ' . $defaultHashtags);
+        $mergedTags = trim($customHashtags.' '.$defaultHashtags);
         $tagArray = array_unique(array_filter(explode(' ', $mergedTags)));
         $finalTags = implode(' ', $tagArray);
 
@@ -316,7 +317,7 @@ class PostController extends Controller
         ]);
 
         // Calculate and log AI usage stats
-        $promptText = trim(($post->product_title ?? '') . ' ' . ($post->product_description ?? '') . ' ' . $post->affiliate_url);
+        $promptText = trim(($post->product_title ?? '').' '.($post->product_description ?? '').' '.$post->affiliate_url);
         $promptTokens = max(24, (int) (str_word_count($promptText) * 1.35));
         $completionTokens = max(45, (int) (str_word_count($caption) * 1.35));
         $totalTokens = $promptTokens + $completionTokens;

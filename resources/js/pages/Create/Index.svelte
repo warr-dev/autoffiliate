@@ -11,8 +11,8 @@
         e.preventDefault();
 
         if (!url.trim()) {
-return;
-}
+            return;
+        }
 
         loading = true;
         error = '';

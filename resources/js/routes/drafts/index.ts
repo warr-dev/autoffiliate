@@ -370,7 +370,7 @@ publish.form = publishForm
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:272
+* @see app/Http/Controllers/PostController.php:273
 * @route '/drafts/{id}/generate-caption'
 */
 export const generateCaption = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -385,7 +385,7 @@ generateCaption.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:272
+* @see app/Http/Controllers/PostController.php:273
 * @route '/drafts/{id}/generate-caption'
 */
 generateCaption.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -412,7 +412,7 @@ generateCaption.url = (args: { id: string | number } | [id: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:272
+* @see app/Http/Controllers/PostController.php:273
 * @route '/drafts/{id}/generate-caption'
 */
 generateCaption.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -422,7 +422,7 @@ generateCaption.post = (args: { id: string | number } | [id: string | number ] |
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:272
+* @see app/Http/Controllers/PostController.php:273
 * @route '/drafts/{id}/generate-caption'
 */
 const generateCaptionForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -432,7 +432,7 @@ const generateCaptionForm = (args: { id: string | number } | [id: string | numbe
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:272
+* @see app/Http/Controllers/PostController.php:273
 * @route '/drafts/{id}/generate-caption'
 */
 generateCaptionForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -444,7 +444,7 @@ generateCaption.form = generateCaptionForm
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:349
+* @see app/Http/Controllers/PostController.php:350
 * @route '/drafts/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -459,7 +459,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:349
+* @see app/Http/Controllers/PostController.php:350
 * @route '/drafts/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -486,7 +486,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:349
+* @see app/Http/Controllers/PostController.php:350
 * @route '/drafts/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -496,7 +496,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:349
+* @see app/Http/Controllers/PostController.php:350
 * @route '/drafts/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -511,7 +511,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:349
+* @see app/Http/Controllers/PostController.php:350
 * @route '/drafts/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

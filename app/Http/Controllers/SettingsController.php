@@ -18,7 +18,7 @@ class SettingsController extends Controller
     public function index(): Response
     {
         return Inertia::render('Settings/Index', [
-            'settings' => Setting::all()->pluck('value', 'key'),
+            'settings' => Setting::query()->pluck('value', 'key'),
             'socialAccounts' => SocialAccount::all(),
             'users' => User::select('id', 'name', 'email', 'created_at')->get(),
         ]);
@@ -83,7 +83,7 @@ class SettingsController extends Controller
         if (array_key_exists('account_id', $validated)) {
             $updateData['account_id'] = $validated['account_id'];
         }
-        if (!empty($validated['access_token']) && $validated['access_token'] !== '••••••••') {
+        if (! empty($validated['access_token']) && $validated['access_token'] !== '••••••••') {
             $updateData['access_token'] = $validated['access_token'];
         }
         if (isset($validated['extra_config'])) {
@@ -101,13 +101,14 @@ class SettingsController extends Controller
     public function destroySocialAccount(string $id)
     {
         SocialAccount::destroy($id);
+
         return back()->with('success', 'Social account deleted.');
     }
 
     public function toggleSocialAccount(string $id)
     {
         $account = SocialAccount::findOrFail($id);
-        $account->is_enabled = !$account->is_enabled;
+        $account->is_enabled = ! $account->is_enabled;
         $account->save();
 
         return back()->with('success', 'Account status updated.');
@@ -130,7 +131,7 @@ class SettingsController extends Controller
         $extraConfig = $account->extra_config ?? [];
 
         $nowStr = now()->format('M d, Y h:i A');
-        $tags = !empty($extraConfig['default_hashtags']) ? $extraConfig['default_hashtags'] : Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH');
+        $tags = ! empty($extraConfig['default_hashtags']) ? $extraConfig['default_hashtags'] : Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH');
         $message = "⚡ Autoffiliate Connection Test Post 🚀\n\nAutomated integration test for {$pageName}.\nTime: {$nowStr}\n\n{$tags}";
 
         try {
@@ -146,9 +147,9 @@ class SettingsController extends Controller
 
                 // Record in posts table
                 Post::create([
-                    'id' => 'post_' . Str::random(12),
+                    'id' => 'post_'.Str::random(12),
                     'product_title' => "⚡ [Connection Test] {$pageName}",
-                    'affiliate_url' => 'https://facebook.com/' . $pageId,
+                    'affiliate_url' => 'https://facebook.com/'.$pageId,
                     'caption' => $message,
                     'tags' => $tags,
                     'status' => 'published',
@@ -166,6 +167,7 @@ class SettingsController extends Controller
             }
 
             $errorMsg = $response->json()['error']['message'] ?? 'Facebook Graph API returned error.';
+
             return response()->json([
                 'success' => false,
                 'error' => $errorMsg,
@@ -186,11 +188,11 @@ class SettingsController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        $user = new User();
+        $user = new User;
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->password = Hash::make($validated['password']);
-        $user->email_verified_at = now();
+        $user->forceFill(['email_verified_at' => now()]);
         $user->save();
 
         return back()->with('success', "Account [{$user->email}] created successfully.");
@@ -199,7 +201,7 @@ class SettingsController extends Controller
     public function testWebhook(Request $request)
     {
         $url = $request->input('url') ?: Setting::get('n8n_outbound_webhook');
-        if (!$url) {
+        if (! $url) {
             return response()->json(['success' => false, 'error' => 'No webhook URL configured'], 400);
         }
 
@@ -217,7 +219,7 @@ class SettingsController extends Controller
             return response()->json([
                 'success' => $response->successful(),
                 'status_code' => $response->status(),
-                'error' => $response->successful() ? null : 'Received HTTP ' . $response->status(),
+                'error' => $response->successful() ? null : 'Received HTTP '.$response->status(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -254,12 +256,13 @@ class SettingsController extends Controller
             $exchangeData = $exchangeRes->json();
             $longLivedUserToken = $exchangeData['access_token'] ?? null;
 
-            if (!$longLivedUserToken) {
+            if (! $longLivedUserToken) {
                 $errorMsg = $exchangeData['error']['message'] ?? 'Failed to exchange short-lived token.';
+
                 return response()->json(['success' => false, 'step' => 'exchange', 'error' => $errorMsg], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'step' => 'exchange', 'error' => 'Connection failed: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false, 'step' => 'exchange', 'error' => 'Connection failed: '.$e->getMessage()], 500);
         }
 
         // Step 2: Fetch Page Access Tokens using long-lived User Token
@@ -285,7 +288,7 @@ class SettingsController extends Controller
             $matchedPageId = null;
 
             // Try to match targetPageId
-            if (!empty($targetPageId)) {
+            if (! empty($targetPageId)) {
                 foreach ($pagesData as $page) {
                     if ((string) ($page['id'] ?? '') === $targetPageId) {
                         $matchedPageToken = $page['access_token'] ?? null;
@@ -297,14 +300,14 @@ class SettingsController extends Controller
             }
 
             // Fallback to first page if no match or not specified
-            if (!$matchedPageToken && count($pagesData) > 0) {
+            if (! $matchedPageToken && count($pagesData) > 0) {
                 $firstPage = $pagesData[0];
                 $matchedPageToken = $firstPage['access_token'] ?? null;
                 $matchedPageName = $firstPage['name'] ?? null;
                 $matchedPageId = (string) ($firstPage['id'] ?? '');
             }
 
-            if (!$matchedPageToken) {
+            if (! $matchedPageToken) {
                 return response()->json([
                     'success' => false,
                     'step' => 'page_token',
@@ -335,7 +338,7 @@ class SettingsController extends Controller
                 'message' => 'Long-lived Page Access Token generated successfully!',
             ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'step' => 'page_token', 'error' => 'Page token retrieval failed: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false, 'step' => 'page_token', 'error' => 'Page token retrieval failed: '.$e->getMessage()], 500);
         }
     }
 
@@ -350,19 +353,20 @@ class SettingsController extends Controller
             return response()->json(['valid' => false, 'error' => 'No access token provided.'], 400);
         }
 
-        $appToken = (!empty($appId) && !empty($appSecret)) ? "{$appId}|{$appSecret}" : $token;
+        $appToken = (! empty($appId) && ! empty($appSecret)) ? "{$appId}|{$appSecret}" : $token;
 
         try {
             // 1. Verify basic page access
-            $targetEndpoint = !empty($accountId) ? $accountId : 'me';
+            $targetEndpoint = ! empty($accountId) ? $accountId : 'me';
             $pageRes = Http::timeout(10)->get("https://graph.facebook.com/v20.0/{$targetEndpoint}", [
                 'fields' => 'id,name',
                 'access_token' => $token,
             ]);
 
             $pageData = $pageRes->json();
-            if (!isset($pageData['id'])) {
+            if (! isset($pageData['id'])) {
                 $errorMsg = $pageData['error']['message'] ?? 'Invalid token or page not accessible.';
+
                 return response()->json(['valid' => false, 'error' => $errorMsg]);
             }
 

@@ -18,16 +18,16 @@
 
     function formatTokenCount(num: number): string {
         if (!num) {
-return '0';
-}
+            return '0';
+        }
 
         if (num >= 1000000) {
-return (num / 1000000).toFixed(1) + 'M';
-}
+            return (num / 1000000).toFixed(1) + 'M';
+        }
 
         if (num >= 1000) {
-return (num / 1000).toFixed(1) + 'K';
-}
+            return (num / 1000).toFixed(1) + 'K';
+        }
 
         return num.toString();
     }
@@ -213,7 +213,9 @@ return (num / 1000).toFixed(1) + 'K';
                         >
                             {aiAnalytics.summary?.active_provider || 'OpenAI'}
                         </div>
-                        <div class="text-[11px] text-amber-400/80 font-mono truncate mt-1">
+                        <div
+                            class="text-[11px] text-amber-400/80 font-mono truncate mt-1"
+                        >
                             {aiAnalytics.summary?.active_model || 'gpt-4o-mini'}
                         </div>
                     </div>
@@ -222,23 +224,53 @@ return (num / 1000).toFixed(1) + 'K';
                 <!-- Breakdown by Provider & Tone Preset -->
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <!-- Provider Usage -->
-                    <div class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-5 rounded-2xl shadow-xl">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
+                    <div
+                        class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-5 rounded-2xl shadow-xl"
+                    >
+                        <h3
+                            class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2"
+                        >
                             ⚡ Usage by AI Provider
                         </h3>
                         {#if !aiAnalytics.by_provider || aiAnalytics.by_provider.length === 0}
-                            <p class="text-xs text-gray-500 py-4 text-center">No external AI requests logged yet</p>
+                            <p class="text-xs text-gray-500 py-4 text-center">
+                                No external AI requests logged yet
+                            </p>
                         {:else}
                             <div class="space-y-3">
                                 {#each aiAnalytics.by_provider as prov}
                                     <div>
-                                        <div class="flex justify-between text-xs font-medium mb-1">
-                                            <span class="text-gray-200 capitalize">{prov.provider}</span>
-                                            <span class="font-mono text-gray-400">{prov.count} runs ({formatTokenCount(prov.total_tokens)} tok)</span>
+                                        <div
+                                            class="flex justify-between text-xs font-medium mb-1"
+                                        >
+                                            <span
+                                                class="text-gray-200 capitalize"
+                                                >{prov.provider}</span
+                                            >
+                                            <span
+                                                class="font-mono text-gray-400"
+                                                >{prov.count} runs ({formatTokenCount(
+                                                    prov.total_tokens,
+                                                )} tok)</span
+                                            >
                                         </div>
-                                        <div class="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
-                                            <div class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-400"
-                                                style="width: {Math.min(100, Math.max(10, (prov.count / (aiAnalytics.summary?.total_generations || 1)) * 100))}%"></div>
+                                        <div
+                                            class="w-full h-2 rounded-full bg-gray-800 overflow-hidden"
+                                        >
+                                            <div
+                                                class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-400"
+                                                style="width: {Math.min(
+                                                    100,
+                                                    Math.max(
+                                                        10,
+                                                        (prov.count /
+                                                            (aiAnalytics.summary
+                                                                ?.total_generations ||
+                                                                1)) *
+                                                            100,
+                                                    ),
+                                                )}%"
+                                            ></div>
                                         </div>
                                     </div>
                                 {/each}
@@ -247,25 +279,54 @@ return (num / 1000).toFixed(1) + 'K';
                     </div>
 
                     <!-- Tone Preset Usage -->
-                    <div class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-5 rounded-2xl shadow-xl">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
+                    <div
+                        class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-5 rounded-2xl shadow-xl"
+                    >
+                        <h3
+                            class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2"
+                        >
                             ✨ Usage by Caption Tone
                         </h3>
                         {#if !aiAnalytics.by_style || aiAnalytics.by_style.length === 0}
-                            <p class="text-xs text-gray-500 py-4 text-center">No tone styles logged yet</p>
+                            <p class="text-xs text-gray-500 py-4 text-center">
+                                No tone styles logged yet
+                            </p>
                         {:else}
                             <div class="space-y-3">
                                 {#each aiAnalytics.by_style as style}
                                     <div>
-                                        <div class="flex justify-between text-xs font-medium mb-1">
-                                            <span class="text-gray-200 uppercase tracking-wider text-[11px]">
+                                        <div
+                                            class="flex justify-between text-xs font-medium mb-1"
+                                        >
+                                            <span
+                                                class="text-gray-200 uppercase tracking-wider text-[11px]"
+                                            >
                                                 {style.style.replace('_', ' ')}
                                             </span>
-                                            <span class="font-mono text-gray-400">{style.count} runs ({formatTokenCount(style.total_tokens)} tok)</span>
+                                            <span
+                                                class="font-mono text-gray-400"
+                                                >{style.count} runs ({formatTokenCount(
+                                                    style.total_tokens,
+                                                )} tok)</span
+                                            >
                                         </div>
-                                        <div class="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
-                                            <div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-400"
-                                                style="width: {Math.min(100, Math.max(10, (style.count / (aiAnalytics.summary?.total_generations || 1)) * 100))}%"></div>
+                                        <div
+                                            class="w-full h-2 rounded-full bg-gray-800 overflow-hidden"
+                                        >
+                                            <div
+                                                class="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-400"
+                                                style="width: {Math.min(
+                                                    100,
+                                                    Math.max(
+                                                        10,
+                                                        (style.count /
+                                                            (aiAnalytics.summary
+                                                                ?.total_generations ||
+                                                                1)) *
+                                                            100,
+                                                    ),
+                                                )}%"
+                                            ></div>
                                         </div>
                                     </div>
                                 {/each}
@@ -276,24 +337,51 @@ return (num / 1000).toFixed(1) + 'K';
 
                 <!-- Recent AI Activity Feed -->
                 {#if aiAnalytics.recent_activity && aiAnalytics.recent_activity.length > 0}
-                    <div class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-5 rounded-2xl shadow-xl">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+                    <div
+                        class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-5 rounded-2xl shadow-xl"
+                    >
+                        <h3
+                            class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3"
+                        >
                             📋 Recent AI Generation Activity
                         </h3>
-                        <div class="divide-y divide-gray-800/60 overflow-x-auto">
+                        <div
+                            class="divide-y divide-gray-800/60 overflow-x-auto"
+                        >
                             {#each aiAnalytics.recent_activity as log}
-                                <div class="py-2.5 flex items-center justify-between text-xs gap-3">
+                                <div
+                                    class="py-2.5 flex items-center justify-between text-xs gap-3"
+                                >
                                     <div class="min-w-0 flex-1">
-                                        <p class="font-medium text-gray-200 truncate">
-                                            {log.product_title || 'Shopee Product Draft'}
+                                        <p
+                                            class="font-medium text-gray-200 truncate"
+                                        >
+                                            {log.product_title ||
+                                                'Shopee Product Draft'}
                                         </p>
-                                        <p class="text-[11px] text-gray-500 mt-0.5 font-mono">
-                                            {new Date(log.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} · {log.provider} ({log.model}) · preset: {log.style}
+                                        <p
+                                            class="text-[11px] text-gray-500 mt-0.5 font-mono"
+                                        >
+                                            {new Date(
+                                                log.timestamp,
+                                            ).toLocaleTimeString('en-US', {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })} · {log.provider} ({log.model}) ·
+                                            preset: {log.style}
                                         </p>
                                     </div>
-                                    <div class="flex items-center gap-3 font-mono flex-shrink-0 text-right">
-                                        <span class="text-gray-400">{log.total_tokens} tok</span>
-                                        <span class="text-emerald-400 font-bold">${(log.estimated_cost || 0).toFixed(5)}</span>
+                                    <div
+                                        class="flex items-center gap-3 font-mono flex-shrink-0 text-right"
+                                    >
+                                        <span class="text-gray-400"
+                                            >{log.total_tokens} tok</span
+                                        >
+                                        <span class="text-emerald-400 font-bold"
+                                            >${(
+                                                log.estimated_cost || 0
+                                            ).toFixed(5)}</span
+                                        >
                                     </div>
                                 </div>
                             {/each}
@@ -358,8 +446,18 @@ return (num / 1000).toFixed(1) + 'K';
                                     class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 border border-gray-800 hover:border-red-500/30 transition-colors cursor-pointer"
                                     title="Delete post"
                                 >
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    <svg
+                                        class="w-3.5 h-3.5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                        />
                                     </svg>
                                 </button>
                             </div>

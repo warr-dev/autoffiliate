@@ -10,7 +10,9 @@ class Setting extends Model
     use HasFactory;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     protected $primaryKey = 'key';
 
     protected $fillable = [
@@ -21,6 +23,7 @@ class Setting extends Model
     public static function get(string $key, ?string $default = null): ?string
     {
         $setting = static::find($key);
+
         return $setting ? $setting->value : $default;
     }
 

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
@@ -75,6 +76,7 @@ class CreateUserCommand extends Command
 
             if ($validator->fails()) {
                 $this->components->error($validator->errors()->first('email'));
+
                 return self::FAILURE;
             }
         }
@@ -92,15 +94,16 @@ class CreateUserCommand extends Command
             );
         } elseif (strlen($passwordInput) < 8) {
             $this->components->error('The password must be at least 8 characters.');
+
             return self::FAILURE;
         }
 
         // 4. Create User
-        $user = new User();
+        $user = new User;
         $user->name = $name;
         $user->email = $email;
         $user->password = Hash::make($passwordInput);
-        $user->email_verified_at = now();
+        $user->forceFill(['email_verified_at' => now()]);
         $user->save();
 
         $this->components->info("✓ User [{$user->email}] created successfully!");
@@ -108,7 +111,7 @@ class CreateUserCommand extends Command
         $this->table(
             ['ID', 'Name', 'Email', 'Verified At'],
             [
-                [$user->id, $user->name, $user->email, $user->email_verified_at?->toDateTimeString() ?? 'N/A'],
+                [$user->id, $user->name, $user->email, (string) $user->email_verified_at],
             ]
         );
 

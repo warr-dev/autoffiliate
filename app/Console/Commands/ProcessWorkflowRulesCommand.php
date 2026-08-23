@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class ProcessWorkflowRulesCommand extends Command
 {
     protected $signature = 'workflows:run {--force : Force execute all active rules regardless of schedule}';
+
     protected $description = 'Evaluate scheduled automated workflow rules and execute due rules in the background';
 
     public function handle(): int
@@ -21,7 +22,8 @@ class ProcessWorkflowRulesCommand extends Command
         $activeRules = WorkflowRule::where('status', 'active')->get();
 
         if ($activeRules->isEmpty()) {
-            $this->comment("No active workflow rules found.");
+            $this->comment('No active workflow rules found.');
+
             return 0;
         }
 
@@ -38,7 +40,7 @@ class ProcessWorkflowRulesCommand extends Command
         if ($executedCount > 0) {
             $this->info("Successfully processed {$executedCount} due workflow rule(s).");
         } else {
-            $this->line("No workflow rules due for execution at this minute.");
+            $this->line('No workflow rules due for execution at this minute.');
         }
 
         return 0;

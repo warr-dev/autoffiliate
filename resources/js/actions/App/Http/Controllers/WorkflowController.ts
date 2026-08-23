@@ -491,7 +491,7 @@ export const toggleStatus = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/automated/{id}'
 */
 const destroyad91159fa8c713556c37cc2bf4378fe1 = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -506,7 +506,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/automated/{id}'
 */
 destroyad91159fa8c713556c37cc2bf4378fe1.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -533,7 +533,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1.url = (args: { id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/automated/{id}'
 */
 destroyad91159fa8c713556c37cc2bf4378fe1.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -543,7 +543,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1.delete = (args: { id: string | number } 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/automated/{id}'
 */
 const destroyad91159fa8c713556c37cc2bf4378fe1Form = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -558,7 +558,7 @@ const destroyad91159fa8c713556c37cc2bf4378fe1Form = (args: { id: string | number
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/automated/{id}'
 */
 destroyad91159fa8c713556c37cc2bf4378fe1Form.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -574,7 +574,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1Form.delete = (args: { id: string | numbe
 destroyad91159fa8c713556c37cc2bf4378fe1.form = destroyad91159fa8c713556c37cc2bf4378fe1Form
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/api/workflows/rules/{id}'
 */
 const destroyfe5c3f0ae3aa197d39f29307249517ab = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -589,7 +589,7 @@ destroyfe5c3f0ae3aa197d39f29307249517ab.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/api/workflows/rules/{id}'
 */
 destroyfe5c3f0ae3aa197d39f29307249517ab.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -616,7 +616,7 @@ destroyfe5c3f0ae3aa197d39f29307249517ab.url = (args: { id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/api/workflows/rules/{id}'
 */
 destroyfe5c3f0ae3aa197d39f29307249517ab.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -626,7 +626,7 @@ destroyfe5c3f0ae3aa197d39f29307249517ab.delete = (args: { id: string | number } 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/api/workflows/rules/{id}'
 */
 const destroyfe5c3f0ae3aa197d39f29307249517abForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -641,7 +641,7 @@ const destroyfe5c3f0ae3aa197d39f29307249517abForm = (args: { id: string | number
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:258
+* @see app/Http/Controllers/WorkflowController.php:259
 * @route '/api/workflows/rules/{id}'
 */
 destroyfe5c3f0ae3aa197d39f29307249517abForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -46,7 +46,7 @@ test('api analytics endpoint returns summary, breakdown by provider and style, a
     $user = User::factory()->create();
 
     $post = Post::create([
-        'id' => 'post_' . Str::random(12),
+        'id' => 'post_'.Str::random(12),
         'product_title' => 'Sample Wireless Mouse',
         'affiliate_url' => 'https://shopee.ph/item-123',
         'status' => 'draft',

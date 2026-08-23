@@ -20,7 +20,7 @@ class WorkflowController extends Controller
         return Inertia::render('Automated/Index', [
             'workflows' => WorkflowRule::latest()->get(),
             'socialAccounts' => SocialAccount::where('platform', 'facebook')->get(),
-            'settings' => Setting::all()->pluck('value', 'key'),
+            'settings' => Setting::query()->pluck('value', 'key'),
         ]);
     }
 
@@ -70,7 +70,7 @@ class WorkflowController extends Controller
         if ($rule) {
             $rule->update($data);
         } else {
-            $data['id'] = 'sch_' . time() . '_' . Str::random(4);
+            $data['id'] = 'sch_'.time().'_'.Str::random(4);
             $rule = WorkflowRule::create($data);
         }
 
@@ -121,10 +121,11 @@ class WorkflowController extends Controller
         $timeTag = ($hour >= 5 && $hour < 12) ? 'Morning ☕' : (($hour >= 12 && $hour < 18) ? 'Afternoon ☀️' : 'Evening 🌙');
 
         $defaultTags = Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH #BudolFinds');
-        
-        $hasAffiliateLink = (!empty($shopeeUrl) && $shopeeUrl !== 'https://shopee.ph') ||
+
+        $hasAffiliateLink = (! empty($shopeeUrl) && $shopeeUrl !== 'https://shopee.ph') ||
             collect($actions)->contains(function ($a) {
                 $l = strtolower($a);
+
                 return str_contains($l, 'affiliate') || str_contains($l, 'shopee') || str_contains($l, 'buy link') || str_contains($l, 'voucher');
             }) ||
             str_contains($manualPrompt, 'http://') || str_contains($manualPrompt, 'https://');
@@ -143,37 +144,37 @@ class WorkflowController extends Controller
             $captionBody = "Good evening everyone! 🌙\n\nTime to unwind and relax after a productive {$dayName}! ✨\n\nAno ang pinaka-sulit na tech or budol find nyo recently?\n\nShare your thoughts with the community below! 👇";
         }
 
-        if (!empty($generalContext)) {
-            $captionBody .= "\n\n📌 Topic Spotlight: " . $generalContext;
+        if (! empty($generalContext)) {
+            $captionBody .= "\n\n📌 Topic Spotlight: ".$generalContext;
         }
 
-        if (!empty($weatherContext)) {
-            $captionBody .= "\n\n🌤️ Weather Check: " . $weatherContext;
+        if (! empty($weatherContext)) {
+            $captionBody .= "\n\n🌤️ Weather Check: ".$weatherContext;
         }
 
-        if (!empty($occasionContext)) {
-            $captionBody .= "\n\n🎉 Special: " . $occasionContext;
+        if (! empty($occasionContext)) {
+            $captionBody .= "\n\n🎉 Special: ".$occasionContext;
         }
 
-        if (!empty($manualPrompt)) {
-            $captionBody .= "\n\n" . $manualPrompt;
+        if (! empty($manualPrompt)) {
+            $captionBody .= "\n\n".$manualPrompt;
         }
 
         $finalCaption = trim(
-            $captionBody .
-            ($disclosure ? "\n\n" . $disclosure : '') .
-            ($defaultTags ? "\n\n" . $defaultTags : '')
+            $captionBody.
+            ($disclosure ? "\n\n".$disclosure : '').
+            ($defaultTags ? "\n\n".$defaultTags : '')
         );
 
         // Estimate tokens
-        $promptTokens = max(30, (int) (str_word_count($captionBody . ' ' . $generalContext) * 1.35));
+        $promptTokens = max(30, (int) (str_word_count($captionBody.' '.$generalContext) * 1.35));
         $completionTokens = max(50, (int) (str_word_count($finalCaption) * 1.35));
         $totalTokens = $promptTokens + $completionTokens;
 
-        $postId = 'post_' . Str::random(12);
+        $postId = 'post_'.Str::random(12);
         $livePostUrl = null;
 
-        if (!$isPreview) {
+        if (! $isPreview) {
             // Record post in database
             $post = Post::create([
                 'id' => $postId,
@@ -192,14 +193,14 @@ class WorkflowController extends Controller
                 $postId,
                 $provider,
                 $model,
-                !empty($tones) ? $tones[0] : 'taglish',
+                ! empty($tones) ? $tones[0] : 'taglish',
                 $promptTokens,
                 $completionTokens,
                 $totalTokens
             );
 
             // If action pipeline contains publish, publish to Facebook
-            $shouldPublish = collect($actions)->contains(fn($a) => str_contains(strtolower($a), 'publish') || str_contains(strtolower($a), 'facebook'));
+            $shouldPublish = collect($actions)->contains(fn ($a) => str_contains(strtolower($a), 'publish') || str_contains(strtolower($a), 'facebook'));
 
             if ($shouldPublish) {
                 $account = SocialAccount::where('name', $targetPage)
@@ -238,7 +239,7 @@ class WorkflowController extends Controller
 
         return response()->json([
             'success' => true,
-            'job_id' => 'wf_' . time(),
+            'job_id' => 'wf_'.time(),
             'rule_name' => $name,
             'post_id' => $postId,
             'post_url' => $livePostUrl ?: 'https://facebook.com',

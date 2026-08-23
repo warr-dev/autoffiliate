@@ -12,6 +12,7 @@ class AiUsageLog extends Model
     use HasFactory;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -67,7 +68,7 @@ class AiUsageLog extends Model
         $estimatedCost = ($promptTokens * $pRate) + ($completionTokens * $cRate);
 
         return self::create([
-            'id' => 'ai_' . Str::random(12),
+            'id' => 'ai_'.Str::random(12),
             'timestamp' => now(),
             'post_id' => $postId,
             'provider' => $provider,

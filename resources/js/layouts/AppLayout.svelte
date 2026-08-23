@@ -22,8 +22,8 @@
         const path = page.url || '';
 
         if (href === '/dashboard') {
-return path === '/dashboard' || path === '/';
-}
+            return path === '/dashboard' || path === '/';
+        }
 
         return path.startsWith(href);
     }

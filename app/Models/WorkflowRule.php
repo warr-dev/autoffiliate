@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +11,7 @@ class WorkflowRule extends Model
     use HasFactory;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -68,7 +70,7 @@ class WorkflowRule extends Model
 
         // Check Day Match
         $dayMatches = true;
-        if (!empty($ruleDays)) {
+        if (! empty($ruleDays)) {
             $dayMatches = false;
             foreach ($ruleDays as $d) {
                 $dLower = strtolower(trim($d));
@@ -87,7 +89,7 @@ class WorkflowRule extends Model
             }
         }
 
-        if (!$dayMatches) {
+        if (! $dayMatches) {
             return false;
         }
 
@@ -99,7 +101,7 @@ class WorkflowRule extends Model
         foreach ($ruleTimes as $timeStr) {
             $t = trim($timeStr);
             try {
-                $parsed = \Carbon\Carbon::parse($t, 'Asia/Manila');
+                $parsed = Carbon::parse($t, 'Asia/Manila');
                 if ($parsed->format('H:i') === $current24) {
                     return true;
                 }

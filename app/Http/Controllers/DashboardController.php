@@ -59,7 +59,7 @@ class DashboardController extends Controller
             ->map(function ($log) {
                 return [
                     'id' => $log->id,
-                    'timestamp' => $log->timestamp ? $log->timestamp->toIso8601String() : now()->toIso8601String(),
+                    'timestamp' => $log->timestamp->toIso8601String(),
                     'post_id' => $log->post_id,
                     'product_title' => $log->post->product_title ?? 'Shopee Product Deal',
                     'provider' => $log->provider,

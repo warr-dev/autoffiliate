@@ -44,9 +44,10 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
 
         $defaultTags = Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH #BudolFinds');
 
-        $hasAffiliateLink = (!empty($shopeeUrl) && $shopeeUrl !== 'https://shopee.ph' && !str_starts_with($shopeeUrl, 'https://facebook.com')) ||
+        $hasAffiliateLink = (! empty($shopeeUrl) && $shopeeUrl !== 'https://shopee.ph' && ! str_starts_with($shopeeUrl, 'https://facebook.com')) ||
             collect($actions)->contains(function ($a) {
                 $l = strtolower($a);
+
                 return str_contains($l, 'affiliate') || str_contains($l, 'shopee') || str_contains($l, 'buy link') || str_contains($l, 'voucher');
             }) ||
             str_contains($manualPrompt, 'http://') || str_contains($manualPrompt, 'https://');
@@ -63,33 +64,33 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
             $captionBody = "Good evening everyone! 🌙\n\nTime to unwind and relax after a productive {$dayName}! ✨\n\nAno ang pinaka-sulit na tech or budol find nyo recently?\n\nShare your thoughts with the community below! 👇";
         }
 
-        if (!empty($generalContext)) {
-            $captionBody .= "\n\n📌 Topic Spotlight: " . $generalContext;
+        if (! empty($generalContext)) {
+            $captionBody .= "\n\n📌 Topic Spotlight: ".$generalContext;
         }
 
-        if (!empty($weatherContext)) {
-            $captionBody .= "\n\n🌤️ Weather Check: " . $weatherContext;
+        if (! empty($weatherContext)) {
+            $captionBody .= "\n\n🌤️ Weather Check: ".$weatherContext;
         }
 
-        if (!empty($occasionContext)) {
-            $captionBody .= "\n\n🎉 Special: " . $occasionContext;
+        if (! empty($occasionContext)) {
+            $captionBody .= "\n\n🎉 Special: ".$occasionContext;
         }
 
-        if (!empty($manualPrompt)) {
-            $captionBody .= "\n\n" . $manualPrompt;
+        if (! empty($manualPrompt)) {
+            $captionBody .= "\n\n".$manualPrompt;
         }
 
         $finalCaption = trim(
-            $captionBody .
-            ($disclosure ? "\n\n" . $disclosure : '') .
-            ($defaultTags ? "\n\n" . $defaultTags : '')
+            $captionBody.
+            ($disclosure ? "\n\n".$disclosure : '').
+            ($defaultTags ? "\n\n".$defaultTags : '')
         );
 
-        $promptTokens = max(30, (int) (str_word_count($captionBody . ' ' . $generalContext) * 1.35));
+        $promptTokens = max(30, (int) (str_word_count($captionBody.' '.$generalContext) * 1.35));
         $completionTokens = max(50, (int) (str_word_count($finalCaption) * 1.35));
         $totalTokens = $promptTokens + $completionTokens;
 
-        $postId = 'post_' . Str::random(12);
+        $postId = 'post_'.Str::random(12);
         $livePostUrl = null;
 
         // Record post
@@ -110,14 +111,14 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
             $postId,
             $provider,
             $model,
-            !empty($tones) ? $tones[0] : 'taglish',
+            ! empty($tones) ? $tones[0] : 'taglish',
             $promptTokens,
             $completionTokens,
             $totalTokens
         );
 
         // Check if publish action requested
-        $shouldPublish = collect($actions)->contains(fn($a) => str_contains(strtolower($a), 'publish') || str_contains(strtolower($a), 'facebook'));
+        $shouldPublish = collect($actions)->contains(fn ($a) => str_contains(strtolower($a), 'publish') || str_contains(strtolower($a), 'facebook'));
 
         if ($shouldPublish) {
             $account = SocialAccount::where('name', $targetPage)
@@ -144,7 +145,7 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
                         Log::info("[Workflow Job] Published to Facebook: {$livePostUrl}");
                     } else {
                         $post->update(['status' => 'failed']);
-                        Log::error("[Workflow Job] FB Graph API failed: " . json_encode($fbResp->json()));
+                        Log::error('[Workflow Job] FB Graph API failed: '.json_encode($fbResp->json()));
                     }
                 } catch (\Exception $e) {
                     $post->update(['status' => 'failed']);

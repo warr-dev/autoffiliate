@@ -32,8 +32,6 @@
         children?: Snippet;
     } = $props();
 
-
-
     const mainNavItems: NavItem[] = [
         {
             title: 'Dashboard',

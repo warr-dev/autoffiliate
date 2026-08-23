@@ -225,7 +225,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::toggle
-* @see app/Http/Controllers/SettingsController.php:107
+* @see app/Http/Controllers/SettingsController.php:108
 * @route '/settings/social-accounts/{id}/toggle'
 */
 export const toggle = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -240,7 +240,7 @@ toggle.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::toggle
-* @see app/Http/Controllers/SettingsController.php:107
+* @see app/Http/Controllers/SettingsController.php:108
 * @route '/settings/social-accounts/{id}/toggle'
 */
 toggle.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -267,7 +267,7 @@ toggle.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\SettingsController::toggle
-* @see app/Http/Controllers/SettingsController.php:107
+* @see app/Http/Controllers/SettingsController.php:108
 * @route '/settings/social-accounts/{id}/toggle'
 */
 toggle.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -277,7 +277,7 @@ toggle.post = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\SettingsController::toggle
-* @see app/Http/Controllers/SettingsController.php:107
+* @see app/Http/Controllers/SettingsController.php:108
 * @route '/settings/social-accounts/{id}/toggle'
 */
 const toggleForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -287,7 +287,7 @@ const toggleForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\SettingsController::toggle
-* @see app/Http/Controllers/SettingsController.php:107
+* @see app/Http/Controllers/SettingsController.php:108
 * @route '/settings/social-accounts/{id}/toggle'
 */
 toggleForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -299,7 +299,7 @@ toggle.form = toggleForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:116
+* @see app/Http/Controllers/SettingsController.php:117
 * @route '/settings/social-accounts/{id}/test-post'
 */
 export const testPost = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -314,7 +314,7 @@ testPost.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:116
+* @see app/Http/Controllers/SettingsController.php:117
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPost.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -341,7 +341,7 @@ testPost.url = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:116
+* @see app/Http/Controllers/SettingsController.php:117
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPost.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -351,7 +351,7 @@ testPost.post = (args: { id: string | number } | [id: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:116
+* @see app/Http/Controllers/SettingsController.php:117
 * @route '/settings/social-accounts/{id}/test-post'
 */
 const testPostForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -361,7 +361,7 @@ const testPostForm = (args: { id: string | number } | [id: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:116
+* @see app/Http/Controllers/SettingsController.php:117
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPostForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
