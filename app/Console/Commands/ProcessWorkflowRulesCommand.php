@@ -13,7 +13,7 @@ class ProcessWorkflowRulesCommand extends Command
 
     public function handle(): int
     {
-        $now = now()->timezone('Asia/Manila');
+        $now = now();
         $force = (bool) $this->option('force');
 
         $this->info("Checking workflow rules at {$now->format('Y-m-d H:i:s T')} (Asia/Manila)...");
