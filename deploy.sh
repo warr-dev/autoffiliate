@@ -10,17 +10,35 @@
 
 set -e
 
-# Load .env.deploy or .env if present
-if [ -f ".env.deploy" ]; then
-    export $(grep -v '^#' .env.deploy | xargs -d '\n')
-elif [ -f ".env" ]; then
-    export $(grep -E '^(DEPLOY_|HOSTINGER_)' .env | xargs -d '\n' 2>/dev/null || true)
-fi
+# Load .env.deploy or .env if present (Compatible with Alpine Busybox, Linux & macOS)
+load_env() {
+    local env_file="$1"
+    if [ -f "$env_file" ]; then
+        while IFS='=' read -r key val || [ -n "$key" ]; do
+            # Trim carriage returns and whitespace
+            key=$(echo "$key" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+            val=$(echo "$val" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+            
+            # Skip empty lines or comments
+            if [ -n "$key" ] && [[ ! "$key" =~ ^# ]]; then
+                # Strip wrapping quotes if any
+                val="${val%\"}"
+                val="${val#\"}"
+                val="${val%\'}"
+                val="${val#\'}"
+                export "$key=$val"
+            fi
+        done < "$env_file"
+    fi
+}
 
-SSH_HOST="${DEPLOY_HOST:-$HOSTINGER_SSH_HOST}"
-SSH_USER="${DEPLOY_USER:-$HOSTINGER_SSH_USER}"
-SSH_PORT="${DEPLOY_PORT:-${HOSTINGER_SSH_PORT:-65002}}"
-SSH_PATH="${DEPLOY_PATH:-${HOSTINGER_APP_PATH:-/var/www/autoffiliate}}"
+load_env ".env.deploy"
+load_env ".env"
+
+SSH_HOST="${DEPLOY_HOST:-${HOSTINGER_SSH_HOST:-$SSH_HOST}}"
+SSH_USER="${DEPLOY_USER:-${HOSTINGER_SSH_USER:-$SSH_USER}}"
+SSH_PORT="${DEPLOY_PORT:-${HOSTINGER_SSH_PORT:-${SSH_PORT:-65002}}}"
+SSH_PATH="${DEPLOY_PATH:-${HOSTINGER_APP_PATH:-${SSH_PATH:-/var/www/autoffiliate}}}"
 
 # Color Output
 GREEN='\033[0;32m'
