@@ -1,4 +1,4 @@
-name: CI/CD Pipeline & Hostinger Deployment
+name: CI/CD - Build with Node & Deploy via SSH
 
 on:
   push:
@@ -8,8 +8,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-and-build:
-    name: 🧪 Quality Checks & Test Suite
+  # ============================================================================
+  # 1. BUILD WITH NODE & RUN TEST SUITE
+  # ============================================================================
+  build-and-test:
+    name: 📦 Build Frontend (Node 20) & Test
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +26,7 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3, bcmath, curl, zip, pcntl
           coverage: none
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 20 LTS
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -49,64 +52,73 @@ jobs:
           php artisan key:generate
           php artisan wayfinder:generate --with-form || true
 
-      - name: Lint & Type Checks
+      - name: Lint & Code Formatting Checks
         run: |
           npm run lint:check
-          npm run types:check
+          npm run format:check
 
-      - name: Build Frontend Assets (Vite)
+      - name: Check TypeScript & Svelte Types
+        run: npm run types:check
+
+      - name: 🔨 Compile Production Frontend Assets (Vite)
         run: npm run build
 
-      - name: Run Database Migrations
+      - name: Run Database Migrations (SQLite)
         run: php artisan migrate --force
 
       - name: Run Test Suite (PHPUnit / Pest)
         run: php artisan test
 
+  # ============================================================================
+  # 2. DEPLOY VIA SSH TO HOSTINGER
+  # ============================================================================
   deploy:
-    name: 🚀 Deploy to Hostinger via SSH
+    name: 🚀 Deploy via SSH to Hostinger
     runs-on: ubuntu-latest
-    needs: test-and-build
-    # Only run deploy on push to main branch and when Hostinger SSH host secret is configured
-    if: github.ref == 'refs/heads/main' && secrets.HOSTINGER_SSH_HOST != ''
+    needs: build-and-test
+    # Triggers on push to main branch when SSH host is configured in Secrets or Variables
+    if: github.ref == 'refs/heads/main' && (secrets.HOSTINGER_SSH_HOST != '' || vars.HOSTINGER_SSH_HOST != '' || secrets.SSH_HOST != '' || vars.SSH_HOST != '')
 
     steps:
-      - name: Deploy to Hostinger via SSH
+      - name: Execute Deployment Commands via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.HOSTINGER_SSH_HOST }}
-          username: ${{ secrets.HOSTINGER_SSH_USER }}
-          key: ${{ secrets.HOSTINGER_SSH_KEY }}
-          password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
-          port: ${{ secrets.HOSTINGER_SSH_PORT || '65002' }}
+          host: ${{ secrets.HOSTINGER_SSH_HOST || vars.HOSTINGER_SSH_HOST || secrets.SSH_HOST || vars.SSH_HOST }}
+          username: ${{ secrets.HOSTINGER_SSH_USER || vars.HOSTINGER_SSH_USER || secrets.SSH_USER || vars.SSH_USER }}
+          password: ${{ secrets.HOSTINGER_SSH_PASSWORD || vars.HOSTINGER_SSH_PASSWORD || secrets.SSH_PASSWORD || vars.SSH_PASSWORD }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY || vars.HOSTINGER_SSH_KEY || secrets.SSH_KEY || vars.SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT || vars.HOSTINGER_SSH_PORT || secrets.SSH_PORT || vars.SSH_PORT || '65002' }}
           script: |
-            TARGET_DIR="${{ secrets.HOSTINGER_APP_PATH }}"
+            # Determine target application directory
+            TARGET_DIR="${{ secrets.HOSTINGER_APP_PATH || vars.HOSTINGER_APP_PATH || secrets.SSH_PATH || vars.SSH_PATH }}"
             if [ -z "$TARGET_DIR" ]; then
               if [ -d "/var/www/autoffiliate" ]; then
                 TARGET_DIR="/var/www/autoffiliate"
-              elif [ -d "$HOME/domains/${{ secrets.HOSTINGER_DOMAIN }}/app" ]; then
-                TARGET_DIR="$HOME/domains/${{ secrets.HOSTINGER_DOMAIN }}/app"
+              elif [ -d "$HOME/domains/${{ vars.HOSTINGER_DOMAIN || 'autoffiliate' }}/app" ]; then
+                TARGET_DIR="$HOME/domains/${{ vars.HOSTINGER_DOMAIN || 'autoffiliate' }}/app"
               else
                 TARGET_DIR="$HOME/public_html"
               fi
             fi
 
-            echo "📂 Navigating to target directory: $TARGET_DIR"
+            echo "======================================================"
+            echo "📂 Deploying to target directory: $TARGET_DIR"
+            echo "======================================================"
             cd "$TARGET_DIR" || exit 1
 
             echo "🔒 Enabling maintenance mode..."
             php artisan down || true
 
-            echo "📥 Pulling latest codebase from GitHub..."
+            echo "📥 Pulling latest pre-built codebase from GitHub..."
             git pull origin main
 
-            echo "📦 Installing optimized PHP dependencies (no Node.js needed)..."
+            echo "📦 Installing PHP dependencies (no Node.js needed on server)..."
             composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
             echo "🗄️ Running database migrations..."
             php artisan migrate --force
 
-            echo "⚡ Clearing and optimizing Laravel caches..."
+            echo "⚡ Optimizing Laravel caches..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
@@ -120,4 +132,6 @@ jobs:
             echo "🔓 Disabling maintenance mode..."
             php artisan up
 
+            echo "======================================================"
             echo "✅ Autoffiliate successfully deployed to Hostinger!"
+            echo "======================================================"
