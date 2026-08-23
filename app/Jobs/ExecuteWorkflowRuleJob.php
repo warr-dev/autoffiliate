@@ -121,11 +121,21 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
         $shouldPublish = collect($actions)->contains(fn ($a) => str_contains(strtolower($a), 'publish') || str_contains(strtolower($a), 'facebook'));
 
         if ($shouldPublish) {
-            $account = SocialAccount::where('name', $targetPage)
-                ->orWhere('platform', 'facebook')
+            $account = SocialAccount::where(function ($query) use ($targetPage) {
+                $query->where('name', $targetPage)
+                    ->orWhere('account_id', $targetPage);
+            })
+                ->where('platform', 'facebook')
                 ->where('is_enabled', true)
                 ->whereNotNull('access_token')
                 ->first();
+
+            if (! $account) {
+                $account = SocialAccount::where('platform', 'facebook')
+                    ->where('is_enabled', true)
+                    ->whereNotNull('access_token')
+                    ->first();
+            }
 
             if ($account) {
                 try {

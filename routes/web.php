@@ -4,6 +4,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\WorkflowController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -50,5 +52,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/settings/token/verify', [SettingsController::class, 'verifyToken'])->name('settings.token.verify');
     Route::post('/settings/suggest-hashtags', [SettingsController::class, 'suggestHashtags'])->name('settings.hashtags.suggest');
 });
+
+// Secured Web-Cron Trigger for Hostinger / External Schedulers
+Route::get('/api/cron/workflows', function (Request $request) {
+    $token = $request->query('token') ?: $request->header('X-Cron-Token');
+    $secret = config('app.cron_secret');
+
+    if ($secret && $token !== $secret) {
+        return response()->json(['error' => 'Unauthorized cron ping. Provide valid ?token='], 403);
+    }
+
+    Artisan::call('workflows:run');
+    $output = Artisan::output();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Workflow runner evaluated successfully.',
+        'timestamp' => now()->timezone('Asia/Manila')->toIso8601String(),
+        'output' => trim($output),
+    ]);
+})->name('cron.workflows');
 
 require __DIR__.'/settings.php';

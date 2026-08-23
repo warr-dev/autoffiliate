@@ -47,33 +47,31 @@ class WorkflowRule extends Model
 
     /**
      * Check if this rule is due for automated execution at current time (Asia/Manila).
+     * Includes a 30-minute flexible grace window to accommodate Hostinger / shared cron timing drift.
      */
-    public function isDue(mixed $now = null): bool
+    public function isDue(mixed $now = null, int $graceMinutes = 30): bool
     {
         if ($this->status !== 'active') {
             return false;
         }
 
         $now = $now ? $now->copy()->timezone('Asia/Manila') : now()->timezone('Asia/Manila');
-        $currentHourMin = $now->format('h:i A'); // e.g. "08:00 AM"
-        $current24 = $now->format('H:i'); // e.g. "08:00"
         $currentDayShort = $now->format('D'); // "Mon"
-        $currentDayFull = $now->format('l'); // "Monday"
-
-        // Prevent multiple executions in the same minute / recent 2 minutes
-        if ($this->last_run && $this->last_run->timezone('Asia/Manila')->diffInMinutes($now) < 2) {
-            return false;
-        }
+        $currentDayFull = $now->format('l');  // "Monday"
 
         $ruleDays = $this->days ?? [];
         $ruleTimes = $this->times ?? [];
 
-        // Check Day Match
+        if (empty($ruleTimes)) {
+            return false;
+        }
+
+        // 1. Check Day Match
         $dayMatches = true;
         if (! empty($ruleDays)) {
             $dayMatches = false;
             foreach ($ruleDays as $d) {
-                $dLower = strtolower(trim($d));
+                $dLower = strtolower(trim((string) $d));
                 if (
                     $dLower === 'everyday' ||
                     $dLower === 'all' ||
@@ -93,22 +91,36 @@ class WorkflowRule extends Model
             return false;
         }
 
-        // Check Time Match
-        if (empty($ruleTimes)) {
-            return false;
-        }
+        // 2. Check Time Slots with Grace Window & Duplicate Run Prevention
+        $lastRunManila = $this->last_run ? $this->last_run->copy()->timezone('Asia/Manila') : null;
 
         foreach ($ruleTimes as $timeStr) {
-            $t = trim($timeStr);
+            $t = trim((string) $timeStr);
             try {
-                $parsed = Carbon::parse($t, 'Asia/Manila');
-                if ($parsed->format('H:i') === $current24) {
-                    return true;
-                }
+                // Parse target slot time today in Asia/Manila (e.g. 2026-08-23 08:00:00)
+                $slotTime = Carbon::parse($t, 'Asia/Manila')->setDate($now->year, $now->month, $now->day);
             } catch (\Exception) {
-                if ($t === $currentHourMin || $t === $current24) {
-                    return true;
+                continue;
+            }
+
+            // Difference in minutes between now and scheduled slot ($now - $slotTime)
+            $diffMinutes = $slotTime->diffInMinutes($now, false);
+
+            // Trigger if current time is within [0 min, graceMinutes] after the scheduled slot
+            if ($diffMinutes >= 0 && $diffMinutes <= $graceMinutes) {
+                // Check if this rule has ALREADY executed for this target slot today
+                if ($lastRunManila) {
+                    $sameDay = $lastRunManila->isSameDay($now);
+                    $ranAfterSlot = $lastRunManila->greaterThanOrEqualTo($slotTime->copy()->subMinutes(2));
+
+                    if ($sameDay && $ranAfterSlot) {
+                        // Already executed for this slot today
+                        continue;
+                    }
                 }
+
+                // Rule is due for execution!
+                return true;
             }
         }
 
