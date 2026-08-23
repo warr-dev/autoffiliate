@@ -51,10 +51,11 @@ jobs:
       - name: Install NPM Dependencies
         run: npm ci
 
-      - name: Prepare Environment File
+      - name: Prepare Environment File & Generate Route Definitions
         run: |
           cp .env.example .env
           php artisan key:generate
+          php artisan wayfinder:generate --with-form
 
       - name: Check TypeScript & Svelte Types
         run: npm run types:check

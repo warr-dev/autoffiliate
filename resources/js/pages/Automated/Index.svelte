@@ -2649,8 +2649,9 @@ return;
 					<!-- Left Column: Rule Details -->
 					<div class="flex flex-col gap-4">
 						<div class="flex flex-col gap-1.5">
-							<label class="text-xs text-gray-400 font-medium">Rule Name</label>
+							<label class="text-xs text-gray-400 font-medium" for="rule_name">Rule Name</label>
 							<input
+								id="rule_name"
 								type="text"
 								bind:value={newRuleName}
 								placeholder="Dynamic Time-Aware AI Greeting & Interactive Fan Post"
@@ -2660,7 +2661,7 @@ return;
 
 						<!-- Category Selector -->
 						<div class="flex flex-col gap-1.5">
-							<label class="text-xs text-gray-400 font-medium">Workflow Category</label>
+							<span class="text-xs text-gray-400 font-medium">Workflow Category</span>
 							<div class="relative">
 								<button
 									type="button"
@@ -2695,7 +2696,7 @@ return;
 
 						<!-- Frequency Selector -->
 						<div class="flex flex-col gap-1.5">
-							<label class="text-xs text-gray-400 font-medium">Posting Frequency</label>
+							<span class="text-xs text-gray-400 font-medium">Posting Frequency</span>
 							<div class="relative">
 								<button
 									type="button"
@@ -2731,7 +2732,7 @@ return;
 						<!-- Target Connected Social Media Account -->
 						<div class="flex flex-col gap-1.5">
 							<div class="flex items-center justify-between">
-								<label class="text-xs text-gray-400 font-medium">Target Connected Social Media Account</label>
+								<span class="text-xs text-gray-400 font-medium">Target Connected Social Media Account</span>
 								<a href="/settings" class="text-[10px] text-indigo-300 hover:text-indigo-200 hover:underline flex items-center gap-1 font-semibold">
 									<span>⚙️ Manage Accounts in Settings</span>
 								</a>
@@ -2773,7 +2774,7 @@ return;
 					<div class="flex flex-col gap-4">
 						{#if newRuleFrequency === 'daily' || newRuleFrequency === 'weekly'}
 							<div class="flex flex-col gap-2">
-								<label class="text-xs text-gray-400 font-medium">Scheduled Posting Times</label>
+								<span class="text-xs text-gray-400 font-medium">Scheduled Posting Times</span>
 
 								<div class="flex flex-wrap items-center gap-2 p-3 bg-gray-900 border border-gray-800 rounded-xl min-h-[64px]">
 									{#if manualTimeSlots.length === 0}
@@ -2907,10 +2908,10 @@ return;
 							<!-- Tone Multi-Select -->
 							<div class="flex flex-col gap-2 border-t border-gray-800/60 pt-3">
 								<div class="flex items-center justify-between">
-									<label class="text-xs font-bold text-indigo-300 flex items-center gap-1">
+									<span class="text-xs font-bold text-indigo-300 flex items-center gap-1">
 										<span>🎨 Copywriting Tone</span>
 										<span class="text-[10px] font-normal text-gray-400">(Optional)</span>
-									</label>
+									</span>
 									<span class="text-[10px] text-gray-500 font-mono">{selectedTones.length} Selected</span>
 								</div>
 								<div class="flex flex-wrap gap-2">
@@ -2933,10 +2934,10 @@ return;
 							<!-- Creator Persona Multi-Select -->
 							<div class="flex flex-col gap-2 pt-3 border-t border-gray-800/60">
 								<div class="flex items-center justify-between">
-									<label class="text-xs font-bold text-amber-300 flex items-center gap-1">
+									<span class="text-xs font-bold text-amber-300 flex items-center gap-1">
 										<span>🎭 Creator Persona</span>
 										<span class="text-[10px] font-normal text-gray-400">(Optional)</span>
-									</label>
+									</span>
 									<span class="text-[10px] text-gray-500 font-mono">{selectedPersonas.length} Selected</span>
 								</div>
 								<div class="flex flex-wrap gap-2">
@@ -2958,15 +2959,16 @@ return;
 
 							<!-- Custom Creator Persona & Voice Input -->
 							<div class="flex flex-col gap-1.5 pt-3 border-t border-gray-800/60">
-								<div class="flex items-center justify-between text-xs">
-									<span class="text-indigo-300 font-medium">🗣️ Custom Voice & Persona Instructions <span class="text-gray-500 font-normal text-[10px]">(Optional)</span>:</span>
-								</div>
-								<input
-									type="text"
+								<span class="text-xs font-bold text-gray-300 flex items-center gap-1">
+									<span>✍️ Custom Creator Persona / Brand Voice</span>
+									<span class="text-[10px] font-normal text-gray-500">(Optional)</span>
+								</span>
+								<textarea
 									bind:value={customPersonaInput}
-									placeholder="e.g. Speak like a chill 20-something WFH tech creator talking to close friends"
-									class="bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white placeholder-gray-600 outline-none focus:border-indigo-500 transition-all font-sans"
-								/>
+									rows="2"
+									placeholder="Describe your custom voice: e.g. An energetic 20-something tech reviewer with punchy Taglish slang, sarcastic wit, and bullet points."
+									class="bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white placeholder-gray-600 outline-none focus:border-indigo-500 transition-all resize-y font-sans"
+								></textarea>
 							</div>
 
 							<div class="flex items-center justify-end pt-2">
@@ -2985,7 +2987,7 @@ return;
 					{#if subStep3 === 2}
 						<div class="flex flex-col gap-3.5 bg-gray-900/40 p-4 rounded-2xl border border-gray-800 animate-fadeIn">
 							<div class="flex items-center justify-between">
-								<label class="text-xs text-gray-300 font-semibold">Select Content Generation Parameters</label>
+								<span class="text-xs text-gray-300 font-semibold">Select Content Generation Parameters</span>
 								<span class="text-[11px] text-indigo-300 font-semibold">{selectedWorkflowActions.length} Selected</span>
 							</div>
 
@@ -3266,8 +3268,9 @@ subStep3 = 3;
 			</div>
 
 			<div class="flex flex-col gap-1.5">
-				<label class="text-xs text-gray-400 font-medium">Trigger Name</label>
+				<label class="text-xs text-gray-400 font-medium" for="trigger_name">Trigger Name</label>
 				<input
+					id="trigger_name"
 					type="text"
 					bind:value={newTriggerName}
 					placeholder="Shopee Price Drop > 40% OFF Alert"
@@ -3276,7 +3279,7 @@ subStep3 = 3;
 			</div>
 
 			<div class="flex flex-col gap-1.5">
-				<label class="text-xs text-gray-400 font-medium">Event Source</label>
+				<span class="text-xs text-gray-400 font-medium">Event Source</span>
 				<div class="relative">
 					<button
 						type="button"
@@ -3310,8 +3313,9 @@ subStep3 = 3;
 			</div>
 
 			<div class="flex flex-col gap-1.5">
-				<label class="text-xs text-gray-400 font-medium">Trigger Condition</label>
+				<label class="text-xs text-gray-400 font-medium" for="trigger_condition">Trigger Condition</label>
 				<input
+					id="trigger_condition"
 					type="text"
 					bind:value={newTriggerCondition}
 					placeholder="Discount >= 40% OFF or Comment contains 'HM' / 'LINK'"
@@ -3320,8 +3324,9 @@ subStep3 = 3;
 			</div>
 
 			<div class="flex flex-col gap-1.5">
-				<label class="text-xs text-gray-400 font-medium">Target Social Page</label>
+				<label class="text-xs text-gray-400 font-medium" for="trigger_target_page">Target Social Page</label>
 				<select
+					id="trigger_target_page"
 					bind:value={newTriggerTargetPage}
 					class="bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white outline-none focus:border-amber-500 cursor-pointer"
 				>
@@ -3335,8 +3340,9 @@ subStep3 = 3;
 			</div>
 
 			<div class="flex flex-col gap-1.5">
-				<label class="text-xs text-gray-400 font-medium">Trigger Action Pipeline</label>
+				<label class="text-xs text-gray-400 font-medium" for="trigger_action_pipeline">Trigger Action Pipeline</label>
 				<select
+					id="trigger_action_pipeline"
 					bind:value={newTriggerAction}
 					class="bg-gray-900 border border-gray-800 rounded-xl p-3 text-xs text-white outline-none focus:border-amber-500 cursor-pointer"
 				>
@@ -3355,8 +3361,9 @@ subStep3 = 3;
 					</span>
 					
 					<div class="flex flex-col gap-1">
-						<label class="text-[11px] text-gray-300 font-medium">Default Shopee Product URL</label>
+						<label class="text-[11px] text-gray-300 font-medium" for="trigger_shopee_url">Default Shopee Product URL</label>
 						<input
+							id="trigger_shopee_url"
 							type="text"
 							bind:value={triggerShopeeUrl}
 							placeholder="https://s.shopee.ph/60QPnzrXoO"
@@ -3372,8 +3379,9 @@ subStep3 = 3;
 					</span>
 					
 					<div class="flex flex-col gap-1">
-						<label class="text-[11px] text-gray-300 font-medium">Trigger Keywords (Comma separated)</label>
+						<label class="text-[11px] text-gray-300 font-medium" for="trigger_keywords">Trigger Keywords (Comma separated)</label>
 						<input
+							id="trigger_keywords"
 							type="text"
 							bind:value={triggerKeywords}
 							placeholder="HM, LINK, PM, PRICE, MAGKANO, SULIT, ORDER"
@@ -3382,8 +3390,9 @@ subStep3 = 3;
 					</div>
 
 					<div class="flex flex-col gap-1">
-						<label class="text-[11px] text-gray-300 font-medium">Auto-Reply Message Template</label>
+						<label class="text-[11px] text-gray-300 font-medium" for="trigger_reply_template">Auto-Reply Message Template</label>
 						<textarea
+							id="trigger_reply_template"
 							bind:value={triggerReplyTemplate}
 							rows="2"
 							placeholder="Hi &#123;user_name&#125;! 👋 Here is the official buy link: 🛒 &#123;buy_link&#125; #TechSulitDeals"
@@ -3399,8 +3408,9 @@ subStep3 = 3;
 					</span>
 					
 					<div class="flex flex-col gap-1">
-						<label class="text-[11px] text-gray-300 font-medium">n8n / Receiver Webhook HTTP URL</label>
+						<label class="text-[11px] text-gray-300 font-medium" for="trigger_webhook_url">n8n / Receiver Webhook HTTP URL</label>
 						<input
+							id="trigger_webhook_url"
 							type="text"
 							bind:value={triggerWebhookUrl}
 							placeholder="https://n8n.example.com/webhook/deal-alert"
@@ -3409,8 +3419,9 @@ subStep3 = 3;
 					</div>
 
 					<div class="flex flex-col gap-1">
-						<label class="text-[11px] text-gray-300 font-medium">Webhook Secret Auth Token</label>
+						<label class="text-[11px] text-gray-300 font-medium" for="trigger_webhook_secret">Webhook Secret Auth Token</label>
 						<input
+							id="trigger_webhook_secret"
 							type="password"
 							bind:value={triggerWebhookSecret}
 							placeholder="e.g. sec_n8n_aiffiliate_2026"
@@ -3426,8 +3437,9 @@ subStep3 = 3;
 					</span>
 					
 					<div class="flex flex-col gap-1">
-						<label class="text-[11px] text-gray-300 font-medium">Promo Voucher Code</label>
+						<label class="text-[11px] text-gray-300 font-medium" for="trigger_voucher_code">Promo Voucher Code</label>
 						<input
+							id="trigger_voucher_code"
 							type="text"
 							bind:value={triggerVoucherCode}
 							placeholder="ANKERTECH88 or PAYDAY100"
@@ -3436,8 +3448,9 @@ subStep3 = 3;
 					</div>
 
 					<div class="flex flex-col gap-1">
-						<label class="text-[11px] text-gray-300 font-medium">Discount Offer Description</label>
+						<label class="text-[11px] text-gray-300 font-medium" for="trigger_voucher_discount">Discount Offer Description</label>
 						<input
+							id="trigger_voucher_discount"
 							type="text"
 							bind:value={triggerVoucherDiscount}
 							placeholder="40% OFF with no min spend up to ₱500"
