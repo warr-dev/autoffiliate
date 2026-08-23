@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
 # ==============================================================================
-# Autoffiliate - High-Speed Build & Verbose SSH Deployment Script
+# Autoffiliate - Universal Fast SSH Deployment Script (No Rsync Required)
 # ==============================================================================
 # Usage:
-#   1. Run on server directly:       ./deploy.sh
-#   2. Build & deploy to SSH server: ./deploy.sh --ssh
+#   1. Build with Node & Deploy via SSH: npm run deploy (or ./deploy.sh --ssh)
+#   2. Direct execution on server:       ./deploy.sh
+#   3. Push local files via TAR stream:  ./deploy.sh --tar
 # ==============================================================================
 
 set -e
@@ -38,13 +39,12 @@ SSH_PORT="${DEPLOY_PORT:-${HOSTINGER_SSH_PORT:-${SSH_PORT:-65002}}}"
 SSH_PATH="${DEPLOY_PATH:-${HOSTINGER_APP_PATH:-${SSH_PATH:-/var/www/autoffiliate}}}"
 SSH_PASS="${DEPLOY_PASSWORD:-${HOSTINGER_SSH_PASSWORD:-$SSH_PASSWORD}}"
 
-# Configure SSH & Rsync Execution Command
-RSYNC_RSH="ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
-SSH_EXEC="ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+# Configure SSH Execution Command
+SSH_OPTS="-p $SSH_PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+SSH_EXEC="ssh $SSH_OPTS"
 
 if [ -n "$SSH_PASS" ] && command -v sshpass &> /dev/null; then
-    RSYNC_RSH="sshpass -p '$SSH_PASS' ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
-    SSH_EXEC="sshpass -p '$SSH_PASS' ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+    SSH_EXEC="sshpass -p '$SSH_PASS' ssh $SSH_OPTS"
 fi
 
 # Color Output & Helpers
@@ -70,13 +70,13 @@ log_error() {
 }
 
 echo -e "${BLUE}==================================================================${NC}"
-echo -e "${BOLD}${CYAN}          🚀 Autoffiliate Build & Deployment Engine               ${NC}"
+echo -e "${BOLD}${CYAN}          🚀 Autoffiliate Fast SSH Deployment Engine              ${NC}"
 echo -e "${BLUE}==================================================================${NC}"
 
 # ==============================================================================
 # MODE 1: LOCAL BUILD ➔ SSH REMOTE DEPLOY
 # ==============================================================================
-if [ "$1" == "--ssh" ] || [ "$1" == "-s" ] || [ -n "$DEPLOY_REMOTE" ]; then
+if [ "$1" == "--ssh" ] || [ "$1" == "-s" ] || [ "$1" == "--tar" ] || [ -n "$DEPLOY_REMOTE" ]; then
     log_info "Mode: ${BOLD}Local Node Build ➔ Deploy to Hostinger via SSH${NC}"
     log_info "Target Host: ${YELLOW}$SSH_USER@$SSH_HOST:$SSH_PORT${NC}"
     log_info "Destination: ${YELLOW}$SSH_PATH${NC}"
@@ -92,43 +92,37 @@ if [ "$1" == "--ssh" ] || [ "$1" == "-s" ] || [ -n "$DEPLOY_REMOTE" ]; then
         exit 1
     fi
 
-    # 1. Local Vite Build
+    # 1. Compile Vite Assets locally
     log_info "📦 Step 1/3: Compiling production frontend assets with Vite..."
     BUILD_START=$(date +%s)
     npm run build
     BUILD_END=$(date +%s)
     log_success "✔ Frontend compiled in $((BUILD_END - BUILD_START))s"
 
-    # 2. Fast Sync with live progress
-    log_info "📤 Step 2/3: Syncing optimized payload to remote server (rsync with progress)..."
-    SYNC_START=$(date +%s)
+    # 2. Check if Tar Streaming was requested or use Git sync over SSH
+    if [ "$1" == "--tar" ]; then
+        log_info "📤 Step 2/3: Streaming compressed TAR archive directly over SSH (no rsync needed)..."
+        tar --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='vendor' \
+            --exclude='.env' \
+            --exclude='.env.deploy' \
+            --exclude='.devcontainer' \
+            --exclude='autoaff' \
+            --exclude='tests' \
+            --exclude='.phpunit.cache' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            --exclude='storage/pail/*' \
+            -czf - . | $SSH_EXEC "$SSH_USER@$SSH_HOST" "mkdir -p '$SSH_PATH' && tar -xzf - -C '$SSH_PATH'"
+        log_success "✔ Files streamed and extracted on remote server."
+    else
+        log_info "📤 Step 2/3: Deploying via Git over SSH..."
+    fi
 
-    rsync -avh \
-        --info=progress2 \
-        --delete \
-        -e "$RSYNC_RSH" \
-        --exclude '.git/' \
-        --exclude 'node_modules/' \
-        --exclude 'vendor/' \
-        --exclude '.env' \
-        --exclude '.env.deploy' \
-        --exclude '.devcontainer/' \
-        --exclude 'autoaff/' \
-        --exclude 'tests/' \
-        --exclude '.phpunit.cache/' \
-        --exclude '.idea/' \
-        --exclude '.vscode/' \
-        --exclude 'storage/logs/*' \
-        --exclude 'storage/framework/cache/*' \
-        --exclude 'storage/framework/sessions/*' \
-        --exclude 'storage/framework/views/*' \
-        --exclude 'storage/pail/*' \
-        ./ "$SSH_USER@$SSH_HOST:$SSH_PATH/"
-
-    SYNC_END=$(date +%s)
-    log_success "✔ Transferred in $((SYNC_END - SYNC_START))s"
-
-    # 3. Remote Execution
+    # 3. Remote Server Execution
     log_info "⚙️ Step 3/3: Executing server-side optimization & migrations..."
     
     $SSH_EXEC "$SSH_USER@$SSH_HOST" "bash -se" << REMOTE_SCRIPT
@@ -138,26 +132,31 @@ if [ "$1" == "--ssh" ] || [ "$1" == "-s" ] || [ -n "$DEPLOY_REMOTE" ]; then
         echo "  [1/6] 🔒 Enabling maintenance mode..."
         php artisan down --render="errors::503" || true
 
-        echo "  [2/6] 📦 Installing Composer dependencies (no-dev)..."
+        echo "  [2/6] 📥 Updating codebase..."
+        if [ -d ".git" ]; then
+            git pull origin main || echo "  ⚠️ Git pull skipped or not configured."
+        fi
+
+        echo "  [3/6] 📦 Installing Composer dependencies (no-dev, optimized)..."
         composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress
 
-        echo "  [3/6] 🗄️ Running database migrations..."
+        echo "  [4/6] 🗄️ Running database migrations..."
         php artisan migrate --force
 
-        echo "  [4/6] ⚡ Generating Wayfinder route types & caching config..."
+        echo "  [5/6] ⚡ Generating Wayfinder route types & caching config..."
         php artisan config:cache
         php artisan route:cache
         php artisan view:cache
         php artisan wayfinder:generate || true
 
         if command -v supervisorctl &> /dev/null; then
-            echo "  [5/6] 🔄 Restarting background worker daemons (Supervisor)..."
+            echo "  [6/6] 🔄 Restarting background worker daemons (Supervisor)..."
             sudo supervisorctl restart all || true
         else
-            echo "  [5/6] ℹ️ Supervisor not detected (Cron mode active)."
+            echo "  [6/6] ℹ️ Supervisor not detected (Cron mode active)."
         fi
 
-        echo "  [6/6] 🔓 Disabling maintenance mode..."
+        echo "  🔓 Disabling maintenance mode..."
         php artisan up
 
         echo "  ✨ Remote execution complete!"
