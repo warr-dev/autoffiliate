@@ -39,6 +39,16 @@ SSH_HOST="${DEPLOY_HOST:-${HOSTINGER_SSH_HOST:-$SSH_HOST}}"
 SSH_USER="${DEPLOY_USER:-${HOSTINGER_SSH_USER:-$SSH_USER}}"
 SSH_PORT="${DEPLOY_PORT:-${HOSTINGER_SSH_PORT:-${SSH_PORT:-65002}}}"
 SSH_PATH="${DEPLOY_PATH:-${HOSTINGER_APP_PATH:-${SSH_PATH:-/var/www/autoffiliate}}}"
+SSH_PASS="${DEPLOY_PASSWORD:-${HOSTINGER_SSH_PASSWORD:-$SSH_PASSWORD}}"
+
+# Configure SSH & Rsync Execution Command
+RSYNC_RSH="ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new"
+SSH_EXEC="ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new"
+
+if [ -n "$SSH_PASS" ] && command -v sshpass &> /dev/null; then
+    RSYNC_RSH="sshpass -p $SSH_PASS ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new"
+    SSH_EXEC="sshpass -p $SSH_PASS ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new"
+fi
 
 # Color Output
 GREEN='\033[0;32m'
@@ -62,6 +72,7 @@ if [ "$1" == "--ssh" ] || [ "$1" == "-s" ] || [ -n "$DEPLOY_REMOTE" ]; then
         echo -e "  DEPLOY_USER=u123456789"
         echo -e "  DEPLOY_PORT=65002"
         echo -e "  DEPLOY_PATH=/home/u123456789/domains/yourdomain.com/app"
+        echo -e "  DEPLOY_PASSWORD=YourSSHPassword (Optional)"
         exit 1
     fi
 
@@ -70,11 +81,12 @@ if [ "$1" == "--ssh" ] || [ "$1" == "-s" ] || [ -n "$DEPLOY_REMOTE" ]; then
 
     echo -e "\n${BLUE}📤 Step 2: Syncing codebase and public/build to $SSH_HOST:$SSH_PATH...${NC}"
     rsync -avz --delete \
-        -e "ssh -p $SSH_PORT" \
+        -e "$RSYNC_RSH" \
         --exclude '.git' \
         --exclude 'node_modules' \
         --exclude 'vendor' \
         --exclude '.env' \
+        --exclude '.env.deploy' \
         --exclude 'storage/logs/*' \
         --exclude 'storage/framework/cache/*' \
         --exclude 'storage/framework/sessions/*' \
@@ -82,7 +94,7 @@ if [ "$1" == "--ssh" ] || [ "$1" == "-s" ] || [ -n "$DEPLOY_REMOTE" ]; then
         ./ "$SSH_USER@$SSH_HOST:$SSH_PATH/"
 
     echo -e "\n${BLUE}⚙️ Step 3: Executing post-deploy commands on remote server...${NC}"
-    ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash -se" << REMOTE_SCRIPT
+    $SSH_EXEC "$SSH_USER@$SSH_HOST" "bash -se" << REMOTE_SCRIPT
         cd "$SSH_PATH" || exit 1
 
         echo "🔒 Enabling maintenance mode..."

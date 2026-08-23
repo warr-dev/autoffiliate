@@ -25,6 +25,8 @@ RUN apk update && apk add --no-cache \
     zip \
     unzip \
     openssh-client \
+    rsync \
+    sshpass \
     build-base \
     autoconf \
     gcc \
