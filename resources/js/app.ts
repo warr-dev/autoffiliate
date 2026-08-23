@@ -1,7 +1,4 @@
 import { createInertiaApp } from '@inertiajs/svelte';
-import AppLayout from '@/layouts/AppLayout.svelte';
-import AuthLayout from '@/layouts/AuthLayout.svelte';
-import SettingsLayout from '@/layouts/settings/Layout.svelte';
 import { initializeFlashToast } from '@/lib/flash-toast';
 import { initializeTheme } from '@/lib/theme.svelte';
 
