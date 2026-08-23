@@ -1,4 +1,4 @@
-name: CD - Deploy to Hostinger
+name: CD - Deploy to Hostinger via SSH
 
 on:
   push:
@@ -7,35 +7,74 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Production Server
+    name: Build & Deploy to Hostinger
     runs-on: ubuntu-latest
-    if: ${{ vars.HOSTINGER_SSH_HOST != '' || secrets.HOSTINGER_SSH_HOST != '' }}
+    if: ${{ secrets.HOSTINGER_SSH_HOST != '' }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH to Hostinger
+      - name: Setup Node.js (Build Assets for Hostinger)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install NPM Dependencies & Build Assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOSTINGER_SSH_HOST }}
           username: ${{ secrets.HOSTINGER_SSH_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
-          port: ${{ secrets.HOSTINGER_SSH_PORT || 22 }}
+          password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT || '65002' }}
           script: |
-            cd /var/www/autoffiliate || cd ~/domains/${{ secrets.HOSTINGER_DOMAIN || 'autoffiliate' }}/public_html
+            # Set target directory
+            TARGET_DIR="${{ secrets.HOSTINGER_APP_PATH }}"
+            if [ -z "$TARGET_DIR" ]; then
+              if [ -d "/var/www/autoffiliate" ]; then
+                TARGET_DIR="/var/www/autoffiliate"
+              elif [ -d "$HOME/domains/${{ secrets.HOSTINGER_DOMAIN }}/app" ]; then
+                TARGET_DIR="$HOME/domains/${{ secrets.HOSTINGER_DOMAIN }}/app"
+              else
+                TARGET_DIR="$HOME/public_html"
+              fi
+            fi
+
+            echo "📂 Navigating to target directory: $TARGET_DIR"
+            cd "$TARGET_DIR" || exit 1
+
+            echo "🔒 Enabling maintenance mode..."
             php artisan down || true
+
+            echo "📥 Pulling latest codebase from GitHub..."
             git pull origin main
+
+            echo "📦 Installing optimized PHP dependencies (no Node.js needed)..."
             composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-            npm ci
-            npm run build
+
+            echo "🗄️ Running database migrations..."
             php artisan migrate --force
+
+            echo "⚡ Clearing and optimizing Laravel caches..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-            php artisan wayfinder:generate
+            php artisan wayfinder:generate || true
+
+            # Restart Supervisor queue/scheduler workers if available
             if command -v supervisorctl &> /dev/null; then
-                sudo supervisorctl restart all || true
+              echo "🔄 Restarting background worker daemons..."
+              sudo supervisorctl restart all || true
             fi
+
+            echo "🔓 Disabling maintenance mode..."
             php artisan up
-            echo "🚀 Deployment successfully completed!"
+
+            echo "✅ Autoffiliate successfully deployed to Hostinger!"
