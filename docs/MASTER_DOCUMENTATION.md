@@ -397,3 +397,46 @@ erDiagram
 1. **Database Key Storage:** API keys and access tokens are stored in the database `settings` and `social_accounts` tables — never hardcoded in client templates.
 2. **Frontend Masking:** Secrets in the Settings interface are masked by default (`••••••••`) with client-side visibility toggles.
 3. **Authentication & 2FA:** Fortify authentication with brute-force rate-limiting, CSRF token validation, and Passkey / Two-Factor Authentication support.
+
+---
+
+## ⏰ Background 24/7 Automation (Closed Frontend Execution)
+
+### How Automated Flows Trigger Without the Browser Open
+The frontend is **purely a management UI**. Once rules are configured and enabled (`status: 'active'`), execution happens entirely on the **backend server** in the background:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Cron as Hostinger Cron / Web Cron
+    participant Artisan as workflows:run Command
+    participant DB as MariaDB (workflow_rules)
+    participant Worker as ExecuteWorkflowRuleJob
+    participant Meta as Facebook Graph API
+
+    Note over Cron: Runs every minute 24/7 (Browser CLOSED)
+    Cron->>Artisan: php artisan workflows:run (or GET /api/cron/workflows)
+    Artisan->>DB: Fetch active rules & evaluate isDue() with 30-min grace window
+    Artisan->>Worker: dispatchSync(rule) (Synchronous Execution)
+    Worker->>Worker: Generate dynamic AI greeting & compliance tags
+    Worker->>Meta: POST /v20.0/{page_id}/feed
+    Worker->>DB: Store Post record & update last_run timestamp
+```
+
+### Setting Up Hostinger 24/7 Triggers
+
+#### Option 1: Hostinger hPanel CLI Cron (Recommended)
+1. In hPanel, go to **Advanced ➔ Cron Jobs**.
+2. Select **Custom** / **PHP Command**.
+3. Frequency: `* * * * *` (Every Minute).
+4. Command:
+   ```bash
+   /usr/bin/php /home/u123456789/domains/yourdomain.com/app/artisan workflows:run >> /dev/null 2>&1
+   ```
+
+#### Option 2: External Web-Cron (100% Reliable Backup)
+If Hostinger's CLI cron has path or timing issues, use a free service like [cron-job.org](https://cron-job.org) or [UptimeRobot](https://uptimerobot.com) to ping:
+```text
+GET https://yourdomain.com/api/cron/workflows
+```
+Every 1, 5, or 15 minutes.

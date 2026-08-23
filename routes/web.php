@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\WorkflowController;
+use App\Models\SocialAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -41,11 +42,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/settings/app', [SettingsController::class, 'index'])->name('settings.app');
     Route::post('/settings/app', [SettingsController::class, 'update'])->name('settings.app.update');
+    Route::get('/settings/social-accounts', function (Request $request) {
+        if ($request->wantsJson()) {
+            return response()->json(SocialAccount::all());
+        }
+
+        return redirect()->route('settings.app');
+    })->name('settings.social.index');
     Route::post('/settings/social-accounts', [SettingsController::class, 'storeSocialAccount'])->name('settings.social.store');
     Route::patch('/settings/social-accounts/{id}', [SettingsController::class, 'updateSocialAccount'])->name('settings.social.update');
     Route::delete('/settings/social-accounts/{id}', [SettingsController::class, 'destroySocialAccount'])->name('settings.social.destroy');
     Route::post('/settings/social-accounts/{id}/toggle', [SettingsController::class, 'toggleSocialAccount'])->name('settings.social.toggle');
     Route::post('/settings/social-accounts/{id}/test-post', [SettingsController::class, 'testPostSocialAccount'])->name('settings.social.testPost');
+    Route::get('/settings/users', fn () => redirect()->route('settings.app'));
     Route::post('/settings/users', [SettingsController::class, 'storeUser'])->name('settings.users.store');
     Route::post('/settings/test-webhook', [SettingsController::class, 'testWebhook'])->name('settings.webhook.test');
     Route::post('/settings/token/exchange', [SettingsController::class, 'exchangeToken'])->name('settings.token.exchange');
