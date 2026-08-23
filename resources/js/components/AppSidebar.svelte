@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
+    import Activity from 'lucide-svelte/icons/activity';
     import BookOpen from 'lucide-svelte/icons/book-open';
     import FileText from 'lucide-svelte/icons/file-text';
     import FolderGit2 from 'lucide-svelte/icons/folder-git-2';
@@ -63,6 +64,11 @@
             title: 'App Settings',
             href: '/settings/app',
             icon: Settings,
+        },
+        {
+            title: 'Telescope Debugger',
+            href: '/telescope',
+            icon: Activity,
         },
     ];
 

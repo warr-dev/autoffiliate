@@ -1,0 +1,1 @@
+import{N as e,P as t,T as n,X as r,l as i,o as a}from"./app-BQCjMwZz.js";import{t as o}from"./Icon-3gFh91f5.js";function s(s,c){let l=a(c,[`children`,`$$slots`,`$$events`,`$$legacy`]),u=[[`path`,{d:`M20 6 9 17l-5-5`}]];o(s,i({name:`check`},()=>l,{get iconNode(){return u},children:(i,a)=>{var o=t(),s=r(o);n(s,c,`default`,{},null),e(i,o)},$$slots:{default:!0}}))}export{s as t};

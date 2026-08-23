@@ -1,5 +1,79 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
+* @see routes/web.php:45
+* @route '/settings/social-accounts'
+*/
+export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
+    method: 'get',
+})
+
+index.definition = {
+    methods: ["get","head"],
+    url: '/settings/social-accounts',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see routes/web.php:45
+* @route '/settings/social-accounts'
+*/
+index.url = (options?: RouteQueryOptions) => {
+    return index.definition.url + queryParams(options)
+}
+
+/**
+* @see routes/web.php:45
+* @route '/settings/social-accounts'
+*/
+index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:45
+* @route '/settings/social-accounts'
+*/
+index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(options),
+    method: 'head',
+})
+
+/**
+* @see routes/web.php:45
+* @route '/settings/social-accounts'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:45
+* @route '/settings/social-accounts'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:45
+* @route '/settings/social-accounts'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\SettingsController::store
 * @see app/Http/Controllers/SettingsController.php:38
 * @route '/settings/social-accounts'
@@ -372,6 +446,7 @@ testPostForm.post = (args: { id: string | number } | [id: string | number ] | st
 testPost.form = testPostForm
 
 const social = {
+    index: Object.assign(index, index),
     store: Object.assign(store, store),
     update: Object.assign(update, update),
     destroy: Object.assign(destroy, destroy),
