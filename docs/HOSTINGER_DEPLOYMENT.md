@@ -252,31 +252,49 @@ If using Hostinger's managed Web Hosting or Cloud Hosting plan with **hPanel**:
 3. Note the Database Name, Username, and Password.
 
 ### Step 4: Deploy Files via Git / SSH
-1. In hPanel, go to **Advanced ➔ SSH Access** and enable SSH.
-2. Connect via SSH:
+
+#### 💡 Node.js Workarounds (Choose One):
+
+**Option A: Pre-Built Assets from Git (Recommended — NO Node.js Needed on Server!)**
+The Git repository now includes pre-compiled production assets in `public/build/`. You do **NOT** need Node.js or `npm` installed on Hostinger!
+```bash
+cd ~/domains/yourdomain.com
+git clone https://github.com/warr-dev/autoffiliate.git app
+cd app
+composer install --no-dev --optimize-autoloader
+cp .env.example .env
+```
+*(Skip `npm run build` completely! The frontend assets are already pre-compiled).*
+
+**Option B: Install Node.js on Hostinger via NVM (If you want to build on server)**
+If you want `node` and `npm` directly in your Hostinger SSH terminal:
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+nvm install 20
+node -v   # Returns v20.x.x
+npm -v    # Returns 10.x.x
+npm ci && npm run build
+```
+
+---
+
+### Step 5: Configure `.env` & Run Migrations
+1. Edit `.env` with your hPanel database credentials:
    ```bash
-   ssh -p 65002 u123456789@YOUR_SERVER_IP
+   nano .env
    ```
-3. Clone repository and run commands:
-   ```bash
-   cd ~/domains/yourdomain.com
-   git clone https://github.com/YOUR_REPO/autoffiliate.git app
-   cd app
-   composer install --no-dev --optimize-autoloader
-   npm ci && npm run build
-   cp .env.example .env
-   ```
-4. Configure `.env` with your hPanel MySQL details.
-5. Run migrations:
+2. Initialize database and optimize Laravel:
    ```bash
    php artisan key:generate
    php artisan migrate --seed --force
    php artisan make:user admin@yourdomain.com "Admin User" --password="YourSecurePassword"
    php artisan config:cache
    php artisan route:cache
+   php artisan view:cache
    ```
 
-### Step 5: Configure hPanel Automated Cron Job
+### Step 6: Configure hPanel Automated Cron Job
 To run automated workflows in the background without browser tabs open:
 1. In hPanel, go to **Advanced ➔ Cron Jobs**.
 2. Select **Custom** command.
