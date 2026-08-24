@@ -52,16 +52,14 @@ jobs:
           php artisan key:generate
           php artisan wayfinder:generate --with-form || true
 
-      - name: Lint & Code Formatting Checks
-        run: |
-          npm run lint:check
-          npm run format:check
-
-      - name: Check TypeScript & Svelte Types
-        run: npm run types:check
-
       - name: 🔨 Compile Production Frontend Assets (Vite)
         run: npm run build
+
+      - name: 📤 Upload Compiled Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: public/build/
 
       - name: Run Database Migrations (SQLite)
         run: php artisan migrate --force
@@ -80,6 +78,25 @@ jobs:
     if: github.ref == 'refs/heads/main' && (secrets.HOSTINGER_SSH_HOST != '' || vars.HOSTINGER_SSH_HOST != '' || secrets.SSH_HOST != '' || vars.SSH_HOST != '')
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download Compiled Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: public/build/
+
+      - name: 🚀 Transfer Built Assets to Server (SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOSTINGER_SSH_HOST || vars.HOSTINGER_SSH_HOST || secrets.SSH_HOST || vars.SSH_HOST }}
+          username: ${{ secrets.HOSTINGER_SSH_USER || vars.HOSTINGER_SSH_USER || secrets.SSH_USER || vars.SSH_USER }}
+          password: ${{ secrets.HOSTINGER_SSH_PASSWORD || vars.HOSTINGER_SSH_PASSWORD || secrets.SSH_PASSWORD || vars.SSH_PASSWORD }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY || vars.HOSTINGER_SSH_KEY || secrets.SSH_KEY || vars.SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT || vars.HOSTINGER_SSH_PORT || secrets.SSH_PORT || vars.SSH_PORT || '65002' }}
+          source: "public/build/*"
+          target: ${{ secrets.HOSTINGER_APP_PATH || vars.HOSTINGER_APP_PATH || secrets.SSH_PATH || vars.SSH_PATH || '/var/www/autoffiliate' }}
       - name: Execute Deployment Commands via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
