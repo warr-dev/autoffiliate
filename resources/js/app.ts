@@ -6,14 +6,10 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
-    layout: (name) => {
-        if (name === 'Welcome' || name.startsWith('auth/')) {
-            return null;
-        }
-
-        return null;
+    resolve: (name) => {
+        const pages = import.meta.glob('./pages/**/*.svelte');
+        return pages[`./pages/${name}.svelte`]();
     },
-
     progress: {
         color: '#4B5563',
     },

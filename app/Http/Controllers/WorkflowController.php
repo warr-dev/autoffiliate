@@ -27,7 +27,7 @@ class WorkflowController extends Controller
     public function store(Request $request)
     {
         $id = $request->input('id');
-        $rule = $id ? WorkflowRule::find($id) : null;
+        $rule = ! empty($id) ? WorkflowRule::find($id) : null;
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -47,6 +47,11 @@ class WorkflowController extends Controller
             'manual_prompt' => 'nullable|string',
             'status' => 'nullable|string|in:active,disabled',
         ]);
+
+        // Fallback: match by exact rule name if rule wasn't found by ID
+        if (! $rule && ! empty($validated['name'])) {
+            $rule = WorkflowRule::where('name', $validated['name'])->first();
+        }
 
         $data = [
             'name' => $validated['name'],
@@ -70,7 +75,9 @@ class WorkflowController extends Controller
         if ($rule) {
             $rule->update($data);
         } else {
-            $data['id'] = 'sch_'.time().'_'.Str::random(4);
+            $data['id'] = (! empty($id) && ! str_starts_with($id, 'preset_'))
+                ? $id
+                : 'sch_'.time().'_'.Str::random(4);
             $rule = WorkflowRule::create($data);
         }
 
@@ -258,8 +265,14 @@ class WorkflowController extends Controller
 
     public function destroy(string $id)
     {
-        $rule = WorkflowRule::findOrFail($id);
-        $rule->delete();
+        $rule = WorkflowRule::find($id);
+        if ($rule) {
+            $rule->delete();
+        }
+
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Workflow rule deleted']);
+        }
 
         return back()->with('success', 'Workflow rule deleted.');
     }

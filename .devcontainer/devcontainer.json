@@ -22,6 +22,9 @@
                 },
                 "[php]": {
                     "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+                },
+                "[svelte]": {
+                    "editor.defaultFormatter": "svelte.svelte-vscode"
                 }
             },
             "extensions": [
@@ -30,6 +33,7 @@
                 "amiralizadeh9480.laravel-extra-intellisense",
                 "onecentlin.laravel-blade",
                 "shufo.vscode-blade-formatter",
+                "svelte.svelte-vscode",
                 "bradlc.vscode-tailwindcss",
                 "eamodio.gitlens",
                 "mhutchie.git-graph"

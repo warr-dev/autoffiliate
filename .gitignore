@@ -35,3 +35,4 @@ autoaff/
 storage/logs/*.log
 
 .env.deploy
+public/build/*

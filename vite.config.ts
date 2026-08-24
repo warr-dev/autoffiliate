@@ -30,6 +30,37 @@ export default defineConfig({
             formVariants: true,
         }),
     ],
+    build: {
+        cssCodeSplit: true,
+        chunkSizeWarningLimit: 1000,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('lucide-svelte')) {
+                            return 'vendor-icons';
+                        }
+                        if (
+                            id.includes('bits-ui') ||
+                            id.includes('clsx') ||
+                            id.includes('tailwind-merge') ||
+                            id.includes('svelte-sonner') ||
+                            id.includes('tw-animate-css')
+                        ) {
+                            return 'vendor-ui';
+                        }
+                        if (id.includes('@laravel/passkeys')) {
+                            return 'vendor-passkeys';
+                        }
+                        if (id.includes('@inertiajs') || id.includes('svelte')) {
+                            return 'vendor-core';
+                        }
+                        return 'vendor';
+                    }
+                },
+            },
+        },
+    },
     server: {
         host: '0.0.0.0',
         hmr: {
@@ -37,4 +68,5 @@ export default defineConfig({
         },
     },
 });
+
 

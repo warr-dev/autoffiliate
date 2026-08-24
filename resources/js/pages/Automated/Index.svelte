@@ -748,8 +748,57 @@
         }
     }
 
-    // Scheduled Rules Data with localStorage persistence
-    let scheduledRules = $state<ScheduledRule[]>(loadRulesFromStorage());
+    function mapDbWorkflowsToScheduledRules(dbWorkflows: Array<any>): ScheduledRule[] {
+        if (!Array.isArray(dbWorkflows) || dbWorkflows.length === 0) {
+            return [];
+        }
+
+        return dbWorkflows.map((w) => ({
+            id: w.id,
+            name: w.name || 'Untitled Rule',
+            category: w.category || 'Connection & Community',
+            frequency: w.frequency || 'daily',
+            times: Array.isArray(w.times) ? w.times : (w.times ? [w.times] : ['08:00 AM']),
+            days: Array.isArray(w.days) ? w.days : [],
+            targetPage: w.target_page || 'Tech Sulit Deals',
+            workflowActions: Array.isArray(w.workflow_actions) ? w.workflow_actions : [],
+            actionContexts: w.action_contexts || {},
+            generalContext: w.general_context || '',
+            weatherContext: w.weather_context || '',
+            occasionContext: w.occasion_context || '',
+            tones: Array.isArray(w.tones) ? w.tones : [],
+            personas: Array.isArray(w.personas) ? w.personas : [],
+            customPersona: w.custom_persona || '',
+            manualPrompt: w.manual_prompt || '',
+            status: (w.status === 'disabled' ? 'disabled' : 'active') as 'active' | 'disabled',
+            lastRun: w.last_run
+                ? new Date(w.last_run).toLocaleString('en-US', {
+                      timeZone: 'Asia/Manila',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                  })
+                : 'Never',
+            nextRun: 'Scheduled',
+        }));
+    }
+
+    function initScheduledRules(): ScheduledRule[] {
+        if (Array.isArray(workflows) && workflows.length > 0) {
+            return mapDbWorkflowsToScheduledRules(workflows);
+        }
+        return loadRulesFromStorage();
+    }
+
+    // Scheduled Rules Data with backend & localStorage persistence
+    let scheduledRules = $state<ScheduledRule[]>(initScheduledRules());
+
+    $effect(() => {
+        if (Array.isArray(workflows) && workflows.length > 0) {
+            scheduledRules = mapDbWorkflowsToScheduledRules(workflows);
+        }
+    });
 
     // Event Triggers Data
     let eventTriggers = $state<EventTrigger[]>([
@@ -1486,10 +1535,12 @@
     }
 
     function toggleScheduleStatus(id: string) {
+        let newStatus = 'active';
         scheduledRules = scheduledRules.map((r) => {
             if (r.id === id) {
                 const nextStatus =
                     r.status === 'active' ? 'disabled' : 'active';
+                newStatus = nextStatus;
                 actionNotification = `Rule "${r.name}" is now ${nextStatus.toUpperCase()}`;
                 actionNotificationType = 'info';
                 actionNotificationLink = null;
@@ -1501,6 +1552,22 @@
             return r;
         });
         saveRulesToStorage(scheduledRules);
+
+        try {
+            const token = localStorage.getItem('aiffiliate_token');
+            fetch(`${API_BASE}/api/workflows/rules/${id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                body: JSON.stringify({ status: newStatus }),
+            }).catch((e) => console.warn('Backend status sync warning:', e));
+        } catch (e) {
+            console.warn('Backend status sync warning:', e);
+        }
     }
 
     function toggleTriggerStatus(id: string) {
@@ -2032,7 +2099,17 @@
                         manual_prompt: ruleObj.manualPrompt,
                         status: ruleObj.status,
                     }),
-                }).catch((e) => console.warn('Backend rule sync error:', e));
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data?.success && data?.id && data.id !== ruleObj.id) {
+                            scheduledRules = scheduledRules.map((r) =>
+                                r.id === ruleObj.id ? { ...r, id: data.id } : r,
+                            );
+                            saveRulesToStorage(scheduledRules);
+                        }
+                    })
+                    .catch((e) => console.warn('Backend rule sync error:', e));
             } catch (syncErr) {
                 console.warn('Backend rule sync error:', syncErr);
             }
