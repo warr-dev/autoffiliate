@@ -29,12 +29,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/history', [PostController::class, 'history'])->name('history.index');
 
     Route::get('/automated', [WorkflowController::class, 'index'])->name('automated.index');
+    Route::get('/automated/export', [WorkflowController::class, 'export'])->name('automated.export');
+    Route::post('/automated/import', [WorkflowController::class, 'import'])->name('automated.import');
     Route::post('/automated', [WorkflowController::class, 'store'])->name('automated.store');
     Route::post('/automated/execute', [WorkflowController::class, 'execute'])->name('automated.execute');
     Route::post('/automated/{id}/toggle', [WorkflowController::class, 'toggleStatus'])->name('automated.toggle');
     Route::delete('/automated/{id}', [WorkflowController::class, 'destroy'])->name('automated.destroy');
 
     // API aliases for automated workflows
+    Route::get('/api/workflows/export', [WorkflowController::class, 'export']);
+    Route::post('/api/workflows/import', [WorkflowController::class, 'import']);
     Route::post('/api/workflows/execute', [WorkflowController::class, 'execute']);
     Route::post('/api/workflows/rules', [WorkflowController::class, 'store']);
     Route::put('/api/workflows/rules/{id}/status', [WorkflowController::class, 'toggleStatus']);

@@ -748,6 +748,22 @@
         }
     }
 
+    function hasConnectedAccount(targetPage?: string): boolean {
+        if (!Array.isArray(socialAccounts) || socialAccounts.length === 0) {
+            return false;
+        }
+
+        return socialAccounts.some(
+            (acc) =>
+                acc.is_enabled &&
+                Boolean(acc.access_token) &&
+                acc.access_token.trim().length > 0 &&
+                (acc.platform === 'facebook' ||
+                    acc.name === targetPage ||
+                    acc.account_id === targetPage),
+        );
+    }
+
     function mapDbWorkflowsToScheduledRules(dbWorkflows: Array<any>): ScheduledRule[] {
         if (!Array.isArray(dbWorkflows) || dbWorkflows.length === 0) {
             return [];
@@ -1716,9 +1732,23 @@
             );
             saveRulesToStorage(scheduledRules);
 
-            actionNotification = `✅ Workflow Executed & Created Post for "${rule.name}"!`;
-            actionNotificationType = 'success';
-            actionNotificationLink = livePostUrl;
+            if (data.warning) {
+                actionNotification = `⚠️ Post Saved as Draft: ${data.warning}`;
+                actionNotificationType = 'warning';
+                actionNotificationLink = '/settings/app';
+            } else if (data.error) {
+                actionNotification = `❌ Publish Error: ${data.error}`;
+                actionNotificationType = 'warning';
+                actionNotificationLink = '/settings/app';
+            } else if (data.published && livePostUrl) {
+                actionNotification = `✅ Successfully Published to Facebook for "${rule.name}"!`;
+                actionNotificationType = 'success';
+                actionNotificationLink = livePostUrl;
+            } else {
+                actionNotification = `✔ Post created and saved as Draft for "${rule.name}"`;
+                actionNotificationType = 'info';
+                actionNotificationLink = '/drafts';
+            }
         } catch (err: any) {
             console.error('Failed to publish post to backend API:', err);
             actionNotification = `⚠️ Workflow Execution Failed: ${err.message || 'Execution error'}`;
@@ -2255,6 +2285,74 @@
 
         return `⏰ Runs at ${rule.times.join(', ')}`;
     }
+
+    let fileInputRef: HTMLInputElement | null = null;
+    let isImporting = $state(false);
+
+    function triggerImportFile() {
+        if (fileInputRef) {
+            fileInputRef.value = '';
+            fileInputRef.click();
+        }
+    }
+
+    async function handleImportFile(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) {
+            return;
+        }
+
+        const file = input.files[0];
+        isImporting = true;
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('mode', 'merge');
+
+            const token = localStorage.getItem('aiffiliate_token');
+            const res = await fetch(`${API_BASE}/api/workflows/import`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    Accept: 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(
+                    errData.error ||
+                        errData.message ||
+                        `Server returned HTTP ${res.status}`,
+                );
+            }
+
+            const data = await res.json();
+            if (Array.isArray(data.workflows)) {
+                scheduledRules = mapDbWorkflowsToScheduledRules(data.workflows);
+                saveRulesToStorage(scheduledRules);
+            }
+
+            actionNotification = `✅ ${data.message || 'Workflows imported successfully!'}`;
+            actionNotificationType = 'success';
+            actionNotificationLink = null;
+        } catch (err: any) {
+            console.error('Import failed:', err);
+            actionNotification = `❌ Import Failed: ${err.message || 'Could not parse JSON'}`;
+            actionNotificationType = 'warning';
+            actionNotificationLink = null;
+        } finally {
+            isImporting = false;
+            setTimeout(() => (actionNotification = ''), 6000);
+        }
+    }
+
+    function handleExportWorkflows() {
+        window.open(`${API_BASE}/api/workflows/export?download=1`, '_blank');
+    }
 </script>
 
 <AppLayout title="Automated Workflows">
@@ -2318,7 +2416,40 @@
                     </p>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <!-- Hidden file input for JSON import -->
+                    <input
+                        type="file"
+                        accept=".json,application/json"
+                        bind:this={fileInputRef}
+                        onchange={handleImportFile}
+                        class="hidden"
+                    />
+
+                    <button
+                        type="button"
+                        onclick={handleExportWorkflows}
+                        title="Export all workflow rules as a JSON backup file"
+                        class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white border border-gray-700/80 hover:border-gray-600 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                    >
+                        <span>📥 Export JSON</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick={triggerImportFile}
+                        disabled={isImporting}
+                        title="Import workflow rules from a JSON backup file"
+                        class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white border border-gray-700/80 hover:border-gray-600 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                    >
+                        {#if isImporting}
+                            <span class="animate-spin">🌀</span>
+                            <span>Importing...</span>
+                        {:else}
+                            <span>📤 Import JSON</span>
+                        {/if}
+                    </button>
+
                     {#if activeTab === 'scheduled'}
                         <button
                             type="button"
@@ -2420,11 +2551,22 @@
                                     <h3 class="font-bold text-white text-base">
                                         {rule.name}
                                     </h3>
-                                    <span
-                                        class="text-xs text-indigo-300 font-semibold leading-relaxed block mt-1"
-                                    >
-                                        {formatScheduleText(rule)}
-                                    </span>
+                                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                                        <span
+                                            class="text-xs text-indigo-300 font-semibold leading-relaxed"
+                                        >
+                                            {formatScheduleText(rule)}
+                                        </span>
+                                        {#if !hasConnectedAccount(rule.targetPage)}
+                                            <a
+                                                href="/settings/app"
+                                                title="No active Facebook account connected for '{rule.targetPage}'. Click to configure in Settings."
+                                                class="text-[10px] text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1 font-mono transition-colors"
+                                            >
+                                                ⚠️ No FB Connected
+                                            </a>
+                                        {/if}
+                                    </div>
                                 </div>
 
                                 <!-- Outer Highlight Action Icon Buttons -->

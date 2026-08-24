@@ -121,6 +121,8 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
 
         // Check if publish action requested
         $shouldPublish = collect($actions)->contains(fn ($a) => str_contains(strtolower($a), 'publish') || str_contains(strtolower($a), 'facebook'));
+        $publishWarning = null;
+        $publishError = null;
 
         if ($shouldPublish) {
             $account = SocialAccount::where(function ($query) use ($targetPage) {
@@ -130,12 +132,14 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
                 ->where('platform', 'facebook')
                 ->where('is_enabled', true)
                 ->whereNotNull('access_token')
+                ->where('access_token', '!=', '')
                 ->first();
 
             if (! $account) {
                 $account = SocialAccount::where('platform', 'facebook')
                     ->where('is_enabled', true)
                     ->whereNotNull('access_token')
+                    ->where('access_token', '!=', '')
                     ->first();
             }
 
@@ -156,13 +160,20 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
                         ]);
                         Log::info("[Workflow Job] Published to Facebook: {$livePostUrl}");
                     } else {
+                        $errJson = $fbResp->json();
+                        $errMsg = $errJson['error']['message'] ?? json_encode($errJson);
+                        $publishError = "Facebook API error: {$errMsg}";
                         $post->update(['status' => 'failed']);
-                        Log::error('[Workflow Job] FB Graph API failed: '.json_encode($fbResp->json()));
+                        Log::error("[Workflow Job] FB Graph API failed: {$errMsg}");
                     }
                 } catch (\Exception $e) {
+                    $publishError = "Facebook network exception: {$e->getMessage()}";
                     $post->update(['status' => 'failed']);
                     Log::error("[Workflow Job] FB publish exception: {$e->getMessage()}");
                 }
+            } else {
+                $publishWarning = "No active Facebook account connected for '{$targetPage}'. Saved as draft.";
+                Log::warning("[Workflow Job] {$publishWarning}");
             }
         }
 
@@ -175,6 +186,9 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
             'tags' => $defaultTags,
             'tokens_used' => $totalTokens,
             'facebook_post_url' => $livePostUrl,
+            'published' => (bool) $livePostUrl,
+            'warning' => $publishWarning,
+            'error' => $publishError,
         ];
     }
 }

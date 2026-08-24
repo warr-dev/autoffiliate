@@ -67,19 +67,26 @@ class ProcessWorkflowRulesCommand extends Command
                 $this->line("   ⚡ Status: <fg=green;options=bold>🚀 TRIGGERED & EXECUTING NOW</> ({$reason})");
 
                 try {
-                    $result = ExecuteWorkflowRuleJob::dispatchSync($rule);
+                    $result = (new ExecuteWorkflowRuleJob($rule))->handle();
                     $executedCount++;
 
                     $postTitle = $result['title'] ?? 'Generated Post';
                     $fbUrl = $result['facebook_post_url'] ?? null;
                     $tokens = $result['tokens_used'] ?? 0;
+                    $warning = $result['warning'] ?? null;
+                    $error = $result['error'] ?? null;
 
                     $this->line("   ✔ Post Created: <fg=yellow>{$postTitle}</>");
                     $this->line("   ✔ AI Tokens Used: <fg=magenta>{$tokens}</>");
                     if ($fbUrl) {
                         $this->line("   ✔ Facebook Post Published: <fg=blue;options=underscore>{$fbUrl}</>");
+                    } elseif ($warning) {
+                        $this->line("   ⚠️  <fg=yellow>{$warning}</>");
+                        $this->line('   💡 Tip: Connect your Facebook Page under <fg=cyan>Settings ➔ Social Accounts</>');
+                    } elseif ($error) {
+                        $this->line("   ❌ <fg=red>{$error}</>");
                     } else {
-                        $this->line('   ✔ Saved as Draft (Check Drafts tab or Facebook token settings)');
+                        $this->line('   ✔ Saved as Draft (Check Drafts tab)');
                     }
                 } catch (\Exception $e) {
                     $this->error("   ❌ Execution Failed: {$e->getMessage()}");

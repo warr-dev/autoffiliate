@@ -208,13 +208,27 @@ class WorkflowController extends Controller
 
             // If action pipeline contains publish, publish to Facebook
             $shouldPublish = collect($actions)->contains(fn ($a) => str_contains(strtolower($a), 'publish') || str_contains(strtolower($a), 'facebook'));
+            $publishWarning = null;
+            $publishError = null;
 
             if ($shouldPublish) {
-                $account = SocialAccount::where('name', $targetPage)
-                    ->orWhere('platform', 'facebook')
+                $account = SocialAccount::where(function ($query) use ($targetPage) {
+                    $query->where('name', $targetPage)
+                        ->orWhere('account_id', $targetPage);
+                })
+                    ->where('platform', 'facebook')
                     ->where('is_enabled', true)
                     ->whereNotNull('access_token')
+                    ->where('access_token', '!=', '')
                     ->first();
+
+                if (! $account) {
+                    $account = SocialAccount::where('platform', 'facebook')
+                        ->where('is_enabled', true)
+                        ->whereNotNull('access_token')
+                        ->where('access_token', '!=', '')
+                        ->first();
+                }
 
                 if ($account) {
                     try {
@@ -231,15 +245,23 @@ class WorkflowController extends Controller
                                 'facebook_post_id' => $fbId,
                                 'facebook_post_url' => $livePostUrl,
                             ]);
+                        } else {
+                            $errJson = $fbResp->json();
+                            $errMsg = $errJson['error']['message'] ?? json_encode($errJson);
+                            $publishError = "Facebook API error: {$errMsg}";
+                            $post->update(['status' => 'failed']);
                         }
-                    } catch (\Exception) {
-                        // ignore background network failures
+                    } catch (\Exception $e) {
+                        $publishError = "Facebook connection exception: {$e->getMessage()}";
+                        $post->update(['status' => 'failed']);
                     }
+                } else {
+                    $publishWarning = "No active Facebook account connected for '{$targetPage}'. Post saved as draft.";
                 }
             }
 
             // Update rule last_run timestamp if workflow_id passed
-            if ($ruleId = $request->input('workflow_id')) {
+            if ($ruleId = $request->input('workflow_id', $request->input('id'))) {
                 WorkflowRule::where('id', $ruleId)->update(['last_run' => now()]);
             }
         }
@@ -249,8 +271,11 @@ class WorkflowController extends Controller
             'job_id' => 'wf_'.time(),
             'rule_name' => $name,
             'post_id' => $postId,
-            'post_url' => $livePostUrl ?: 'https://facebook.com',
-            'link' => $livePostUrl ?: 'https://facebook.com',
+            'post_url' => $livePostUrl,
+            'published' => (bool) $livePostUrl,
+            'warning' => $publishWarning ?? null,
+            'error' => $publishError ?? null,
+            'link' => $livePostUrl ?: null,
             'title' => $finalTitle,
             'caption' => $finalCaption,
             'executed_steps' => $actions,
@@ -259,6 +284,9 @@ class WorkflowController extends Controller
                 'caption' => $finalCaption,
                 'executed_steps' => $actions,
                 'post_url' => $livePostUrl,
+                'published' => (bool) $livePostUrl,
+                'warning' => $publishWarning ?? null,
+                'error' => $publishError ?? null,
             ],
         ]);
     }
@@ -275,5 +303,144 @@ class WorkflowController extends Controller
         }
 
         return back()->with('success', 'Workflow rule deleted.');
+    }
+
+    public function export(Request $request)
+    {
+        $workflows = WorkflowRule::latest()->get();
+
+        $exportData = [
+            'version' => '1.0',
+            'exported_at' => now()->toIso8601String(),
+            'count' => $workflows->count(),
+            'workflows' => $workflows->map(function ($w) {
+                return [
+                    'id' => $w->id,
+                    'name' => $w->name,
+                    'category' => $w->category,
+                    'frequency' => $w->frequency,
+                    'times' => $w->times,
+                    'days' => $w->days,
+                    'target_page' => $w->target_page,
+                    'workflow_actions' => $w->workflow_actions,
+                    'action_contexts' => $w->action_contexts,
+                    'general_context' => $w->general_context,
+                    'weather_context' => $w->weather_context,
+                    'occasion_context' => $w->occasion_context,
+                    'tones' => $w->tones,
+                    'personas' => $w->personas,
+                    'custom_persona' => $w->custom_persona,
+                    'manual_prompt' => $w->manual_prompt,
+                    'status' => $w->status,
+                ];
+            }),
+        ];
+
+        if ($request->query('download') || ! $request->wantsJson()) {
+            $filename = 'autoffiliate-workflows-'.now()->format('Y-m-d-His').'.json';
+
+            return response()->streamDownload(function () use ($exportData) {
+                echo json_encode($exportData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }, $filename, [
+                'Content-Type' => 'application/json',
+            ]);
+        }
+
+        return response()->json($exportData);
+    }
+
+    public function import(Request $request)
+    {
+        $rawContent = null;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $rawContent = file_get_contents($file->getRealPath());
+        } elseif ($request->has('workflows')) {
+            $data = $request->input('workflows');
+            if (is_array($data)) {
+                $rawContent = json_encode(['workflows' => $data]);
+            } else {
+                $rawContent = (string) $data;
+            }
+        } else {
+            $rawContent = $request->getContent();
+        }
+
+        if (empty($rawContent)) {
+            return response()->json(['success' => false, 'error' => 'No import data provided'], 400);
+        }
+
+        $decoded = json_decode($rawContent, true);
+
+        if (! is_array($decoded)) {
+            return response()->json(['success' => false, 'error' => 'Invalid JSON file or format'], 400);
+        }
+
+        // Support both direct array of rules or { workflows: [...] } structure
+        $rules = $decoded['workflows'] ?? (isset($decoded[0]) ? $decoded : [$decoded]);
+
+        if (! is_array($rules) || empty($rules)) {
+            return response()->json(['success' => false, 'error' => 'No valid workflow rules found in import data'], 400);
+        }
+
+        $mode = $request->input('mode', 'merge'); // 'merge' or 'replace'
+
+        if ($mode === 'replace') {
+            WorkflowRule::truncate();
+        }
+
+        $importedCount = 0;
+
+        foreach ($rules as $ruleData) {
+            if (empty($ruleData['name'])) {
+                continue;
+            }
+
+            $id = $ruleData['id'] ?? ('sch_'.time().'_'.Str::random(4));
+
+            $attributes = [
+                'name' => $ruleData['name'],
+                'category' => $ruleData['category'] ?? 'Connection & Community',
+                'frequency' => $ruleData['frequency'] ?? 'daily',
+                'times' => is_array($ruleData['times'] ?? null) ? $ruleData['times'] : ['08:00 AM'],
+                'days' => is_array($ruleData['days'] ?? null) ? $ruleData['days'] : [],
+                'target_page' => $ruleData['target_page'] ?? $ruleData['targetPage'] ?? 'Tech Sulit Deals',
+                'workflow_actions' => is_array($ruleData['workflow_actions'] ?? null)
+                    ? $ruleData['workflow_actions']
+                    : (is_array($ruleData['workflowActions'] ?? null) ? $ruleData['workflowActions'] : []),
+                'action_contexts' => is_array($ruleData['action_contexts'] ?? null)
+                    ? $ruleData['action_contexts']
+                    : (is_array($ruleData['actionContexts'] ?? null) ? $ruleData['actionContexts'] : []),
+                'general_context' => $ruleData['general_context'] ?? $ruleData['generalContext'] ?? '',
+                'weather_context' => $ruleData['weather_context'] ?? $ruleData['weatherContext'] ?? '',
+                'occasion_context' => $ruleData['occasion_context'] ?? $ruleData['occasionContext'] ?? '',
+                'tones' => is_array($ruleData['tones'] ?? null) ? $ruleData['tones'] : [],
+                'personas' => is_array($ruleData['personas'] ?? null) ? $ruleData['personas'] : [],
+                'custom_persona' => $ruleData['custom_persona'] ?? $ruleData['customPersona'] ?? '',
+                'manual_prompt' => $ruleData['manual_prompt'] ?? $ruleData['manualPrompt'] ?? '',
+                'status' => ($ruleData['status'] ?? 'active') === 'disabled' ? 'disabled' : 'active',
+            ];
+
+            WorkflowRule::updateOrCreate(
+                ['id' => $id],
+                $attributes
+            );
+
+            $importedCount++;
+        }
+
+        $allRules = WorkflowRule::latest()->get();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully imported {$importedCount} workflow rule(s).",
+                'imported_count' => $importedCount,
+                'workflows' => $allRules,
+            ]);
+        }
+
+        return back()->with('success', "Successfully imported {$importedCount} workflow rule(s).");
     }
 }
