@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Setting;
 use App\Models\SocialAccount;
 use App\Models\WorkflowRule;
+use App\Services\AiContentGeneratorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -36,66 +37,36 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
         $weatherContext = $rule->weather_context ?? '';
         $occasionContext = $rule->occasion_context ?? '';
         $tones = $rule->tones ?? ['taglish'];
+        $personas = $rule->personas ?? [];
         $manualPrompt = $rule->manual_prompt ?? '';
         $shopeeUrl = $rule->action_contexts['shopee_url'] ?? $rule->action_contexts['url'] ?? 'https://shopee.ph';
 
-        $now = now()->timezone('Asia/Manila');
-        $hour = $now->hour;
-        $dayName = $now->format('l');
-        $timeTag = ($hour >= 5 && $hour < 12) ? 'Morning ☕' : (($hour >= 12 && $hour < 18) ? 'Afternoon ☀️' : 'Evening 🌙');
-
         $defaultTags = Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH #BudolFinds');
 
-        $hasAffiliateLink = (! empty($shopeeUrl) && $shopeeUrl !== 'https://shopee.ph' && ! str_starts_with($shopeeUrl, 'https://facebook.com')) ||
-            collect($actions)->contains(function ($a) {
-                $l = strtolower($a);
+        // Generate Dynamic & Varied Content via AI Service / Dynamic Template Engine
+        $generated = AiContentGeneratorService::generate([
+            'name' => $name,
+            'target_page' => $targetPage,
+            'category' => $rule->category ?? 'Connection & Community',
+            'tones' => $tones,
+            'personas' => $personas,
+            'general_context' => $generalContext,
+            'weather_context' => $weatherContext,
+            'occasion_context' => $occasionContext,
+            'manual_prompt' => $manualPrompt,
+            'shopee_url' => $shopeeUrl,
+        ]);
 
-                return str_contains($l, 'affiliate') || str_contains($l, 'shopee') || str_contains($l, 'buy link') || str_contains($l, 'voucher');
-            }) ||
-            str_contains($manualPrompt, 'http://') || str_contains($manualPrompt, 'https://');
-
-        $disclosure = $hasAffiliateLink ? Setting::get('disclosure', 'Affiliate link. Price and availability may change anytime.') : '';
-
-        $finalTitle = "✨ {$timeTag} Community Lounge · {$name}";
-
-        if ($hour >= 5 && $hour < 12) {
-            $captionBody = "Magandang umaga mga ka-Tech Sulit! ☕\n\nSana maganda ang simula ng inyong {$dayName}! ✨\n\nQuick check-in for the {$targetPage} family:\nAno ang #1 tech upgrade or daily goal nyo for today?\n\nDrop your setup or thoughts in the comments below! 👇";
-        } elseif ($hour >= 12 && $hour < 18) {
-            $captionBody = "Happy afternoon {$targetPage} family! ☀️\n\nKamusta ang hapon nyo mga besh? Working from home ba kayo or on-site setup today?\n\nKumain na ba kayo ng lunch? Share your workspace vibes below! 👇";
-        } else {
-            $captionBody = "Good evening everyone! 🌙\n\nTime to unwind and relax after a productive {$dayName}! ✨\n\nAno ang pinaka-sulit na tech or budol find nyo recently?\n\nShare your thoughts with the community below! 👇";
-        }
-
-        if (! empty($generalContext)) {
-            $captionBody .= "\n\n📌 Topic Spotlight: ".$generalContext;
-        }
-
-        if (! empty($weatherContext)) {
-            $captionBody .= "\n\n🌤️ Weather Check: ".$weatherContext;
-        }
-
-        if (! empty($occasionContext)) {
-            $captionBody .= "\n\n🎉 Special: ".$occasionContext;
-        }
-
-        if (! empty($manualPrompt)) {
-            $captionBody .= "\n\n".$manualPrompt;
-        }
-
-        $finalCaption = trim(
-            $captionBody.
-            ($disclosure ? "\n\n".$disclosure : '').
-            ($defaultTags ? "\n\n".$defaultTags : '')
-        );
-
-        $promptTokens = max(30, (int) (str_word_count($captionBody.' '.$generalContext) * 1.35));
-        $completionTokens = max(50, (int) (str_word_count($finalCaption) * 1.35));
-        $totalTokens = $promptTokens + $completionTokens;
+        $finalTitle = $generated['title'];
+        $finalCaption = $generated['caption'];
+        $totalTokens = $generated['total_tokens'];
+        $promptTokens = $generated['prompt_tokens'];
+        $completionTokens = $generated['completion_tokens'];
 
         $postId = 'post_'.Str::random(12);
         $livePostUrl = null;
 
-        // Record post
+        // Record post in database
         $post = Post::create([
             'id' => $postId,
             'product_title' => $finalTitle,
