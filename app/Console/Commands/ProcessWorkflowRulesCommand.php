@@ -8,7 +8,9 @@ use Illuminate\Console\Command;
 
 class ProcessWorkflowRulesCommand extends Command
 {
-    protected $signature = 'workflows:run {--force : Force execute all active rules regardless of schedule}';
+    protected $signature = 'workflows:run 
+                            {--rule= : Target a specific workflow rule by ID or Name} 
+                            {--force : Force execute all active rules regardless of schedule}';
 
     protected $description = 'Evaluate scheduled automated workflow rules and execute due rules in the background';
 
@@ -16,23 +18,40 @@ class ProcessWorkflowRulesCommand extends Command
     {
         $now = now()->timezone('Asia/Manila');
         $force = (bool) $this->option('force');
+        $targetRule = $this->option('rule');
 
         $this->line("<fg=cyan>[$(date +'%H:%M:%S')]</> <fg=blue;options=bold>Autoffiliate Automated Workflow Engine</>");
         $this->line("Current Server Time: <fg=yellow>{$now->format('Y-m-d h:i:s A T')} (Asia/Manila)</>");
 
-        $activeRules = WorkflowRule::where('status', 'active')->get();
+        $query = WorkflowRule::query();
 
-        if ($activeRules->isEmpty()) {
-            $this->warn('ℹ️ No active workflow rules found in database (Rules must have status="active").');
+        if ($targetRule) {
+            $query->where(function ($q) use ($targetRule) {
+                $q->where('id', $targetRule)
+                    ->orWhere('name', 'like', "%{$targetRule}%");
+            });
+            $force = true; // Automatically force when targeting a specific rule
+        } else {
+            $query->where('status', 'active');
+        }
+
+        $rules = $query->get();
+
+        if ($rules->isEmpty()) {
+            if ($targetRule) {
+                $this->error("❌ No workflow rule found matching '{$targetRule}'.");
+            } else {
+                $this->warn('ℹ️ No active workflow rules found in database (Rules must have status="active").');
+            }
 
             return 0;
         }
 
-        $this->line("Found <fg=green>{$activeRules->count()}</> active workflow rule(s) to evaluate.\n");
+        $this->line("Found <fg=green>{$rules->count()}</> workflow rule(s) to evaluate.\n");
 
         $executedCount = 0;
 
-        foreach ($activeRules as $rule) {
+        foreach ($rules as $rule) {
             $timesStr = ! empty($rule->times) ? implode(', ', (array) $rule->times) : 'None';
             $daysStr = ! empty($rule->days) ? implode(', ', (array) $rule->days) : 'Everyday';
             $lastRunStr = $rule->last_run ? $rule->last_run->timezone('Asia/Manila')->format('M d, h:i A') : 'Never';
@@ -42,7 +61,9 @@ class ProcessWorkflowRulesCommand extends Command
             $this->line("   📅 Days: <fg=gray>{$daysStr}</> | ⏰ Times: <fg=gray>{$timesStr}</> | 🕒 Last Run: <fg=gray>{$lastRunStr}</>");
 
             if ($force || $rule->isDue($now)) {
-                $reason = $force ? 'Force flag (--force) supplied' : 'Schedule matched within active window';
+                $reason = $targetRule
+                    ? "Targeted by --rule='{$targetRule}'"
+                    : ($force ? 'Force flag (--force) supplied' : 'Schedule matched within active window');
                 $this->line("   ⚡ Status: <fg=green;options=bold>🚀 TRIGGERED & EXECUTING NOW</> ({$reason})");
 
                 try {
@@ -75,6 +96,7 @@ class ProcessWorkflowRulesCommand extends Command
         } else {
             $this->comment("ℹ️ Evaluation complete: 0 rules were due at {$now->format('h:i A')}.");
             $this->line('💡 Tip: Use <fg=yellow>php artisan workflows:run --force</> to test immediate execution anytime.');
+            $this->line('💡 Tip: Use <fg=yellow>php artisan workflows:run --rule="Name or ID"</> to execute a specific rule.');
         }
 
         return 0;

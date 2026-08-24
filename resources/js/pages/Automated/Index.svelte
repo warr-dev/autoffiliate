@@ -1587,7 +1587,7 @@
         });
     }
 
-    // Real Backend Execution via FastAPI AI Caption Generator + Alert Link
+    // Real Backend Execution via AI Caption Generator & Post Publisher
     async function runScheduleNow(rule: ScheduledRule) {
         if (runningRuleId) {
             return;
@@ -1596,7 +1596,15 @@
         runningRuleId = rule.id;
         activeStepIndex = 0;
 
-        const totalSteps = rule.workflowActions.length;
+        const actionsToRun =
+            rule.workflowActions && rule.workflowActions.length > 0
+                ? rule.workflowActions
+                : [
+                      'Generate Dynamic Time-Aware AI Greeting',
+                      'Publish to Facebook Page',
+                  ];
+
+        const totalSteps = actionsToRun.length;
         let currentStep = 0;
 
         const stepInterval = setInterval(() => {
@@ -1624,9 +1632,11 @@
                     ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
                 body: JSON.stringify({
+                    workflow_id: rule.id,
+                    id: rule.id,
                     name: rule.name,
                     category: rule.category,
-                    actions: rule.workflowActions,
+                    actions: actionsToRun,
                     target_page: rule.targetPage,
                     general_context: rule.generalContext || '',
                     weather_context: rule.weatherContext || '',
@@ -1643,7 +1653,10 @@
                 const errData = await res.json().catch(() => ({}));
 
                 throw new Error(
-                    errData.detail || `Server returned HTTP ${res.status}`,
+                    errData.error ||
+                        errData.message ||
+                        errData.detail ||
+                        `Server returned HTTP ${res.status}`,
                 );
             }
 
@@ -1703,12 +1716,12 @@
             );
             saveRulesToStorage(scheduledRules);
 
-            actionNotification = `✅ Dynamic AI Workflow Executed & Created Post for "${rule.name}"!`;
+            actionNotification = `✅ Workflow Executed & Created Post for "${rule.name}"!`;
             actionNotificationType = 'success';
             actionNotificationLink = livePostUrl;
         } catch (err: any) {
             console.error('Failed to publish post to backend API:', err);
-            actionNotification = `⚠️ Workflow Execution Failed: ${err.message || 'Authentication error'}`;
+            actionNotification = `⚠️ Workflow Execution Failed: ${err.message || 'Execution error'}`;
             actionNotificationType = 'warning';
             actionNotificationLink = null;
         } finally {
@@ -1740,6 +1753,7 @@
                     ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
                 body: JSON.stringify({
+                    workflow_id: trigger.id,
                     name: trigger.name,
                     category: 'Brand Promotion',
                     actions: [
@@ -1761,7 +1775,10 @@
                 const errData = await res.json().catch(() => ({}));
 
                 throw new Error(
-                    errData.detail || `Server returned HTTP ${res.status}`,
+                    errData.error ||
+                        errData.message ||
+                        errData.detail ||
+                        `Server returned HTTP ${res.status}`,
                 );
             }
 

@@ -27,7 +27,9 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
     public function handle(): array
     {
         $rule = $this->rule;
-        $actions = $rule->workflow_actions ?? ['Generate Dynamic Time-Aware AI Greeting', 'Publish to Facebook Page'];
+        $actions = ! empty($rule->workflow_actions)
+            ? $rule->workflow_actions
+            : ['Generate Dynamic Time-Aware AI Greeting', 'Publish to Facebook Page'];
         $name = $rule->name;
         $targetPage = $rule->target_page ?? 'Tech Sulit Deals';
         $generalContext = $rule->general_context ?? '';

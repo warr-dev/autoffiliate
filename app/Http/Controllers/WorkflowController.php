@@ -105,7 +105,7 @@ class WorkflowController extends Controller
     {
         $actions = $request->input('actions', []);
         if (empty($actions)) {
-            return response()->json(['success' => false, 'error' => 'No workflow actions provided'], 400);
+            $actions = ['Generate Dynamic Time-Aware AI Greeting', 'Publish to Facebook Page'];
         }
 
         $name = $request->input('name', 'Automated Workflow');
