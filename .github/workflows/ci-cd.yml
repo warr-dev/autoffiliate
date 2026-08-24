@@ -74,8 +74,8 @@ jobs:
     name: 🚀 Deploy via SSH to Hostinger
     runs-on: ubuntu-latest
     needs: build-and-test
-    # Triggers on push to main branch when SSH host is configured in Secrets or Variables
-    if: github.ref == 'refs/heads/main' && (secrets.HOSTINGER_SSH_HOST != '' || vars.HOSTINGER_SSH_HOST != '' || secrets.SSH_HOST != '' || vars.SSH_HOST != '')
+    # Triggers automatically when pushed or dispatched to the main branch
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout Code
