@@ -112,6 +112,74 @@
     let showManualGuideAdd = $state(false);
     let newTagInputAdd = $state('');
 
+    // Social Pages Import & Export State & Handlers
+    let pagesFileInputRef: HTMLInputElement | null = null;
+    let isImportingPages = $state(false);
+    let socialNotification = $state<{ text: string; type: 'success' | 'error' } | null>(null);
+
+    function triggerImportPages() {
+        if (pagesFileInputRef) {
+            pagesFileInputRef.value = '';
+            pagesFileInputRef.click();
+        }
+    }
+
+    async function handleImportPagesFile(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) {
+            return;
+        }
+
+        const file = input.files[0];
+        isImportingPages = true;
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('mode', 'merge');
+
+            const token = typeof localStorage !== 'undefined' ? localStorage.getItem('aiffiliate_token') : null;
+            const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
+
+            const res = await fetch('/settings/social-accounts/import', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrf,
+                    Accept: 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || errData.message || `Server returned HTTP ${res.status}`);
+            }
+
+            const data = await res.json();
+            socialNotification = {
+                text: `✅ ${data.message || 'Connected Pages imported successfully!'}`,
+                type: 'success',
+            };
+
+            // Reload Inertia props to sync UI
+            router.reload({ only: ['socialAccounts'] });
+        } catch (err: any) {
+            console.error('Pages import failed:', err);
+            socialNotification = {
+                text: `❌ Import Failed: ${err.message || 'Invalid JSON file'}`,
+                type: 'error',
+            };
+        } finally {
+            isImportingPages = false;
+            setTimeout(() => (socialNotification = null), 6000);
+        }
+    }
+
+    function handleExportPages() {
+        window.open('/settings/social-accounts/export?download=1', '_blank');
+    }
+
     // Edit Social Account Modal State
     let showEditModal = $state(false);
     let editId = $state('');
@@ -754,6 +822,24 @@
                 <div
                     class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6"
                 >
+                    <!-- Social Import / Export Toast Alert -->
+                    {#if socialNotification}
+                        <div
+                            class="p-4 rounded-xl text-xs font-semibold flex items-center justify-between border animate-slideDown
+                            {socialNotification.type === 'error'
+                                ? 'bg-red-950/80 border-red-500/50 text-red-200'
+                                : 'bg-emerald-950/80 border-emerald-500/50 text-emerald-200'}"
+                        >
+                            <span>{socialNotification.text}</span>
+                            <button
+                                type="button"
+                                onclick={() => (socialNotification = null)}
+                                class="text-gray-400 hover:text-white ml-3"
+                                >✕</button
+                            >
+                        </div>
+                    {/if}
+
                     <div
                         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800/60 pb-5"
                     >
@@ -769,14 +855,50 @@
                                 channels for multi-channel affiliate publishing.
                             </p>
                         </div>
-                        <button
-                            type="button"
-                            onclick={() =>
-                                (showAddSocialModal = !showAddSocialModal)}
-                            class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/25 transition-all cursor-pointer self-start sm:self-auto"
-                        >
-                            Connect Account
-                        </button>
+
+                        <div class="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+                            <!-- Hidden file input for Pages JSON Import -->
+                            <input
+                                type="file"
+                                accept=".json,application/json"
+                                bind:this={pagesFileInputRef}
+                                onchange={handleImportPagesFile}
+                                class="hidden"
+                            />
+
+                            <button
+                                type="button"
+                                onclick={handleExportPages}
+                                title="Export connected pages & tokens as a JSON backup file"
+                                class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white border border-gray-700/80 hover:border-gray-600 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                            >
+                                <span>📥 Export Pages</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick={triggerImportPages}
+                                disabled={isImportingPages}
+                                title="Import connected pages from a JSON backup file"
+                                class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white border border-gray-700/80 hover:border-gray-600 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                            >
+                                {#if isImportingPages}
+                                    <span class="animate-spin">🌀</span>
+                                    <span>Importing...</span>
+                                {:else}
+                                    <span>📤 Import Pages</span>
+                                {/if}
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick={() =>
+                                    (showAddSocialModal = !showAddSocialModal)}
+                                class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/25 transition-all cursor-pointer"
+                            >
+                                Connect Account
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Add Social Account Form -->

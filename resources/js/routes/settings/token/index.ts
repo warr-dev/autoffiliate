@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\SettingsController::exchange
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 export const exchange = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ exchange.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchange
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 exchange.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ exchange.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchange
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 exchange.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ exchange.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchange
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 const exchangeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ const exchangeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> 
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchange
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 exchangeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -57,7 +57,7 @@ exchange.form = exchangeForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::verify
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 export const verify = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -72,7 +72,7 @@ verify.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::verify
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 verify.url = (options?: RouteQueryOptions) => {
@@ -81,7 +81,7 @@ verify.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::verify
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 verify.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -91,7 +91,7 @@ verify.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::verify
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 const verifyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -101,7 +101,7 @@ const verifyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =>
 
 /**
 * @see \App\Http\Controllers\SettingsController::verify
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 verifyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -137,6 +137,298 @@ updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 update.form = updateForm
 
 /**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+const exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.url(options),
+    method: 'get',
+})
+
+exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.definition = {
+    methods: ["get","head"],
+    url: '/settings/social-accounts/export',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.url = (options?: RouteQueryOptions) => {
+    return exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+const exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62.form = exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62Form
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/api/social-accounts/export'
+*/
+const exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.url(options),
+    method: 'get',
+})
+
+exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.definition = {
+    methods: ["get","head"],
+    url: '/api/social-accounts/export',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/api/social-accounts/export'
+*/
+exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.url = (options?: RouteQueryOptions) => {
+    return exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/api/social-accounts/export'
+*/
+exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/api/social-accounts/export'
+*/
+exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/api/social-accounts/export'
+*/
+const exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fdForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/api/social-accounts/export'
+*/
+exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fdForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/api/social-accounts/export'
+*/
+exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fdForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd.form = exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fdForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\SettingsController::exportSocialAccounts, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `exportSocialAccounts['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const exportSocialAccounts = {
+    '/settings/social-accounts/export': exportSocialAccountsfb8f1619caa5bb5692b4788d2739da62,
+    '/api/social-accounts/export': exportSocialAccounts5de6ab7b448b316bd8eb3296ae7f02fd,
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+const importSocialAccountsac8f9a279ccf12188625480e166e7a99 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: importSocialAccountsac8f9a279ccf12188625480e166e7a99.url(options),
+    method: 'post',
+})
+
+importSocialAccountsac8f9a279ccf12188625480e166e7a99.definition = {
+    methods: ["post"],
+    url: '/settings/social-accounts/import',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+importSocialAccountsac8f9a279ccf12188625480e166e7a99.url = (options?: RouteQueryOptions) => {
+    return importSocialAccountsac8f9a279ccf12188625480e166e7a99.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+importSocialAccountsac8f9a279ccf12188625480e166e7a99.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: importSocialAccountsac8f9a279ccf12188625480e166e7a99.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+const importSocialAccountsac8f9a279ccf12188625480e166e7a99Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: importSocialAccountsac8f9a279ccf12188625480e166e7a99.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+importSocialAccountsac8f9a279ccf12188625480e166e7a99Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: importSocialAccountsac8f9a279ccf12188625480e166e7a99.url(options),
+    method: 'post',
+})
+
+importSocialAccountsac8f9a279ccf12188625480e166e7a99.form = importSocialAccountsac8f9a279ccf12188625480e166e7a99Form
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/api/social-accounts/import'
+*/
+const importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.url(options),
+    method: 'post',
+})
+
+importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.definition = {
+    methods: ["post"],
+    url: '/api/social-accounts/import',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/api/social-accounts/import'
+*/
+importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.url = (options?: RouteQueryOptions) => {
+    return importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/api/social-accounts/import'
+*/
+importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/api/social-accounts/import'
+*/
+const importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3aForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::importSocialAccounts
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/api/social-accounts/import'
+*/
+importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3aForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.url(options),
+    method: 'post',
+})
+
+importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a.form = importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3aForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\SettingsController::importSocialAccounts, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `importSocialAccounts['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const importSocialAccounts = {
+    '/settings/social-accounts/import': importSocialAccountsac8f9a279ccf12188625480e166e7a99,
+    '/api/social-accounts/import': importSocialAccounts6b556cfcf77eefc0df1498b8ca400b3a,
+}
+
+/**
 * @see \App\Http\Controllers\SettingsController::storeSocialAccount
 * @see app/Http/Controllers/SettingsController.php:38
 * @route '/settings/social-accounts'
@@ -436,7 +728,7 @@ toggleSocialAccount.form = toggleSocialAccountForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPostSocialAccount
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 export const testPostSocialAccount = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -451,7 +743,7 @@ testPostSocialAccount.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPostSocialAccount
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPostSocialAccount.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -478,7 +770,7 @@ testPostSocialAccount.url = (args: { id: string | number } | [id: string | numbe
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPostSocialAccount
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPostSocialAccount.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -488,7 +780,7 @@ testPostSocialAccount.post = (args: { id: string | number } | [id: string | numb
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPostSocialAccount
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 const testPostSocialAccountForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -498,7 +790,7 @@ const testPostSocialAccountForm = (args: { id: string | number } | [id: string |
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPostSocialAccount
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPostSocialAccountForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -510,7 +802,7 @@ testPostSocialAccount.form = testPostSocialAccountForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::storeUser
-* @see app/Http/Controllers/SettingsController.php:183
+* @see app/Http/Controllers/SettingsController.php:302
 * @route '/settings/users'
 */
 export const storeUser = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -525,7 +817,7 @@ storeUser.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::storeUser
-* @see app/Http/Controllers/SettingsController.php:183
+* @see app/Http/Controllers/SettingsController.php:302
 * @route '/settings/users'
 */
 storeUser.url = (options?: RouteQueryOptions) => {
@@ -534,7 +826,7 @@ storeUser.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::storeUser
-* @see app/Http/Controllers/SettingsController.php:183
+* @see app/Http/Controllers/SettingsController.php:302
 * @route '/settings/users'
 */
 storeUser.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -544,7 +836,7 @@ storeUser.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::storeUser
-* @see app/Http/Controllers/SettingsController.php:183
+* @see app/Http/Controllers/SettingsController.php:302
 * @route '/settings/users'
 */
 const storeUserForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -554,7 +846,7 @@ const storeUserForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'>
 
 /**
 * @see \App\Http\Controllers\SettingsController::storeUser
-* @see app/Http/Controllers/SettingsController.php:183
+* @see app/Http/Controllers/SettingsController.php:302
 * @route '/settings/users'
 */
 storeUserForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -566,7 +858,7 @@ storeUser.form = storeUserForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::testWebhook
-* @see app/Http/Controllers/SettingsController.php:201
+* @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
 export const testWebhook = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -581,7 +873,7 @@ testWebhook.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::testWebhook
-* @see app/Http/Controllers/SettingsController.php:201
+* @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
 testWebhook.url = (options?: RouteQueryOptions) => {
@@ -590,7 +882,7 @@ testWebhook.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::testWebhook
-* @see app/Http/Controllers/SettingsController.php:201
+* @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
 testWebhook.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -600,7 +892,7 @@ testWebhook.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::testWebhook
-* @see app/Http/Controllers/SettingsController.php:201
+* @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
 const testWebhookForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -610,7 +902,7 @@ const testWebhookForm = (options?: RouteQueryOptions): RouteFormDefinition<'post
 
 /**
 * @see \App\Http\Controllers\SettingsController::testWebhook
-* @see app/Http/Controllers/SettingsController.php:201
+* @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
 testWebhookForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -622,7 +914,7 @@ testWebhook.form = testWebhookForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchangeToken
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 export const exchangeToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -637,7 +929,7 @@ exchangeToken.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchangeToken
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 exchangeToken.url = (options?: RouteQueryOptions) => {
@@ -646,7 +938,7 @@ exchangeToken.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchangeToken
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 exchangeToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -656,7 +948,7 @@ exchangeToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchangeToken
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 const exchangeTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -666,7 +958,7 @@ const exchangeTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'po
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchangeToken
-* @see app/Http/Controllers/SettingsController.php:232
+* @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
 exchangeTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -678,7 +970,7 @@ exchangeToken.form = exchangeTokenForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::verifyToken
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 export const verifyToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -693,7 +985,7 @@ verifyToken.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::verifyToken
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 verifyToken.url = (options?: RouteQueryOptions) => {
@@ -702,7 +994,7 @@ verifyToken.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::verifyToken
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 verifyToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -712,7 +1004,7 @@ verifyToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::verifyToken
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 const verifyTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -722,7 +1014,7 @@ const verifyTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post
 
 /**
 * @see \App\Http\Controllers\SettingsController::verifyToken
-* @see app/Http/Controllers/SettingsController.php:345
+* @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
 verifyTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -734,7 +1026,7 @@ verifyToken.form = verifyTokenForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::suggestHashtags
-* @see app/Http/Controllers/SettingsController.php:413
+* @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
 export const suggestHashtags = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -749,7 +1041,7 @@ suggestHashtags.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::suggestHashtags
-* @see app/Http/Controllers/SettingsController.php:413
+* @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
 suggestHashtags.url = (options?: RouteQueryOptions) => {
@@ -758,7 +1050,7 @@ suggestHashtags.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::suggestHashtags
-* @see app/Http/Controllers/SettingsController.php:413
+* @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
 suggestHashtags.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -768,7 +1060,7 @@ suggestHashtags.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
 
 /**
 * @see \App\Http\Controllers\SettingsController::suggestHashtags
-* @see app/Http/Controllers/SettingsController.php:413
+* @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
 const suggestHashtagsForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -778,7 +1070,7 @@ const suggestHashtagsForm = (options?: RouteQueryOptions): RouteFormDefinition<'
 
 /**
 * @see \App\Http\Controllers\SettingsController::suggestHashtags
-* @see app/Http/Controllers/SettingsController.php:413
+* @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
 suggestHashtagsForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -788,6 +1080,6 @@ suggestHashtagsForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'p
 
 suggestHashtags.form = suggestHashtagsForm
 
-const SettingsController = { index, update, storeSocialAccount, updateSocialAccount, destroySocialAccount, toggleSocialAccount, testPostSocialAccount, storeUser, testWebhook, exchangeToken, verifyToken, suggestHashtags }
+const SettingsController = { index, update, exportSocialAccounts, importSocialAccounts, storeSocialAccount, updateSocialAccount, destroySocialAccount, toggleSocialAccount, testPostSocialAccount, storeUser, testWebhook, exchangeToken, verifyToken, suggestHashtags }
 
 export default SettingsController

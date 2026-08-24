@@ -46,6 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/settings/app', [SettingsController::class, 'index'])->name('settings.app');
     Route::post('/settings/app', [SettingsController::class, 'update'])->name('settings.app.update');
+    Route::get('/settings/social-accounts/export', [SettingsController::class, 'exportSocialAccounts'])->name('settings.social.export');
+    Route::post('/settings/social-accounts/import', [SettingsController::class, 'importSocialAccounts'])->name('settings.social.import');
+    Route::get('/api/social-accounts/export', [SettingsController::class, 'exportSocialAccounts']);
+    Route::post('/api/social-accounts/import', [SettingsController::class, 'importSocialAccounts']);
     Route::get('/settings/social-accounts', function (Request $request) {
         if ($request->wantsJson()) {
             return response()->json(SocialAccount::all());

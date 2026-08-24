@@ -1,6 +1,143 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
-* @see routes/web.php:49
+* @see \App\Http\Controllers\SettingsController::exportMethod
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportMethod.url(options),
+    method: 'get',
+})
+
+exportMethod.definition = {
+    methods: ["get","head"],
+    url: '/settings/social-accounts/export',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportMethod
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportMethod.url = (options?: RouteQueryOptions) => {
+    return exportMethod.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportMethod
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportMethod
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportMethod.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportMethod
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportMethod
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exportMethod
+* @see app/Http/Controllers/SettingsController.php:117
+* @route '/settings/social-accounts/export'
+*/
+exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportMethod.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+exportMethod.form = exportMethodForm
+
+/**
+* @see \App\Http\Controllers\SettingsController::importMethod
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+export const importMethod = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: importMethod.url(options),
+    method: 'post',
+})
+
+importMethod.definition = {
+    methods: ["post"],
+    url: '/settings/social-accounts/import',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::importMethod
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+importMethod.url = (options?: RouteQueryOptions) => {
+    return importMethod.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::importMethod
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: importMethod.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::importMethod
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: importMethod.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::importMethod
+* @see app/Http/Controllers/SettingsController.php:152
+* @route '/settings/social-accounts/import'
+*/
+importMethodForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: importMethod.url(options),
+    method: 'post',
+})
+
+importMethod.form = importMethodForm
+
+/**
+* @see routes/web.php:53
 * @route '/settings/social-accounts'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +151,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:49
+* @see routes/web.php:53
 * @route '/settings/social-accounts'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -22,7 +159,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:49
+* @see routes/web.php:53
 * @route '/settings/social-accounts'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +168,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:49
+* @see routes/web.php:53
 * @route '/settings/social-accounts'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +177,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:49
+* @see routes/web.php:53
 * @route '/settings/social-accounts'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +186,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 })
 
 /**
-* @see routes/web.php:49
+* @see routes/web.php:53
 * @route '/settings/social-accounts'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +195,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:49
+* @see routes/web.php:53
 * @route '/settings/social-accounts'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -373,7 +510,7 @@ toggle.form = toggleForm
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 export const testPost = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -388,7 +525,7 @@ testPost.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPost.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -415,7 +552,7 @@ testPost.url = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPost.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -425,7 +562,7 @@ testPost.post = (args: { id: string | number } | [id: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 const testPostForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -435,7 +572,7 @@ const testPostForm = (args: { id: string | number } | [id: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\SettingsController::testPost
-* @see app/Http/Controllers/SettingsController.php:117
+* @see app/Http/Controllers/SettingsController.php:236
 * @route '/settings/social-accounts/{id}/test-post'
 */
 testPostForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -446,6 +583,8 @@ testPostForm.post = (args: { id: string | number } | [id: string | number ] | st
 testPost.form = testPostForm
 
 const social = {
+    export: Object.assign(exportMethod, exportMethod),
+    import: Object.assign(importMethod, importMethod),
     index: Object.assign(index, index),
     store: Object.assign(store, store),
     update: Object.assign(update, update),

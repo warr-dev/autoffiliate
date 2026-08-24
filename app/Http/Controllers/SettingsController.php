@@ -114,6 +114,125 @@ class SettingsController extends Controller
         return back()->with('success', 'Account status updated.');
     }
 
+    public function exportSocialAccounts(Request $request)
+    {
+        $accounts = SocialAccount::all();
+
+        $exportData = [
+            'version' => '1.0',
+            'exported_at' => now()->toIso8601String(),
+            'count' => $accounts->count(),
+            'pages' => $accounts->map(function ($acc) {
+                return [
+                    'id' => $acc->id,
+                    'platform' => $acc->platform,
+                    'name' => $acc->name,
+                    'account_id' => $acc->account_id,
+                    'access_token' => $acc->access_token,
+                    'extra_config' => $acc->extra_config,
+                    'is_enabled' => (bool) $acc->is_enabled,
+                    'status' => $acc->status ?? 'active',
+                ];
+            }),
+        ];
+
+        if ($request->query('download') || ! $request->wantsJson()) {
+            $filename = 'autoffiliate-pages-'.now()->format('Y-m-d-His').'.json';
+
+            return response()->streamDownload(function () use ($exportData) {
+                echo json_encode($exportData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }, $filename, [
+                'Content-Type' => 'application/json',
+            ]);
+        }
+
+        return response()->json($exportData);
+    }
+
+    public function importSocialAccounts(Request $request)
+    {
+        $rawContent = null;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $rawContent = file_get_contents($file->getRealPath());
+        } elseif ($request->has('pages') || $request->has('accounts') || $request->has('socialAccounts')) {
+            $data = $request->input('pages', $request->input('accounts', $request->input('socialAccounts')));
+            if (is_array($data)) {
+                $rawContent = json_encode(['pages' => $data]);
+            } else {
+                $rawContent = (string) $data;
+            }
+        } else {
+            $rawContent = $request->getContent();
+        }
+
+        if (empty($rawContent)) {
+            return response()->json(['success' => false, 'error' => 'No import data provided'], 400);
+        }
+
+        $decoded = json_decode($rawContent, true);
+
+        if (! is_array($decoded)) {
+            return response()->json(['success' => false, 'error' => 'Invalid JSON file or format'], 400);
+        }
+
+        $pages = $decoded['pages'] ?? ($decoded['accounts'] ?? ($decoded['socialAccounts'] ?? (isset($decoded[0]) ? $decoded : [$decoded])));
+
+        if (! is_array($pages) || empty($pages)) {
+            return response()->json(['success' => false, 'error' => 'No valid social accounts / pages found in import data'], 400);
+        }
+
+        $mode = $request->input('mode', 'merge'); // 'merge' or 'replace'
+
+        if ($mode === 'replace') {
+            SocialAccount::truncate();
+        }
+
+        $importedCount = 0;
+
+        foreach ($pages as $pageData) {
+            if (empty($pageData['name'])) {
+                continue;
+            }
+
+            $id = $pageData['id'] ?? (string) Str::uuid();
+
+            $attributes = [
+                'platform' => $pageData['platform'] ?? 'facebook',
+                'name' => $pageData['name'],
+                'account_id' => $pageData['account_id'] ?? ($pageData['accountId'] ?? ($pageData['page_id'] ?? null)),
+                'access_token' => $pageData['access_token'] ?? ($pageData['accessToken'] ?? ($pageData['token'] ?? null)),
+                'extra_config' => is_array($pageData['extra_config'] ?? null)
+                    ? $pageData['extra_config']
+                    : (is_array($pageData['extraConfig'] ?? null) ? $pageData['extraConfig'] : []),
+                'is_enabled' => isset($pageData['is_enabled']) ? (bool) $pageData['is_enabled'] : (isset($pageData['isEnabled']) ? (bool) $pageData['isEnabled'] : true),
+                'status' => $pageData['status'] ?? 'active',
+            ];
+
+            SocialAccount::updateOrCreate(
+                ['id' => $id],
+                $attributes
+            );
+
+            $importedCount++;
+        }
+
+        $allAccounts = SocialAccount::all();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully imported {$importedCount} social account / page(s).",
+                'imported_count' => $importedCount,
+                'socialAccounts' => $allAccounts,
+                'pages' => $allAccounts,
+            ]);
+        }
+
+        return back()->with('success', "Successfully imported {$importedCount} social account / page(s).");
+    }
+
     public function testPostSocialAccount(string $id)
     {
         $account = SocialAccount::findOrFail($id);
