@@ -78,8 +78,8 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
         ]);
 
         // Log AI tokens
-        $provider = Setting::get('ai_provider', 'openai');
-        $model = Setting::get('ai_model', 'gpt-4o-mini');
+        $provider = $generated['provider'] ?? Setting::get('ai_provider', 'openai');
+        $model = $generated['model'] ?? Setting::get('ai_model', 'gpt-4o-mini');
         AiUsageLog::logUsage(
             $postId,
             $provider,
@@ -87,7 +87,11 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
             ! empty($tones) ? $tones[0] : 'taglish',
             $promptTokens,
             $completionTokens,
-            $totalTokens
+            $totalTokens,
+            $generated['execution_time_ms'] ?? null,
+            'automated_workflow',
+            'success',
+            $generated['is_live_ai'] ?? false
         );
 
         // Check if publish action requested
@@ -115,32 +119,19 @@ class ExecuteWorkflowRuleJob implements ShouldQueue
             }
 
             if ($account) {
-                try {
-                    $fbResp = Http::timeout(30)->post("https://graph.facebook.com/v20.0/{$account->account_id}/feed", [
-                        'message' => $finalCaption,
-                        'access_token' => $account->access_token,
-                    ]);
+                $pubRes = \App\Services\FacebookPublishService::publish($post, $account, $finalCaption, $affiliateUrl);
 
-                    if ($fbResp->successful()) {
-                        $fbId = $fbResp->json()['id'] ?? null;
-                        $livePostUrl = $fbId ? "https://facebook.com/{$fbId}" : "https://facebook.com/{$account->account_id}";
-                        $post->update([
-                            'status' => 'published',
-                            'facebook_post_id' => $fbId,
-                            'facebook_post_url' => $livePostUrl,
-                        ]);
-                        Log::info("[Workflow Job] Published to Facebook: {$livePostUrl}");
-                    } else {
-                        $errJson = $fbResp->json();
-                        $errMsg = $errJson['error']['message'] ?? json_encode($errJson);
-                        $publishError = "Facebook API error: {$errMsg}";
-                        $post->update(['status' => 'failed']);
-                        Log::error("[Workflow Job] FB Graph API failed: {$errMsg}");
-                    }
-                } catch (\Exception $e) {
-                    $publishError = "Facebook network exception: {$e->getMessage()}";
+                if ($pubRes['success']) {
+                    $post->update([
+                        'status' => 'published',
+                        'facebook_post_id' => $pubRes['facebook_post_id'],
+                        'facebook_post_url' => $pubRes['facebook_post_url'],
+                    ]);
+                    Log::info("[Workflow Job] Published to Facebook with media: " . ($pubRes['facebook_post_url'] ?? ''));
+                } else {
+                    $publishError = "Facebook API error: " . ($pubRes['error'] ?? 'Publish failed');
                     $post->update(['status' => 'failed']);
-                    Log::error("[Workflow Job] FB publish exception: {$e->getMessage()}");
+                    Log::error("[Workflow Job] FB Graph API failed: " . ($pubRes['error'] ?? ''));
                 }
             } else {
                 $publishWarning = "No active Facebook account connected for '{$targetPage}'. Saved as draft.";

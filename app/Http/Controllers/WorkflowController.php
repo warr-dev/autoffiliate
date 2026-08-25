@@ -192,8 +192,8 @@ class WorkflowController extends Controller
             ]);
 
             // Log AI Usage
-            $provider = Setting::get('ai_provider', 'openai');
-            $model = Setting::get('ai_model', 'gpt-4o-mini');
+            $provider = $generated['provider'] ?? Setting::get('ai_provider', 'openai');
+            $model = $generated['model'] ?? Setting::get('ai_model', 'gpt-4o-mini');
             AiUsageLog::logUsage(
                 $postId,
                 $provider,
@@ -201,7 +201,11 @@ class WorkflowController extends Controller
                 ! empty($tones) ? $tones[0] : 'taglish',
                 $promptTokens,
                 $completionTokens,
-                $totalTokens
+                $totalTokens,
+                $generated['execution_time_ms'] ?? null,
+                'automated_workflow',
+                'success',
+                $generated['is_live_ai'] ?? false
             );
 
             // If action pipeline contains publish, publish to Facebook
@@ -229,28 +233,16 @@ class WorkflowController extends Controller
                 }
 
                 if ($account) {
-                    try {
-                        $fbResp = Http::timeout(30)->post("https://graph.facebook.com/v20.0/{$account->account_id}/feed", [
-                            'message' => $finalCaption,
-                            'access_token' => $account->access_token,
-                        ]);
+                    $pubRes = \App\Services\FacebookPublishService::publish($post, $account, $finalCaption, $affiliateUrl);
 
-                        if ($fbResp->successful()) {
-                            $fbId = $fbResp->json()['id'] ?? null;
-                            $livePostUrl = $fbId ? "https://facebook.com/{$fbId}" : "https://facebook.com/{$account->account_id}";
-                            $post->update([
-                                'status' => 'published',
-                                'facebook_post_id' => $fbId,
-                                'facebook_post_url' => $livePostUrl,
-                            ]);
-                        } else {
-                            $errJson = $fbResp->json();
-                            $errMsg = $errJson['error']['message'] ?? json_encode($errJson);
-                            $publishError = "Facebook API error: {$errMsg}";
-                            $post->update(['status' => 'failed']);
-                        }
-                    } catch (\Exception $e) {
-                        $publishError = "Facebook connection exception: {$e->getMessage()}";
+                    if ($pubRes['success']) {
+                        $post->update([
+                            'status' => 'published',
+                            'facebook_post_id' => $pubRes['facebook_post_id'],
+                            'facebook_post_url' => $pubRes['facebook_post_url'],
+                        ]);
+                    } else {
+                        $publishError = "Facebook API error: " . ($pubRes['error'] ?? 'Publish failed');
                         $post->update(['status' => 'failed']);
                     }
                 } else {

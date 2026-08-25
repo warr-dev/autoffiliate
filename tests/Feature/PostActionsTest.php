@@ -177,6 +177,104 @@ test('user can publish a post to Facebook and dispatch outbound webhook', functi
     });
 });
 
+test('user can publish a post with multiple images as an album carousel', function () {
+    Http::fake([
+        'https://graph.facebook.com/v20.0/*/photos' => Http::sequence()
+            ->push(['id' => 'photo_111'], 200)
+            ->push(['id' => 'photo_222'], 200)
+            ->push(['id' => 'photo_333'], 200),
+        'https://graph.facebook.com/v20.0/*/feed' => Http::response([
+            'id' => '1184127881441932_multi777',
+        ], 200),
+    ]);
+
+    $account = SocialAccount::create([
+        'id' => (string) Str::uuid(),
+        'platform' => 'facebook',
+        'name' => 'Tech Sulit Deals',
+        'account_id' => '1184127881441932',
+        'access_token' => 'EAATestTokenCarousel',
+        'is_enabled' => true,
+        'status' => 'active',
+    ]);
+
+    $user = User::factory()->create();
+    $post = Post::create([
+        'id' => 'post_'.Str::random(12),
+        'product_title' => 'Gaming Mouse Wireless',
+        'product_price' => '₱899',
+        'affiliate_url' => 'https://shopee.ph/mouse-item',
+        'caption' => 'RGB wireless gaming mouse deal!',
+        'media_files' => [
+            'https://down-ph.img.susercontent.com/file/img1.jpg',
+            'https://down-ph.img.susercontent.com/file/img2.jpg',
+            'https://down-ph.img.susercontent.com/file/img3.jpg',
+        ],
+        'status' => 'draft',
+    ]);
+
+    $response = $this->actingAs($user)->post("/drafts/{$post->id}/publish");
+
+    $response->assertSessionHas('success');
+
+    $post->refresh();
+    expect($post->status)->toBe('published');
+    expect($post->facebook_post_id)->toBe('1184127881441932_multi777');
+    expect($post->facebook_post_url)->toBe('https://facebook.com/1184127881441932_multi777');
+
+    Http::assertSent(function ($request) {
+        if (str_contains($request->url(), '/feed') && $request->method() === 'POST') {
+            $data = $request->data();
+            return isset($data['attached_media']) && count($data['attached_media']) === 3;
+        }
+        return true;
+    });
+});
+
+test('user can publish a post with a single image to photos endpoint', function () {
+    Http::fake([
+        'https://graph.facebook.com/v20.0/*/photos' => Http::response([
+            'id' => 'photo_single_555',
+            'post_id' => '1184127881441932_single999',
+        ], 200),
+    ]);
+
+    $account = SocialAccount::create([
+        'id' => (string) Str::uuid(),
+        'platform' => 'facebook',
+        'name' => 'Tech Sulit Deals',
+        'account_id' => '1184127881441932',
+        'access_token' => 'EAATestTokenSingle',
+        'is_enabled' => true,
+        'status' => 'active',
+    ]);
+
+    $user = User::factory()->create();
+    $post = Post::create([
+        'id' => 'post_'.Str::random(12),
+        'product_title' => 'Desk Mat Pad',
+        'product_price' => '₱250',
+        'affiliate_url' => 'https://shopee.ph/mat-item',
+        'caption' => 'Clean minimalist desk pad!',
+        'media_files' => [
+            'https://down-ph.img.susercontent.com/file/mat.jpg',
+        ],
+        'status' => 'draft',
+    ]);
+
+    $response = $this->actingAs($user)->post("/drafts/{$post->id}/publish");
+
+    $response->assertSessionHas('success');
+
+    $post->refresh();
+    expect($post->status)->toBe('published');
+    expect($post->facebook_post_id)->toBe('1184127881441932_single999');
+
+    Http::assertSent(function ($request) {
+        return str_contains($request->url(), '/photos') && $request->method() === 'POST';
+    });
+});
+
 test('user can delete a post draft', function () {
     $user = User::factory()->create();
     $post = Post::create([

@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Setting;
 use App\Models\SocialAccount;
 use App\Services\AiContentGeneratorService;
+use App\Services\FacebookPublishService;
 use App\Services\ShopeeExtractService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -19,7 +20,7 @@ class PostController extends Controller
     public function index(): Response
     {
         return Inertia::render('Drafts/Index', [
-            'posts' => Post::where('status', 'draft')->latest()->get(),
+            'posts' => Post::latest()->get(),
             'socialAccounts' => SocialAccount::where('platform', 'facebook')->where('is_enabled', true)->get(),
         ]);
     }
@@ -92,8 +93,8 @@ class PostController extends Controller
             $tags = $aiGen['tags'];
             $postId = 'post_'.Str::random(12);
 
-            $provider = Setting::get('ai_provider', 'openai');
-            $model = Setting::get('ai_model', 'gpt-4o-mini');
+            $provider = $aiGen['provider'] ?? Setting::get('ai_provider', 'openai');
+            $model = $aiGen['model'] ?? Setting::get('ai_model', 'gpt-4o-mini');
             AiUsageLog::logUsage(
                 $postId,
                 $provider,
@@ -101,7 +102,11 @@ class PostController extends Controller
                 $style,
                 $aiGen['prompt_tokens'],
                 $aiGen['completion_tokens'],
-                $aiGen['total_tokens']
+                $aiGen['total_tokens'],
+                $aiGen['execution_time_ms'] ?? null,
+                'manual_draft',
+                'success',
+                $aiGen['is_live_ai'] ?? false
             );
         } else {
             $postId = 'post_'.Str::random(12);
@@ -249,39 +254,25 @@ class PostController extends Controller
                 $message .= "\n\n".$post->tags;
             }
 
-            try {
-                $response = Http::timeout(30)->post("https://graph.facebook.com/v20.0/{$pageId}/feed", [
-                    'message' => $message,
-                    'link' => $post->affiliate_url,
-                    'access_token' => $token,
-                ]);
+            $pubResult = FacebookPublishService::publish($post, $account, $message, $post->affiliate_url);
 
-                if ($response->successful()) {
-                    $fbData = $response->json();
-                    $fbPostId = $fbData['id'] ?? null;
-                    $fbPostUrl = $fbPostId ? "https://facebook.com/{$fbPostId}" : "https://facebook.com/{$pageId}";
-                    $firstPostId = $firstPostId ?: $fbPostId;
-                    $firstPostUrl = $firstPostUrl ?: $fbPostUrl;
+            if ($pubResult['success']) {
+                $fbPostId = $pubResult['facebook_post_id'];
+                $fbPostUrl = $pubResult['facebook_post_url'];
+                $firstPostId = $firstPostId ?: $fbPostId;
+                $firstPostUrl = $firstPostUrl ?: $fbPostUrl;
 
-                    $publishedResults[] = [
-                        'account_id' => $pageId,
-                        'name' => $account->name,
-                        'facebook_post_id' => $fbPostId,
-                        'facebook_post_url' => $fbPostUrl,
-                    ];
-                } else {
-                    $err = $response->json();
-                    $publishedResults[] = [
-                        'account_id' => $pageId,
-                        'name' => $account->name,
-                        'error' => $err['error']['message'] ?? 'Unknown Graph API error',
-                    ];
-                }
-            } catch (\Exception $e) {
                 $publishedResults[] = [
-                    'account_id' => $pageId,
+                    'account_id' => $account->account_id,
                     'name' => $account->name,
-                    'error' => $e->getMessage(),
+                    'facebook_post_id' => $fbPostId,
+                    'facebook_post_url' => $fbPostUrl,
+                ];
+            } else {
+                $publishedResults[] = [
+                    'account_id' => $account->account_id,
+                    'name' => $account->name,
+                    'error' => $pubResult['error'] ?? 'Unknown Graph API error',
                 ];
             }
         }
@@ -360,8 +351,8 @@ class PostController extends Controller
             'tags' => $aiGen['tags'],
         ]);
 
-        $provider = Setting::get('ai_provider', 'openai');
-        $model = Setting::get('ai_model', 'gpt-4o-mini');
+        $provider = $aiGen['provider'] ?? Setting::get('ai_provider', 'openai');
+        $model = $aiGen['model'] ?? Setting::get('ai_model', 'gpt-4o-mini');
 
         AiUsageLog::logUsage(
             $post->id,
@@ -370,7 +361,11 @@ class PostController extends Controller
             $style,
             $aiGen['prompt_tokens'],
             $aiGen['completion_tokens'],
-            $aiGen['total_tokens']
+            $aiGen['total_tokens'],
+            $aiGen['execution_time_ms'] ?? null,
+            'regenerate',
+            'success',
+            $aiGen['is_live_ai'] ?? false
         );
 
         if ($request->wantsJson()) {
