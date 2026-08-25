@@ -26,10 +26,10 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3, bcmath, curl, zip, pcntl
           coverage: none
 
-      - name: Setup Node.js 20 LTS
+      - name: Setup Node.js (Active LTS)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Cache Composer Dependencies

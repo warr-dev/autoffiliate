@@ -52,8 +52,8 @@ class PostController extends Controller
         $shop = $validated['shop_name'] ?? null;
         $mediaFiles = $validated['media_files'] ?? [];
 
-        // Auto-extract from Shopee if title or media was not provided
-        if (empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal' || empty($mediaFiles)) {
+        // Auto-extract from Shopee if title was not provided or is placeholder
+        if (empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal') {
             $extracted = ShopeeExtractService::extract($affiliateUrl);
             if ($extracted['success']) {
                 if (empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal') {
