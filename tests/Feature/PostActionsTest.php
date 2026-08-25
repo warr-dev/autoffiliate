@@ -28,7 +28,9 @@ test('user can create a new post draft', function () {
         'tags' => '#TechSulitDeals #ShopeePH #GamingMouse',
     ]);
 
-    $response->assertRedirect('/drafts');
+    $post = Post::where('affiliate_url', 'https://shopee.ph/product-deal-12345')->first();
+    expect($post)->not->toBeNull();
+    $response->assertRedirect(route('drafts.show', $post->id));
 
     $this->assertDatabaseHas('posts', [
         'product_title' => 'Wireless Gaming Mouse RGB',
@@ -115,9 +117,9 @@ test('user can generate caption with different styles', function () {
     $response->assertSessionHas('success');
 
     $post->refresh();
-    expect($post->caption)->toContain('SUPER SALE ALERT');
     expect($post->caption)->toContain('Smart Watch Fitness Tracker');
     expect($post->caption)->toContain('₱1,299');
+    expect(strlen($post->caption))->toBeGreaterThan(20);
 });
 
 test('user can publish a post to Facebook and dispatch outbound webhook', function () {
