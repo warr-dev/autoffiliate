@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
-* @see routes/web.php:264
+* @see routes/web.php:282
 * @route '/api/cron/workflows'
 */
 export const workflows = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ workflows.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:264
+* @see routes/web.php:282
 * @route '/api/cron/workflows'
 */
 workflows.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ workflows.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:264
+* @see routes/web.php:282
 * @route '/api/cron/workflows'
 */
 workflows.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ workflows.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:264
+* @see routes/web.php:282
 * @route '/api/cron/workflows'
 */
 workflows.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ workflows.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:264
+* @see routes/web.php:282
 * @route '/api/cron/workflows'
 */
 const workflowsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ const workflowsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 })
 
 /**
-* @see routes/web.php:264
+* @see routes/web.php:282
 * @route '/api/cron/workflows'
 */
 workflowsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ workflowsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 })
 
 /**
-* @see routes/web.php:264
+* @see routes/web.php:282
 * @route '/api/cron/workflows'
 */
 workflowsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { router, page } from '@inertiajs/svelte';
     import AppLayout from '@/layouts/AppLayout.svelte';
+    import { api } from '@/lib/api';
 
     let {
         settings = {},
@@ -512,6 +513,64 @@
     let creatingUser = $state(false);
     let userSuccessMsg = $state('');
     let userErrorMsg = $state('');
+
+    // API Tokens & Automation Keys Management
+    let apiTokens = $state<any[]>([]);
+    let loadingTokens = $state(false);
+    let newTokenName = $state('');
+    let creatingToken = $state(false);
+    let createdTokenData = $state<any>(null);
+    let tokenMsg = $state('');
+    let tokenError = $state('');
+    let copiedToken = $state(false);
+
+    async function loadApiTokens() {
+        loadingTokens = true;
+        try {
+            const data = await api.auth.listTokens();
+            apiTokens = data.tokens || [];
+        } catch (e: any) {
+            console.error('Failed to load API tokens:', e);
+        } finally {
+            loadingTokens = false;
+        }
+    }
+
+    async function handleCreateToken() {
+        if (!newTokenName.trim()) return;
+        creatingToken = true;
+        tokenError = '';
+        tokenMsg = '';
+        try {
+            const data = await api.auth.createToken(newTokenName.trim());
+            createdTokenData = data;
+            newTokenName = '';
+            tokenMsg = `API Key "${data.name}" generated successfully! Copy it now.`;
+            await loadApiTokens();
+        } catch (e: any) {
+            tokenError = e.message || 'Failed to create API key';
+        } finally {
+            creatingToken = false;
+        }
+    }
+
+    async function handleRevokeToken(id: string | number) {
+        if (!confirm('Are you sure you want to revoke this API key? External automations using this key will stop working.')) {
+            return;
+        }
+        try {
+            await api.auth.revokeToken(id);
+            await loadApiTokens();
+        } catch (e: any) {
+            tokenError = e.message || 'Failed to revoke token';
+        }
+    }
+
+    $effect(() => {
+        if (activeCategory === 'security') {
+            loadApiTokens();
+        }
+    });
 
     // Helper functions for Hashtags
     function parseHashtagString(str: string | undefined): string[] {
@@ -2548,8 +2607,157 @@
                         </div>
                     </div>
                 {/if}
+
+                <!-- API Keys & Automation Tokens Manager Card -->
+                <div class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base font-bold text-gray-100">
+                                🔑 API Keys & Integration Tokens (Bearer Auth)
+                            </h2>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase">
+                                Token Auth
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Generate personal access tokens and permanent API keys for <strong>n8n</strong>, external cron jobs, mobile shortcuts, or CLI scripts. All requests authenticate via <code class="text-indigo-400 bg-gray-950 px-1.5 py-0.5 rounded">Authorization: Bearer &lt;token&gt;</code>.
+                        </p>
+                    </div>
+
+                    {#if tokenMsg}
+                        <div class="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-2 animate-fadeIn">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-300">✓ {tokenMsg}</span>
+                                <span class="text-[11px] text-emerald-400/80">Make sure to copy it now!</span>
+                            </div>
+                            {#if createdTokenData?.token}
+                                <div class="flex items-center gap-2 pt-1">
+                                    <input
+                                        type="text"
+                                        readonly
+                                        value={createdTokenData.token}
+                                        class="flex-1 bg-gray-950 border border-emerald-500/40 rounded-xl px-3 py-2 text-xs text-emerald-200 font-mono select-all outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onclick={() => {
+                                            navigator.clipboard.writeText(createdTokenData.token);
+                                            copiedToken = true;
+                                            setTimeout(() => (copiedToken = false), 2500);
+                                        }}
+                                        class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer flex-shrink-0"
+                                    >
+                                        {copiedToken ? '✓ Copied!' : '📋 Copy Token'}
+                                    </button>
+                                </div>
+                            {/if}
+                        </div>
+                    {/if}
+
+                    {#if tokenError}
+                        <div class="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-300 font-medium">
+                            ⚠️ {tokenError}
+                        </div>
+                    {/if}
+
+                    <!-- Create New Token Input Form -->
+                    <div class="p-4 bg-gray-950/60 rounded-xl border border-gray-800/80 space-y-3">
+                        <label for="tok_name" class="block text-xs font-semibold text-gray-300">
+                            Create New API Key for External Automations:
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-2.5">
+                            <input
+                                id="tok_name"
+                                type="text"
+                                bind:value={newTokenName}
+                                placeholder="e.g. n8n Production Webhook Bot"
+                                onkeydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCreateToken(); } }}
+                                class="flex-1 h-11 rounded-xl border border-gray-800 bg-gray-950 px-4 text-xs text-gray-100 placeholder-gray-600 focus:border-indigo-500 outline-none font-mono"
+                            />
+                            <button
+                                type="button"
+                                onclick={handleCreateToken}
+                                disabled={creatingToken || !newTokenName.trim()}
+                                class="px-5 h-11 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0"
+                            >
+                                {#if creatingToken}
+                                    <span class="animate-spin text-xs">🌀</span>
+                                    <span>Generating...</span>
+                                {:else}
+                                    <span>➕ Generate API Key</span>
+                                {/if}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active API Keys Table -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">
+                                Active Tokens & API Keys ({apiTokens.length})
+                            </h3>
+                            <button
+                                type="button"
+                                onclick={loadApiTokens}
+                                class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer"
+                            >
+                                🔄 Refresh
+                            </button>
+                        </div>
+
+                        {#if loadingTokens}
+                            <div class="p-8 text-center text-gray-500 text-xs">
+                                <span class="animate-spin inline-block mr-1.5">🌀</span> Loading active tokens...
+                            </div>
+                        {:else if apiTokens.length === 0}
+                            <div class="p-6 text-center text-gray-500 text-xs border border-dashed border-gray-800 rounded-xl bg-gray-950/30">
+                                No active API keys generated yet. Create one above to integrate with n8n or external scripts.
+                            </div>
+                        {:else}
+                            <div class="divide-y divide-gray-800/60 border border-gray-800/80 rounded-xl bg-gray-950/40 overflow-hidden">
+                                {#each apiTokens as tok (tok.id)}
+                                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-gray-900/40 transition-colors">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-bold text-xs text-gray-100 font-mono">{tok.name}</span>
+                                                <span class="px-2 py-0.5 text-[9px] rounded font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                                    ID: #{tok.id}
+                                                </span>
+                                            </div>
+                                            <p class="text-[11px] text-gray-500 mt-1">
+                                                Created: {new Date(tok.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {#if tok.last_used_at}
+                                                    · <span class="text-emerald-400">Last used: {new Date(tok.last_used_at).toLocaleString('en-PH')}</span>
+                                                {:else}
+                                                    · <span class="text-gray-600">Never used</span>
+                                                {/if}
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            onclick={() => handleRevokeToken(tok.id)}
+                                            class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer self-start sm:self-auto"
+                                        >
+                                            🗑️ Revoke Key
+                                        </button>
+                                    </div>
+                                {/each}
+                            </div>
+                        {/if}
+                    </div>
+
+                    <!-- Usage Syntax Helper -->
+                    <div class="p-4 rounded-xl bg-gray-950 border border-gray-800 text-xs space-y-2">
+                        <span class="font-semibold text-gray-300 block">💡 How to authenticate from external tools:</span>
+                        <div class="bg-gray-900 p-2.5 rounded-lg font-mono text-[11px] text-indigo-300 overflow-x-auto">
+                            curl -X GET "https://socmed.warrdev.site/api/posts" \<br/>
+                            &nbsp;&nbsp;-H "Authorization: Bearer &lt;YOUR_TOKEN&gt;" \<br/>
+                            &nbsp;&nbsp;-H "Accept: application/json"
+                        </div>
+                    </div>
+                </div>
             </div>
-        {/if}
 
         <!-- Sticky Save Bar at the bottom -->
         <div

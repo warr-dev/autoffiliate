@@ -74,10 +74,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // =========================================================================
-// FULL API SUITE (100% PARITY WITH AUTOPLATFORM API CLIENT & N8N WEBHOOKS)
+// PUBLIC API ENDPOINTS (HEALTH & TOKEN-BASED AUTH)
 // =========================================================================
 Route::get('/api/health', fn () => response()->json(['status' => 'ok', 'version' => '1.0.0']));
+Route::post('/api/auth/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
+Route::post('/api/auth/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
 
+// =========================================================================
+// PROTECTED API SUITE (REQUIRES BEARER TOKEN OR ACTIVE SESSION)
+// =========================================================================
+Route::middleware([\App\Http\Middleware\AuthenticateApiToken::class])->group(function () {
+    // Current User & Token Management
+    Route::get('/api/auth/me', [\App\Http\Controllers\Api\AuthController::class, 'me']);
+    Route::post('/api/auth/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
+    Route::get('/api/auth/tokens', [\App\Http\Controllers\Api\AuthController::class, 'listTokens']);
+    Route::post('/api/auth/tokens', [\App\Http\Controllers\Api\AuthController::class, 'createToken']);
+    Route::delete('/api/auth/tokens/{id}', [\App\Http\Controllers\Api\AuthController::class, 'revokeToken']);
+
+    // Extraction
     Route::post('/api/extract', function (Request $request) {
         $url = $request->input('url');
         if (! $url) {
@@ -86,6 +100,7 @@ Route::get('/api/health', fn () => response()->json(['status' => 'ok', 'version'
         return response()->json(\App\Services\ShopeeExtractService::extract($url));
     });
 
+    // Posts & Drafts
     Route::get('/api/posts', function (Request $request) {
         $limit = (int) $request->input('limit', 50);
         $offset = (int) $request->input('offset', 0);
@@ -179,6 +194,7 @@ Route::get('/api/health', fn () => response()->json(['status' => 'ok', 'version'
         return (new PostController())->deleteMedia($request, $postId, $filename);
     });
 
+    // Settings & Tokens
     Route::get('/api/settings', fn () => response()->json(\App\Models\Setting::query()->pluck('value', 'key')));
     Route::post('/api/settings', [SettingsController::class, 'update']);
 
@@ -215,6 +231,7 @@ Route::get('/api/health', fn () => response()->json(['status' => 'ok', 'version'
     Route::get('/api/token/debug', fn () => response()->json(['available' => true, 'is_valid' => true, 'is_page_token' => true]));
     Route::post('/api/token/exchange', [SettingsController::class, 'exchangeToken']);
 
+    // Integrations
     Route::get('/api/integrations', fn () => response()->json(['integrations' => SocialAccount::all()]));
     Route::post('/api/integrations/toggle', function (Request $request) {
         $id = $request->input('id');
@@ -259,6 +276,7 @@ Route::get('/api/health', fn () => response()->json(['status' => 'ok', 'version'
     });
     Route::post('/api/integrations/suggest-hashtags', [SettingsController::class, 'suggestHashtags']);
     Route::post('/api/webhooks/test', [SettingsController::class, 'testWebhook']);
+});
 
 // Secured Web-Cron Trigger for Hostinger / External Schedulers
 Route::get('/api/cron/workflows', function (Request $request) {
