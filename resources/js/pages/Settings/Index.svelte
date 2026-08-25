@@ -1717,22 +1717,22 @@
                                                 ? '🎥'
                                                 : '✈️'}
                                 <div
-                                    class="p-4 rounded-xl bg-gray-950/60 border border-gray-800/80 hover:border-indigo-500/40 transition-all flex items-center justify-between gap-4"
+                                    class="p-4 rounded-xl bg-gray-950/60 border border-gray-800/80 hover:border-indigo-500/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
                                 >
                                     <div
-                                        class="flex items-center gap-3.5 min-w-0"
+                                        class="flex items-start sm:items-center gap-3.5 min-w-0 flex-1"
                                     >
                                         <div
-                                            class="w-11 h-11 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl flex-shrink-0"
+                                            class="w-11 h-11 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl flex-shrink-0 mt-0.5 sm:mt-0"
                                         >
                                             {icon}
                                         </div>
-                                        <div class="min-w-0">
+                                        <div class="min-w-0 flex-1">
                                             <div
                                                 class="flex items-center gap-2 flex-wrap"
                                             >
                                                 <h3
-                                                    class="text-sm font-bold text-gray-100 truncate"
+                                                    class="text-sm font-bold text-gray-100 break-words"
                                                 >
                                                     {account.name}
                                                 </h3>
@@ -1758,7 +1758,7 @@
                                                 </button>
                                             </div>
                                             <p
-                                                class="text-xs text-gray-500 font-mono mt-0.5 truncate flex items-center gap-2 flex-wrap"
+                                                class="text-xs text-gray-500 font-mono mt-1 flex items-center gap-2 flex-wrap"
                                             >
                                                 <span
                                                     >ID: {account.account_id ||
@@ -1811,8 +1811,9 @@
                                         </div>
                                     </div>
 
+                                    <!-- Responsive Action Bar -->
                                     <div
-                                        class="flex items-center gap-1 flex-shrink-0"
+                                        class="pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-800/60 flex items-center gap-1.5 justify-end flex-wrap flex-shrink-0"
                                     >
                                         {#if account.platform === 'facebook'}
                                             <button
@@ -1822,16 +1823,17 @@
                                                 disabled={testPostStatuses[
                                                     account.id
                                                 ]?.loading}
-                                                class="p-2 rounded-lg text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 transition-colors cursor-pointer disabled:opacity-50"
+                                                class="px-2.5 py-1.5 rounded-lg text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer disabled:opacity-50"
                                                 title="Publish live test post to Facebook"
                                             >
                                                 {#if testPostStatuses[account.id]?.loading}
                                                     <div
-                                                        class="loading-spinner w-4 h-4"
+                                                        class="loading-spinner w-3.5 h-3.5"
                                                     ></div>
+                                                    <span>Posting...</span>
                                                 {:else}
                                                     <svg
-                                                        class="w-4 h-4"
+                                                        class="w-3.5 h-3.5"
                                                         fill="none"
                                                         stroke="currentColor"
                                                         viewBox="0 0 24 24"
@@ -1843,6 +1845,7 @@
                                                             d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                                                         />
                                                     </svg>
+                                                    <span class="sm:hidden">Test Post</span>
                                                 {/if}
                                             </button>
                                             <button
@@ -1851,7 +1854,7 @@
                                                     handleVerifyAccountToken(
                                                         account,
                                                     )}
-                                                class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors cursor-pointer"
+                                                class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800 transition-colors cursor-pointer"
                                                 title="Verify Token & Expiry Status"
                                             >
                                                 <svg
@@ -1873,7 +1876,7 @@
                                             type="button"
                                             onclick={() =>
                                                 handleToggleAccount(account.id)}
-                                            class="p-2 rounded-lg transition-colors cursor-pointer {account.is_enabled
+                                            class="p-2 rounded-lg border border-gray-800 transition-colors cursor-pointer {account.is_enabled
                                                 ? 'text-emerald-400 hover:bg-emerald-500/10'
                                                 : 'text-gray-500 hover:bg-gray-800'}"
                                             title={account.is_enabled
@@ -1912,7 +1915,7 @@
                                             type="button"
                                             onclick={() =>
                                                 openEditModal(account)}
-                                            class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors cursor-pointer"
+                                            class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800 transition-colors cursor-pointer"
                                             title="Edit account details"
                                         >
                                             <svg
@@ -1933,7 +1936,7 @@
                                             type="button"
                                             onclick={() =>
                                                 handleDeleteAccount(account.id)}
-                                            class="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                            class="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 border border-gray-800 transition-colors cursor-pointer"
                                             title="Delete account"
                                         >
                                             <svg
@@ -2758,6 +2761,7 @@
                     </div>
                 </div>
             </div>
+        {/if}
 
         <!-- Sticky Save Bar at the bottom -->
         <div

@@ -318,6 +318,39 @@
 
 <AppLayout title="Edit Draft: {product_title || 'Post'}">
     <div class="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8 overflow-x-hidden space-y-6">
+        <!-- Live Facebook Post Success Banner -->
+        {#if post.facebook_post_url || post.status === 'posted' || post.status === 'published'}
+            <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-950/60 via-indigo-950/50 to-emerald-950/60 border border-blue-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xl animate-slideDown">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xl text-blue-400 flex-shrink-0 shadow-inner">
+                        🌐
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-bold text-sm sm:text-base text-gray-100">Live on Facebook</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                ✓ Published
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            This post is active on your connected Facebook Page.
+                        </p>
+                    </div>
+                </div>
+                {#if post.facebook_post_url}
+                    <a
+                        href={post.facebook_post_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto active:scale-95"
+                    >
+                        <span>Open Live Post in Facebook</span>
+                        <span>↗</span>
+                    </a>
+                {/if}
+            </div>
+        {/if}
+
         <!-- Responsive Header Component (Exact Reference Style) -->
         <div class="p-4 sm:p-5 rounded-2xl border border-gray-800/80 bg-gray-950/70 backdrop-blur-md shadow-2xl space-y-4">
             <!-- Top Nav Row: Back + Status -->
@@ -360,7 +393,7 @@
 
             <!-- Header Action Bar -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-gray-800/60">
-                <!-- Primary Action Buttons (Save & Preview/Publish) -->
+                <!-- Primary Action Buttons (Save & Preview/Publish & Live Link) -->
                 <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
                     <button
                         type="button"
@@ -371,21 +404,31 @@
                         {saved ? '✓ Saved!' : '💾 Save Draft'}
                     </button>
 
-                    {#if post.status !== 'posted'}
-                        <button
-                            type="button"
-                            onclick={() => (showPreviewModal = true)}
-                            disabled={publishing || post.status === 'publishing'}
-                            class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    {#if post.facebook_post_url}
+                        <a
+                            href={post.facebook_post_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="px-3.5 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 hover:text-blue-200 border border-blue-500/30 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                            title="Open live post in Facebook"
                         >
-                            {#if publishing || post.status === 'publishing'}
-                                <span class="animate-spin text-xs">🌀</span>
-                                <span>Publishing...</span>
-                            {:else}
-                                <span>🚀 Preview & Publish</span>
-                            {/if}
-                        </button>
+                            <span>🌐 Live Post ↗</span>
+                        </a>
                     {/if}
+
+                    <button
+                        type="button"
+                        onclick={() => (showPreviewModal = true)}
+                        disabled={publishing || post.status === 'publishing'}
+                        class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                        {#if publishing || post.status === 'publishing'}
+                            <span class="animate-spin text-xs">🌀</span>
+                            <span>Publishing...</span>
+                        {:else}
+                            <span>🚀 {post.status === 'posted' || post.status === 'published' ? 'Re-Publish' : 'Preview & Publish'}</span>
+                        {/if}
+                    </button>
                 </div>
 
                 <!-- Secondary Tools (Extract Media, Regenerate, Delete) -->

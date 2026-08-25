@@ -140,34 +140,34 @@
         </div>
 
         <!-- Stats Counters (Reference Style) -->
-        <div class="grid grid-cols-3 gap-4 max-w-xl mx-auto">
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 max-w-xl mx-auto">
             {#each [
                 { label: 'Total Posts', value: stats.total, color: 'from-indigo-400 to-purple-500' },
                 { label: 'Drafts', value: stats.drafts, color: 'from-amber-400 to-orange-500' },
                 { label: 'Published', value: stats.posted, color: 'from-emerald-400 to-teal-500' },
             ] as stat}
-                <div class="p-4 rounded-2xl bg-gray-900/60 border border-gray-800/80 text-center shadow-md">
-                    <div class="text-2xl font-bold bg-gradient-to-r {stat.color} bg-clip-text text-transparent">
+                <div class="p-3 sm:p-4 rounded-2xl bg-gray-900/60 border border-gray-800/80 text-center shadow-md">
+                    <div class="text-xl sm:text-2xl font-bold bg-gradient-to-r {stat.color} bg-clip-text text-transparent">
                         {stat.value}
                     </div>
-                    <div class="text-xs text-gray-400 mt-1">{stat.label}</div>
+                    <div class="text-[11px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">{stat.label}</div>
                 </div>
             {/each}
         </div>
 
         <!-- Recent Posts / Drafts Section (Reference List Style) -->
         <div class="max-w-3xl mx-auto space-y-4">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <h2 class="text-base font-semibold text-gray-200">
                     Recent Drafts & Posts
                 </h2>
                 {#if posts.length > 0}
-                    <div class="relative w-48 sm:w-64">
+                    <div class="relative w-full sm:w-64">
                         <input
                             type="text"
                             bind:value={searchQuery}
                             placeholder="Filter drafts..."
-                            class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-indigo-500"
+                            class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-indigo-500 transition-colors"
                         />
                     </div>
                 {/if}
@@ -180,88 +180,135 @@
                     <p class="text-xs text-gray-500 mt-1">Paste a Shopee link to get started</p>
                 </div>
             {:else}
-                <div class="space-y-2.5">
+                <div class="space-y-3">
                     {#each filteredPosts as post (post.id)}
                         {@const mediaCount = Array.isArray(post.media_files) ? post.media_files.length : (post.media_files ? 1 : 0)}
-                        <a
-                            href="/drafts/{post.id}"
-                            class="p-4 rounded-2xl bg-gray-900/70 hover:bg-gray-900 border border-gray-800/80 hover:border-indigo-500/50 flex items-center justify-between gap-3 transition-all cursor-pointer shadow-md group"
+                        <div
+                            class="p-4 sm:p-4.5 rounded-2xl bg-gray-900/70 hover:bg-gray-900/90 border border-gray-800/80 hover:border-indigo-500/40 transition-all shadow-md group flex flex-col gap-3"
                         >
-                            <div class="flex items-center gap-3.5 min-w-0">
-                                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/60 flex items-center justify-center flex-shrink-0 text-base shadow-sm">
-                                    {mediaCount > 0 ? '🖼️' : '🔗'}
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="font-bold text-sm text-gray-200 group-hover:text-indigo-300 transition-colors truncate">
-                                        {post.product_title || 'Untitled Post'}
-                                    </p>
-                                    <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
-                                        <span>{new Date(post.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                                        <span>·</span>
-                                        <span>{mediaCount} media</span>
-                                        {#if post.product_price}
+                            <!-- Top Row: Thumbnail + Product Title + Status Badge -->
+                            <div class="flex items-start justify-between gap-3 min-w-0">
+                                <a
+                                    href="/drafts/{post.id}"
+                                    class="flex items-start gap-3 min-w-0 flex-1 group/title cursor-pointer"
+                                >
+                                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/60 flex items-center justify-center flex-shrink-0 text-base shadow-sm group-hover/title:scale-105 transition-transform">
+                                        {mediaCount > 0 ? '🖼️' : '🔗'}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-bold text-sm text-gray-200 group-hover/title:text-indigo-300 transition-colors line-clamp-2 sm:line-clamp-1 leading-snug">
+                                            {post.product_title || 'Untitled Post'}
+                                        </p>
+                                        <div class="text-xs text-gray-400 mt-1 flex items-center gap-2 flex-wrap">
+                                            <span>{new Date(post.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                             <span>·</span>
-                                            <span class="text-emerald-400 font-bold font-mono">{post.product_price}</span>
-                                        {/if}
-                                    </p>
+                                            <span>{mediaCount} media</span>
+                                            {#if post.product_price}
+                                                <span>·</span>
+                                                <span class="text-emerald-400 font-bold font-mono">{post.product_price}</span>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!-- Status Badge & Live Link -->
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    {#if post.facebook_post_url}
+                                        <a
+                                            href={post.facebook_post_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-blue-500/15 text-blue-300 hover:text-blue-200 border border-blue-500/30 hover:border-blue-400/50 shadow-sm transition-all active:scale-95"
+                                            title="Open live post on Facebook"
+                                        >
+                                            <span>🌐 View on FB ↗</span>
+                                        </a>
+                                    {/if}
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase
+                                        {post.status === 'posted' || post.status === 'published' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
+                                         post.status === 'publishing' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 
+                                         post.status === 'failed' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
+                                         'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
+                                        <span class="w-1.5 h-1.5 rounded-full 
+                                            {post.status === 'posted' || post.status === 'published' ? 'bg-emerald-400' : 
+                                             post.status === 'publishing' ? 'bg-indigo-400 animate-ping' : 
+                                             post.status === 'failed' ? 'bg-red-400' : 
+                                             'bg-amber-400 animate-pulse'}"></span>
+                                        {post.status === 'posted' || post.status === 'published' ? '✓ Posted' : 
+                                         post.status === 'publishing' ? '⌛ Publishing...' : 
+                                         post.status === 'failed' ? '❌ Failed' : 
+                                         '✎ Draft'}
+                                    </span>
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-2.5 flex-shrink-0 ml-3">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase
-                                    {post.status === 'posted' || post.status === 'published' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
-                                     post.status === 'publishing' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 
-                                     post.status === 'failed' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
-                                     'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
-                                    <span class="w-1.5 h-1.5 rounded-full 
-                                        {post.status === 'posted' || post.status === 'published' ? 'bg-emerald-400' : 
-                                         post.status === 'publishing' ? 'bg-indigo-400 animate-ping' : 
-                                         post.status === 'failed' ? 'bg-red-400' : 
-                                         'bg-amber-400 animate-pulse'}"></span>
-                                    {post.status === 'posted' || post.status === 'published' ? '✓ Posted' : 
-                                     post.status === 'publishing' ? '⌛ Publishing...' : 
-                                     post.status === 'failed' ? '❌ Failed' : 
-                                     '✎ Draft'}
-                                </span>
-
-                                <button
-                                    type="button"
-                                    onclick={(e) => handleGenerateCaption(post.id, e)}
-                                    disabled={generatingId === post.id}
-                                    class="p-1.5 text-gray-400 hover:text-indigo-300 rounded-lg hover:bg-indigo-500/10 transition-colors cursor-pointer"
-                                    title="AI Re-roll caption"
-                                >
-                                    {#if generatingId === post.id}
-                                        <span class="animate-spin text-xs">🌀</span>
-                                    {:else}
-                                        <span>✨</span>
+                            <!-- Bottom Row: Touch-Friendly Action Toolbar & Edit Post Link -->
+                            <div class="pt-2.5 border-t border-gray-800/60 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    {#if post.facebook_post_url}
+                                        <a
+                                            href={post.facebook_post_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="px-2.5 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 border border-blue-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm"
+                                            title="Open live post on Facebook"
+                                        >
+                                            <span>🌐</span>
+                                            <span>View Post ↗</span>
+                                        </a>
                                     {/if}
-                                </button>
 
-                                <button
-                                    type="button"
-                                    onclick={(e) => handlePublish(post.id, e)}
-                                    disabled={publishingId === post.id}
-                                    class="p-1.5 text-gray-400 hover:text-emerald-400 rounded-lg hover:bg-emerald-500/10 transition-colors cursor-pointer"
-                                    title="Publish to Facebook"
-                                >
-                                    {#if publishingId === post.id}
-                                        <span class="animate-spin text-xs">🌀</span>
-                                    {:else}
-                                        <span>🚀</span>
-                                    {/if}
-                                </button>
+                                    <button
+                                        type="button"
+                                        onclick={(e) => handleGenerateCaption(post.id, e)}
+                                        disabled={generatingId === post.id}
+                                        class="px-2.5 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-indigo-200 border border-indigo-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                                        title="AI Re-roll caption"
+                                    >
+                                        {#if generatingId === post.id}
+                                            <span class="animate-spin text-xs">🌀</span>
+                                            <span>Generating...</span>
+                                        {:else}
+                                            <span>✨</span>
+                                            <span>AI Re-roll</span>
+                                        {/if}
+                                    </button>
 
-                                <button
-                                    type="button"
-                                    onclick={(e) => handleDelete(post.id, e)}
-                                    class="p-1.5 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
-                                    title="Delete post draft"
+                                    <button
+                                        type="button"
+                                        onclick={(e) => handlePublish(post.id, e)}
+                                        disabled={publishingId === post.id}
+                                        class="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:text-emerald-200 border border-emerald-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                                        title="Publish to Facebook"
+                                    >
+                                        {#if publishingId === post.id}
+                                            <span class="animate-spin text-xs">🌀</span>
+                                            <span>Publishing...</span>
+                                        {:else}
+                                            <span>🚀</span>
+                                            <span>{post.status === 'posted' || post.status === 'published' ? 'Re-Publish' : 'Publish'}</span>
+                                        {/if}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onclick={(e) => handleDelete(post.id, e)}
+                                        class="p-1.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+                                        title="Delete post draft"
+                                    >
+                                        🗑️
+                                    </button>
+                                </div>
+
+                                <a
+                                    href="/drafts/{post.id}"
+                                    class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 ml-auto transition-colors py-1 cursor-pointer"
                                 >
-                                    🗑️
-                                </button>
+                                    <span>Edit Draft</span>
+                                    <span>→</span>
+                                </a>
                             </div>
-                        </a>
+                        </div>
                     {/each}
                 </div>
             {/if}

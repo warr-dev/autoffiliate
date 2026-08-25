@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SettingsController;
@@ -13,7 +14,11 @@ Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/api/analytics/ai', [DashboardController::class, 'aiAnalytics'])->name('analytics.ai');
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
+    Route::get('/api/analytics/ai', [AnalyticsController::class, 'apiAnalytics'])->name('analytics.ai');
+    Route::get('/api/analytics/ai/export', [AnalyticsController::class, 'export']);
+    Route::post('/api/analytics/ai/clear', [AnalyticsController::class, 'clear'])->name('analytics.clear');
 
     Route::inertia('/create', 'Create/Index')->name('create');
 
@@ -137,6 +142,23 @@ Route::middleware([\App\Http\Middleware\AuthenticateApiToken::class])->group(fun
             'caption' => $aiGen['caption'],
             'tags' => $aiGen['tags'],
         ]);
+        $provider = $aiGen['provider'] ?? \App\Models\Setting::get('ai_provider', 'openai');
+        $model = $aiGen['model'] ?? \App\Models\Setting::get('ai_model', 'gpt-4o-mini');
+
+        $log = \App\Models\AiUsageLog::logUsage(
+            $post->id,
+            $provider,
+            $model,
+            $style,
+            $aiGen['prompt_tokens'],
+            $aiGen['completion_tokens'],
+            $aiGen['total_tokens'],
+            $aiGen['execution_time_ms'] ?? null,
+            'api_endpoint',
+            'success',
+            $aiGen['is_live_ai'] ?? false
+        );
+
         return response()->json([
             'post_id' => $post->id,
             'caption' => $aiGen['caption'],
@@ -144,11 +166,14 @@ Route::middleware([\App\Http\Middleware\AuthenticateApiToken::class])->group(fun
             'tags' => $aiGen['tags'],
             'recommended_hashtags' => ['#ShopeePH', '#BudolFinds', '#TechSulitDeals', '#ShopeeFinds', '#MustHave'],
             'ai_usage' => [
-                'provider' => \App\Models\Setting::get('ai_provider', 'openai'),
-                'model' => \App\Models\Setting::get('ai_model', 'gpt-4o-mini'),
+                'log_id' => $log->id,
+                'provider' => $provider,
+                'model' => $model,
                 'prompt_tokens' => $aiGen['prompt_tokens'],
                 'completion_tokens' => $aiGen['completion_tokens'],
                 'total_tokens' => $aiGen['total_tokens'],
+                'estimated_cost' => $log->estimated_cost,
+                'execution_time_ms' => $log->execution_time_ms,
             ],
         ]);
     });
@@ -276,6 +301,11 @@ Route::middleware([\App\Http\Middleware\AuthenticateApiToken::class])->group(fun
     });
     Route::post('/api/integrations/suggest-hashtags', [SettingsController::class, 'suggestHashtags']);
     Route::post('/api/webhooks/test', [SettingsController::class, 'testWebhook']);
+
+    // AI Analytics API endpoints
+    Route::get('/api/analytics/ai', [AnalyticsController::class, 'apiAnalytics']);
+    Route::get('/api/analytics/ai/export', [AnalyticsController::class, 'export']);
+    Route::post('/api/analytics/ai/clear', [AnalyticsController::class, 'clear']);
 });
 
 // Secured Web-Cron Trigger for Hostinger / External Schedulers

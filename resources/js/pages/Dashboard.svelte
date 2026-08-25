@@ -147,12 +147,20 @@
                             AI Model & Token Analytics
                         </h2>
                     </div>
-                    <a
-                        href="/settings/app"
-                        class="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
-                    >
-                        Configure AI Provider →
-                    </a>
+                    <div class="flex items-center gap-3">
+                        <a
+                            href="/analytics"
+                            class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1"
+                        >
+                            <span>📊</span> View Full Analytics →
+                        </a>
+                        <a
+                            href="/settings/app"
+                            class="text-xs text-gray-400 hover:text-gray-300 font-medium"
+                        >
+                            Configure AI →
+                        </a>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -409,57 +417,75 @@
                 <div class="space-y-3">
                     {#each posts as post (post.id)}
                         <div
-                            class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-4 rounded-2xl flex items-center justify-between shadow-md hover:border-indigo-500/40 transition-all"
+                            class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 p-3.5 sm:p-4 rounded-2xl flex flex-col gap-2.5 shadow-md hover:border-indigo-500/40 transition-all group"
                         >
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0 text-lg"
+                            <!-- Top Row: Icon + Title + Status -->
+                            <div class="flex items-start justify-between gap-3">
+                                <a
+                                    href="/drafts/{post.id}"
+                                    class="flex items-start gap-3 min-w-0 flex-1 group-hover:text-indigo-300 transition-colors"
                                 >
-                                    🔗
-                                </div>
-                                <div class="min-w-0">
-                                    <p
-                                        class="font-bold text-sm text-gray-200 truncate"
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0 text-base shadow-inner"
                                     >
-                                        {post.product_title ||
-                                            'Shopee Product Deal'}
-                                    </p>
-                                    <p
-                                        class="text-xs text-indigo-400 font-mono truncate"
+                                        🔗
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <h3
+                                            class="font-bold text-sm text-gray-200 line-clamp-2 leading-snug break-words"
+                                        >
+                                            {post.product_title || 'Shopee Product Deal'}
+                                        </h3>
+                                        <p
+                                            class="text-xs text-indigo-400 font-mono truncate mt-0.5"
+                                        >
+                                            {post.affiliate_url}
+                                        </p>
+                                    </div>
+                                </a>
+
+                                <div class="flex-shrink-0">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold
+                                            {post.status === 'published' || post.status === 'posted' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400'}"
                                     >
-                                        {post.affiliate_url}
-                                    </p>
+                                        {post.status}
+                                    </span>
                                 </div>
                             </div>
 
-                            <div
-                                class="flex items-center gap-3 flex-shrink-0 ml-3"
-                            >
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/20 text-amber-400"
-                                >
-                                    {post.status}
-                                </span>
-                                <button
-                                    onclick={(e) =>
-                                        handleDeletePost(post.id, e)}
-                                    class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 border border-gray-800 hover:border-red-500/30 transition-colors cursor-pointer"
-                                    title="Delete post"
-                                >
-                                    <svg
-                                        class="w-3.5 h-3.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
+                            <!-- Bottom Row: Action Buttons -->
+                            <div class="pt-2 border-t border-gray-800/60 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+                                <div class="flex items-center gap-2">
+                                    {#if post.facebook_post_url}
+                                        <a
+                                            href={post.facebook_post_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-blue-500/15 text-blue-300 hover:text-blue-200 border border-blue-500/30 hover:border-blue-400/50 shadow-sm transition-all"
+                                            title="View live post on Facebook"
+                                        >
+                                            <span>🌐 View on FB ↗</span>
+                                        </a>
+                                    {/if}
+
+                                    <button
+                                        onclick={(e) =>
+                                            handleDeletePost(post.id, e)}
+                                        class="p-1.5 px-2 flex items-center justify-center rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-500/10 border border-gray-800 hover:border-red-500/30 transition-colors cursor-pointer text-xs"
+                                        title="Delete post"
                                     >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                        />
-                                    </svg>
-                                </button>
+                                        🗑️
+                                    </button>
+                                </div>
+
+                                <a
+                                    href="/drafts/{post.id}"
+                                    class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 ml-auto transition-colors py-1 cursor-pointer"
+                                >
+                                    <span>Edit Draft</span>
+                                    <span>→</span>
+                                </a>
                             </div>
                         </div>
                     {/each}

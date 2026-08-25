@@ -71,102 +71,113 @@
 
         {#if filtered.length === 0}
             <div
-                class="p-16 text-center bg-gray-900/60 border border-gray-800/80 rounded-2xl shadow-xl"
+                class="p-12 sm:p-16 text-center bg-gray-900/60 border border-gray-800/80 rounded-2xl shadow-xl"
             >
-                <div class="text-5xl mb-4 opacity-30">📭</div>
-                <p class="text-gray-400 font-medium">
+                <div class="text-4xl sm:text-5xl mb-4 opacity-30">📭</div>
+                <p class="text-gray-400 font-medium text-sm">
                     No posts found for "{filter}" filter
                 </p>
             </div>
         {:else}
-            <div class="space-y-2">
+            <div class="space-y-3">
                 {#each filtered as post (post.id)}
                     <div
-                        class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 hover:border-indigo-500/40 p-4 rounded-2xl flex items-center justify-between transition-all shadow-md"
+                        class="bg-gray-900/70 backdrop-blur-xl border border-gray-800/80 hover:border-indigo-500/40 p-3.5 sm:p-4 rounded-2xl flex flex-col gap-3 transition-all shadow-md group"
                     >
-                        <div class="flex items-center gap-4 min-w-0">
-                            <div
-                                class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0 text-lg"
+                        <!-- Top Row: Icon + Title + Status Badge -->
+                        <div class="flex items-start justify-between gap-3">
+                            <a
+                                href="/drafts/{post.id}"
+                                class="flex items-start gap-3 min-w-0 flex-1 group-hover:text-indigo-300 transition-colors"
                             >
-                                🔗
-                            </div>
-                            <div class="min-w-0">
-                                <p
-                                    class="font-bold text-sm text-gray-200 truncate"
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0 text-base shadow-inner"
                                 >
-                                    {post.product_title ||
-                                        'Shopee Product Deal'}
-                                </p>
-                                <p
-                                    class="text-xs text-indigo-400 font-mono truncate mt-0.5"
+                                    🔗
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h3
+                                        class="font-bold text-sm text-gray-200 line-clamp-2 leading-snug break-words"
+                                    >
+                                        {post.product_title || 'Shopee Product Deal'}
+                                    </h3>
+                                    <p
+                                        class="text-xs text-indigo-400 font-mono truncate mt-0.5"
+                                    >
+                                        {post.affiliate_url}
+                                    </p>
+                                    <p
+                                        class="text-[11px] text-gray-500 mt-0.5 font-mono"
+                                    >
+                                        {new Date(post.created_at || Date.now()).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                </div>
+                            </a>
+
+                            <!-- Status Badge -->
+                            <div class="flex-shrink-0">
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase
+                                    {post.status === 'published'
+                                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                        : post.status === 'approved'
+                                          ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                                          : post.status === 'failed'
+                                            ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                            : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}"
                                 >
-                                    {post.affiliate_url}
-                                </p>
-                                <p
-                                    class="text-[11px] text-gray-500 mt-0.5 font-mono"
-                                >
-                                    Created: {post.created_at || 'Just now'}
-                                </p>
+                                    <span
+                                        class="w-1.5 h-1.5 rounded-full
+                                        {post.status === 'published'
+                                            ? 'bg-emerald-400'
+                                            : post.status === 'approved'
+                                              ? 'bg-indigo-400 animate-ping'
+                                              : post.status === 'failed'
+                                                ? 'bg-red-400'
+                                                : 'bg-amber-400 animate-pulse'}"
+                                    ></span>
+                                    {post.status === 'published'
+                                        ? '✓ Published'
+                                        : post.status === 'approved'
+                                          ? '⌛ Approved'
+                                          : post.status === 'failed'
+                                            ? '❌ Failed'
+                                            : '✎ Draft'}
+                                </span>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-3 flex-shrink-0 ml-3">
-                            {#if post.facebook_post_url}
-                                <a
-                                    href={post.facebook_post_url}
-                                    target="_blank"
-                                    class="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                        <!-- Bottom Row: Action Toolbar (View on FB, Edit Draft, Delete) -->
+                        <div class="pt-2 border-t border-gray-800/60 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                {#if post.facebook_post_url}
+                                    <a
+                                        href={post.facebook_post_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 border border-blue-500/20 text-xs font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
+                                        title="Open live post on Facebook"
+                                    >
+                                        <span>🌐 View on FB ↗</span>
+                                    </a>
+                                {/if}
+
+                                <button
+                                    onclick={(e) => handleDeletePost(post.id, e)}
+                                    class="p-1.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+                                    title="Delete post record"
                                 >
-                                    View on FB ↗
-                                </a>
-                            {/if}
-                            <span
-                                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase
-                                {post.status === 'published'
-                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                    : post.status === 'approved'
-                                      ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-                                      : post.status === 'failed'
-                                        ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                                        : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}"
+                                    🗑️
+                                </button>
+                            </div>
+
+                            <a
+                                href="/drafts/{post.id}"
+                                class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 ml-auto transition-colors py-1 cursor-pointer"
                             >
-                                <span
-                                    class="w-1.5 h-1.5 rounded-full
-                                    {post.status === 'published'
-                                        ? 'bg-emerald-400'
-                                        : post.status === 'approved'
-                                          ? 'bg-indigo-400 animate-ping'
-                                          : post.status === 'failed'
-                                            ? 'bg-red-400'
-                                            : 'bg-amber-400 animate-pulse'}"
-                                ></span>
-                                {post.status === 'published'
-                                    ? '✓ Published'
-                                    : post.status === 'approved'
-                                      ? '⌛ Approved'
-                                      : post.status === 'failed'
-                                        ? '❌ Failed'
-                                        : '✎ Draft'}
-                            </span>
-                            <button
-                                onclick={(e) => handleDeletePost(post.id, e)}
-                                class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-red-400 rounded-lg hover:bg-red-500/10 border border-gray-800 hover:border-red-500/30 transition-colors cursor-pointer"
-                                title="Delete post"
-                            >
-                                <svg
-                                    class="w-3.5 h-3.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                </svg>
-                            </button>
+                                <span>Open Details</span>
+                                <span>→</span>
+                            </a>
                         </div>
                     </div>
                 {/each}
