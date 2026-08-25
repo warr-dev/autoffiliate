@@ -41,11 +41,11 @@
         );
     }
 
-    function handleGenerateCaption(id: string) {
+    function handleGenerateCaption(id: string, style = 'viral_ai') {
         generatingId = id;
         router.post(
             `/drafts/${id}/generate-caption`,
-            { caption_style: 'viral' },
+            { caption_style: style },
             {
                 onFinish: () => {
                     generatingId = null;

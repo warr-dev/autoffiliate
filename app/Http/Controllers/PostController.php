@@ -6,6 +6,7 @@ use App\Models\AiUsageLog;
 use App\Models\Post;
 use App\Models\Setting;
 use App\Models\SocialAccount;
+use App\Services\AiContentGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -32,25 +33,63 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_title' => 'required|string|max:255',
+            'product_title' => 'nullable|string|max:255',
             'product_description' => 'nullable|string',
             'product_price' => 'nullable|string',
             'shop_name' => 'nullable|string',
             'affiliate_url' => 'required|url',
             'caption' => 'nullable|string',
+            'caption_style' => 'nullable|string',
             'tags' => 'nullable|string',
             'media_files' => 'nullable|array',
         ]);
 
+        $title = ! empty($validated['product_title']) && $validated['product_title'] !== 'Shopee Deal'
+            ? $validated['product_title']
+            : 'Shopee Sulit Deal';
+
+        $caption = $validated['caption'] ?? '';
+        $style = $validated['caption_style'] ?? $request->input('caption_style', 'viral_ai');
+
+        if (empty($caption) || str_starts_with($caption, 'Caption Style:')) {
+            $aiGen = AiContentGeneratorService::generateProductDeal([
+                'product_title' => $title,
+                'product_description' => $validated['product_description'] ?? '',
+                'product_price' => $validated['product_price'] ?? '',
+                'shop_name' => $validated['shop_name'] ?? '',
+                'affiliate_url' => $validated['affiliate_url'],
+                'caption_style' => $style,
+            ]);
+
+            $caption = $aiGen['caption'];
+            $tags = $aiGen['tags'];
+            $postId = 'post_'.Str::random(12);
+
+            $provider = Setting::get('ai_provider', 'openai');
+            $model = Setting::get('ai_model', 'gpt-4o-mini');
+            AiUsageLog::logUsage(
+                $postId,
+                $provider,
+                $model,
+                $style,
+                $aiGen['prompt_tokens'],
+                $aiGen['completion_tokens'],
+                $aiGen['total_tokens']
+            );
+        } else {
+            $postId = 'post_'.Str::random(12);
+            $tags = $validated['tags'] ?? Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH');
+        }
+
         $post = Post::create([
-            'id' => 'post_'.Str::random(12),
-            'product_title' => $validated['product_title'],
+            'id' => $postId,
+            'product_title' => $title,
             'product_description' => $validated['product_description'] ?? null,
             'product_price' => $validated['product_price'] ?? null,
             'shop_name' => $validated['shop_name'] ?? null,
             'affiliate_url' => $validated['affiliate_url'],
-            'caption' => $validated['caption'] ?? '',
-            'tags' => $validated['tags'] ?? '',
+            'caption' => $caption,
+            'tags' => $tags,
             'status' => 'draft',
             'media_files' => $validated['media_files'] ?? [],
         ]);
@@ -59,7 +98,7 @@ class PostController extends Controller
             return response()->json(['success' => true, 'post' => $post]);
         }
 
-        return redirect()->route('drafts.index')->with('success', 'Post draft created successfully.');
+        return redirect()->route('drafts.index')->with('success', 'Post draft created with AI copy.');
     }
 
     public function storeCustom(Request $request)
@@ -274,53 +313,21 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        $style = $request->input('caption_style', 'standard');
-        $customHashtags = $request->input('custom_hashtags', $post->tags);
+        $style = $request->input('caption_style', 'viral_ai');
 
-        $defaultHashtags = Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH');
-        $hasAffiliateLink = ! empty($post->affiliate_url) && $post->affiliate_url !== 'https://shopee.ph' && ! str_starts_with($post->affiliate_url, 'https://facebook.com');
-        $disclosure = $hasAffiliateLink ? Setting::get('disclosure', 'Affiliate link. Price and availability may change anytime.') : '';
-
-        $mergedTags = trim($customHashtags.' '.$defaultHashtags);
-        $tagArray = array_unique(array_filter(explode(' ', $mergedTags)));
-        $finalTags = implode(' ', $tagArray);
-
-        $disclosureBlock = $disclosure ? "\n\n{$disclosure}" : '';
-        $tagsBlock = $finalTags ? "\n\n{$finalTags}" : '';
-        $linkViral = $hasAffiliateLink ? "\n\n👉 Grab yours here before stock runs out: {$post->affiliate_url}" : '';
-        $linkTaglish = $hasAffiliateLink ? "\n\n🛒 Check out the deal here: {$post->affiliate_url}" : '';
-        $linkSpecs = $hasAffiliateLink ? "\n\n🔗 Order Link: {$post->affiliate_url}" : '';
-        $linkDefault = $hasAffiliateLink ? "\n\n🔗 Link: {$post->affiliate_url}" : '';
-
-        $title = $post->product_title ?? 'Featured Deal';
-        $price = $post->product_price ? "Price: {$post->product_price}" : '';
-
-        // AI or rule-based caption styling
-        switch ($style) {
-            case 'viral':
-                $caption = "🔥 SUPER SALE ALERT! 🔥\n\nCheck out {$title}!\n{$price}{$linkViral}{$disclosureBlock}{$tagsBlock}";
-                break;
-            case 'taglish':
-                $caption = "Sobrang sulit nito mga ka-budol! 😍\n\n{$title}\n{$price}{$linkTaglish}{$disclosureBlock}{$tagsBlock}";
-                break;
-            case 'specs':
-                $caption = "📌 Product Specification & Feature Breakdown:\n\n{$title}\n{$price}\n\nKey Highlights:\n• High quality build & premium performance\n• Verified shop reviews{$linkSpecs}{$disclosureBlock}{$tagsBlock}";
-                break;
-            default:
-                $caption = "✨ Check out this great deal on {$title}!\n{$price}{$linkDefault}{$disclosureBlock}{$tagsBlock}";
-                break;
-        }
-
-        $post->update([
-            'caption' => $caption,
-            'tags' => $finalTags,
+        $aiGen = AiContentGeneratorService::generateProductDeal([
+            'product_title' => $post->product_title ?? 'Featured Deal',
+            'product_description' => $post->product_description ?? '',
+            'product_price' => $post->product_price ?? '',
+            'shop_name' => $post->shop_name ?? '',
+            'affiliate_url' => $post->affiliate_url,
+            'caption_style' => $style,
         ]);
 
-        // Calculate and log AI usage stats
-        $promptText = trim(($post->product_title ?? '').' '.($post->product_description ?? '').' '.$post->affiliate_url);
-        $promptTokens = max(24, (int) (str_word_count($promptText) * 1.35));
-        $completionTokens = max(45, (int) (str_word_count($caption) * 1.35));
-        $totalTokens = $promptTokens + $completionTokens;
+        $post->update([
+            'caption' => $aiGen['caption'],
+            'tags' => $aiGen['tags'],
+        ]);
 
         $provider = Setting::get('ai_provider', 'openai');
         $model = Setting::get('ai_model', 'gpt-4o-mini');
@@ -330,21 +337,21 @@ class PostController extends Controller
             $provider,
             $model,
             $style,
-            $promptTokens,
-            $completionTokens,
-            $totalTokens
+            $aiGen['prompt_tokens'],
+            $aiGen['completion_tokens'],
+            $aiGen['total_tokens']
         );
 
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'caption' => $caption,
-                'tags' => $finalTags,
+                'caption' => $aiGen['caption'],
+                'tags' => $aiGen['tags'],
                 'post' => $post,
             ]);
         }
 
-        return back()->with('success', 'Caption generated successfully.');
+        return back()->with('success', 'AI Caption generated successfully.');
     }
 
     public function destroy(string $id)

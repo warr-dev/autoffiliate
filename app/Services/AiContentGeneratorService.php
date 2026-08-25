@@ -280,4 +280,203 @@ class AiContentGeneratorService
             'is_live_ai' => false,
         ];
     }
+
+    /**
+     * Generate AI or Dynamic Copywriting for a Product / Affiliate Deal Post.
+     */
+    public static function generateProductDeal(array $params): array
+    {
+        $title = $params['product_title'] ?? $params['title'] ?? 'Featured Product Deal';
+        $desc = $params['product_description'] ?? '';
+        $price = $params['product_price'] ?? '';
+        $shop = $params['shop_name'] ?? '';
+        $affiliateUrl = $params['affiliate_url'] ?? 'https://shopee.ph';
+        $style = $params['caption_style'] ?? $params['style'] ?? 'viral_ai';
+        $targetPage = $params['target_page'] ?? 'Tech Sulit Deals';
+
+        $defaultTags = Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH #BudolFinds');
+        $hasAffiliateLink = ! empty($affiliateUrl) && $affiliateUrl !== 'https://shopee.ph' && ! str_starts_with($affiliateUrl, 'https://facebook.com');
+        $disclosure = $hasAffiliateLink ? Setting::get('disclosure', 'Affiliate link. Price and availability may change anytime.') : '';
+
+        // Check if user has configured AI API key
+        $apiKey = Setting::get('ai_api_key');
+        $provider = Setting::get('ai_provider', 'openai');
+        $model = Setting::get('ai_model', 'gpt-4o-mini');
+        $systemPrompt = Setting::get('ai_system_prompt', 'You are an expert affiliate marketer and copywriter specializing in high-converting viral social media posts.');
+
+        if (! empty($apiKey)) {
+            $aiResult = self::callAiProductApi($provider, $apiKey, $model, $systemPrompt, [
+                'title' => $title,
+                'desc' => $desc,
+                'price' => $price,
+                'shop' => $shop,
+                'affiliate_url' => $affiliateUrl,
+                'style' => $style,
+                'target_page' => $targetPage,
+            ]);
+
+            if ($aiResult['success']) {
+                $caption = trim(
+                    $aiResult['caption'].
+                    ($hasAffiliateLink ? "\n\n🛒 Order / Buy Link: {$affiliateUrl}" : '').
+                    ($disclosure ? "\n\n".$disclosure : '').
+                    ($defaultTags ? "\n\n".$defaultTags : '')
+                );
+
+                return [
+                    'caption' => $caption,
+                    'tags' => $defaultTags,
+                    'prompt_tokens' => $aiResult['prompt_tokens'],
+                    'completion_tokens' => $aiResult['completion_tokens'],
+                    'total_tokens' => $aiResult['total_tokens'],
+                    'is_live_ai' => true,
+                ];
+            }
+        }
+
+        // Dynamic Rich Fallback Template for Products
+        return self::generateProductFallback([
+            'title' => $title,
+            'desc' => $desc,
+            'price' => $price,
+            'shop' => $shop,
+            'affiliate_url' => $affiliateUrl,
+            'style' => $style,
+            'target_page' => $targetPage,
+            'disclosure' => $disclosure,
+            'default_tags' => $defaultTags,
+            'has_link' => $hasAffiliateLink,
+        ]);
+    }
+
+    /**
+     * Call Live AI APIs for Product Deal Posts
+     */
+    protected static function callAiProductApi(string $provider, string $apiKey, string $model, string $systemPrompt, array $ctx): array
+    {
+        $styleInstructions = match ($ctx['style']) {
+            'viral_ai', 'viral' => 'Write a high-energy, viral affiliate post. Use engaging hook, eye-catching emojis, bullet points of key benefits, and strong FOMO/urgency call-to-action.',
+            'pinoy_taglish', 'taglish' => 'Write a natural, conversational Taglish "budol" friend recommendation. Sound genuine, relatable, and enthusiastic about how sulit this deal is.',
+            'specs_tech', 'specs' => 'Write a detailed tech enthusiast breakdown. Highlight build quality, key technical specifications, performance pros, and who should buy it.',
+            'urgency_flash', 'flash' => 'Write an urgent FLASH SALE / Voucher alert. Emphasize limited stocks, voucher stacking, price drop, and act-now urgency.',
+            'review_story', 'review' => 'Write a personal review and experience post. Explain why you love this product, daily use case, and rating (10/10).',
+            'aesthetic' => 'Write a clean, aesthetic lifestyle post. Focus on desk setup vibes, minimal design, productivity, and mood.',
+            'minimal' => 'Write a short, punchy 3-to-4 line minimalist deal post. No fluff, straight to value and benefits.',
+            default => 'Write an engaging, high-converting product showcase post with bullet points, price value, and clear call-to-action.',
+        };
+
+        $userPrompt = "Product Title: {$ctx['title']}\n".
+                      (! empty($ctx['price']) ? "Price: {$ctx['price']}\n" : '').
+                      (! empty($ctx['shop']) ? "Shop: {$ctx['shop']}\n" : '').
+                      (! empty($ctx['desc']) ? "Details: {$ctx['desc']}\n" : '').
+                      "Style Requirement: {$styleInstructions}\n\n".
+                      "Rules: Do NOT include links or hashtags in your response (they will be appended automatically). Do NOT output quotes or markdown code blocks.";
+
+        try {
+            if ($provider === 'openai' || $provider === 'groq' || $provider === 'openrouter') {
+                $endpoint = match ($provider) {
+                    'groq' => 'https://api.groq.com/openai/v1/chat/completions',
+                    'openrouter' => 'https://openrouter.ai/api/v1/chat/completions',
+                    default => 'https://api.openai.com/v1/chat/completions',
+                };
+
+                $resp = Http::timeout(30)->withHeaders([
+                    'Authorization' => "Bearer {$apiKey}",
+                    'Content-Type' => 'application/json',
+                ])->post($endpoint, [
+                    'model' => $model ?: 'gpt-4o-mini',
+                    'messages' => [
+                        ['role' => 'system', 'content' => $systemPrompt],
+                        ['role' => 'user', 'content' => $userPrompt],
+                    ],
+                    'temperature' => 0.85,
+                ]);
+
+                if ($resp->successful()) {
+                    $data = $resp->json();
+                    $content = $data['choices'][0]['message']['content'] ?? '';
+                    $usage = $data['usage'] ?? [];
+
+                    return [
+                        'success' => true,
+                        'caption' => trim($content),
+                        'prompt_tokens' => $usage['prompt_tokens'] ?? 80,
+                        'completion_tokens' => $usage['completion_tokens'] ?? 150,
+                        'total_tokens' => $usage['total_tokens'] ?? 230,
+                    ];
+                }
+            } elseif ($provider === 'gemini') {
+                $geminiModel = $model ?: 'gemini-1.5-flash';
+                $resp = Http::timeout(30)->post("https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$apiKey}", [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => "{$systemPrompt}\n\n{$userPrompt}"],
+                            ],
+                        ],
+                    ],
+                ]);
+
+                if ($resp->successful()) {
+                    $data = $resp->json();
+                    $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                    $meta = $data['usageMetadata'] ?? [];
+
+                    return [
+                        'success' => true,
+                        'caption' => trim($content),
+                        'prompt_tokens' => $meta['promptTokenCount'] ?? 85,
+                        'completion_tokens' => $meta['candidatesTokenCount'] ?? 160,
+                        'total_tokens' => $meta['totalTokenCount'] ?? 245,
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("[AiContentGenerator] Product AI call failed: {$e->getMessage()}. Using dynamic fallback.");
+        }
+
+        return ['success' => false];
+    }
+
+    /**
+     * Rich Dynamic Fallback Templates for Product Posts
+     */
+    protected static function generateProductFallback(array $ctx): array
+    {
+        $title = $ctx['title'];
+        $price = ! empty($ctx['price']) ? "💰 Price: {$ctx['price']}\n" : '';
+        $shop = ! empty($ctx['shop']) ? "🏬 Official Shop: {$ctx['shop']}\n" : '';
+        $style = $ctx['style'];
+        $link = $ctx['has_link'] ? "\n\n🛒 Order / Buy Link: {$ctx['affiliate_url']}" : '';
+
+        $body = match ($style) {
+            'viral_ai', 'viral' => "🔥 MEGA SULIT ALERT! Grab yours before it sells out! 🔥\n\n✨ {$title}\n{$price}{$shop}\nBakit sulit tong budol na to?\n✔ Premium quality & top-rated verified reviews\n✔ Super handy for daily desk / work setup\n✔ Great value for money deal today! 🚀\n\nDon't miss out while stock and sale price last! 👇",
+            'pinoy_taglish', 'taglish' => "Mga ka-budol, check out this super sulit find! 😍✨\n\n📌 {$title}\n{$price}{$shop}\nSobrang ganda nito mga idol, legit na 10/10 recommend sa desk at lifestyle setup! Walang pagsisisi sa quality at performance. 💯\n\nCheck out the deal bago pa magkaubusan! 👇",
+            'specs_tech', 'specs' => "⚡ TECH HIGHLIGHT & SPECIFICATION BREAKDOWN ⚡\n\n📦 {$title}\n{$price}{$shop}\nKey Features & Highlights:\n• High performance & premium durability\n• Optimized for modern productivity & gaming\n• Verified authentic seller with top ratings\n\nIdeal upgrade for your workstation! Check details below: 👇",
+            'urgency_flash', 'flash' => "🚨 LIMITED TIME FLASH SALE / PRICE DROP ALERT! 🚨\n\n💥 {$title}\n{$price}{$shop}\n⚠️ Stocks are moving fast! Make sure to collect your shop vouchers and coins upon checkout for maximum savings! 💸\n\nGrab it now before price reverts back! 👇",
+            'review_story', 'review' => "⭐ PERSONAL REVIEW & RECOMMENDATION ⭐\n\nBeen using and eyeing this gem: {$title}!\n{$price}{$shop}\nHonestly one of the best value purchases this month. Clean build, dependable, and truly exceeds expectations for its price point. Highly recommended! 👍\n\nGet yours here: 👇",
+            'aesthetic' => "🌸 DESK & LIFESTYLE UPGRADE ESSENTIAL 🌸\n\n✨ {$title}\n{$price}{$shop}\nElevate your aesthetic setup with this sleek and functional piece. Clean vibes, minimal clutter, and maximum satisfaction. ☕🌿\n\nDiscover the piece below: 👇",
+            'minimal' => "✨ Featured Deal: {$title}\n{$price}{$shop}\nClean, reliable, and verified sulit find.\nOrder link below: 👇",
+            default => "✨ Featured Deal: {$title}\n{$price}{$shop}\nCheck out this high quality, top-rated deal!\nHigh quality build, verified seller ratings, and great everyday value. 🚀",
+        };
+
+        $finalCaption = trim(
+            $body.
+            $link.
+            ($ctx['disclosure'] ? "\n\n".$ctx['disclosure'] : '').
+            ($ctx['default_tags'] ? "\n\n".$ctx['default_tags'] : '')
+        );
+
+        $promptTokens = max(30, (int) (str_word_count($title) * 1.35));
+        $completionTokens = max(60, (int) (str_word_count($finalCaption) * 1.35));
+
+        return [
+            'caption' => $finalCaption,
+            'tags' => $ctx['default_tags'],
+            'prompt_tokens' => $promptTokens,
+            'completion_tokens' => $completionTokens,
+            'total_tokens' => $promptTokens + $completionTokens,
+            'is_live_ai' => false,
+        ];
+    }
 }
