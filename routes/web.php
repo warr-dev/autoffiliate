@@ -71,11 +71,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/settings/token/exchange', [SettingsController::class, 'exchangeToken'])->name('settings.token.exchange');
     Route::post('/settings/token/verify', [SettingsController::class, 'verifyToken'])->name('settings.token.verify');
     Route::post('/settings/suggest-hashtags', [SettingsController::class, 'suggestHashtags'])->name('settings.hashtags.suggest');
+});
 
-    // =========================================================================
-    // FULL API SUITE (100% PARITY WITH AUTOPLATFORM API CLIENT & N8N WEBHOOKS)
-    // =========================================================================
-    Route::get('/api/health', fn () => response()->json(['status' => 'ok', 'version' => '1.0.0']));
+// =========================================================================
+// FULL API SUITE (100% PARITY WITH AUTOPLATFORM API CLIENT & N8N WEBHOOKS)
+// =========================================================================
+Route::get('/api/health', fn () => response()->json(['status' => 'ok', 'version' => '1.0.0']));
 
     Route::post('/api/extract', function (Request $request) {
         $url = $request->input('url');
@@ -258,7 +259,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     Route::post('/api/integrations/suggest-hashtags', [SettingsController::class, 'suggestHashtags']);
     Route::post('/api/webhooks/test', [SettingsController::class, 'testWebhook']);
-});
 
 // Secured Web-Cron Trigger for Hostinger / External Schedulers
 Route::get('/api/cron/workflows', function (Request $request) {
