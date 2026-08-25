@@ -207,7 +207,7 @@ class ShopeeExtractService
         $shopId = null;
         $itemId = null;
 
-        if (preg_match('/(?:i\.|product\/|[-/])(\d+)[.\/-](\d+)/', $url, $m)) {
+        if (preg_match('#(?:i\.|product/|[-/])(\d+)[./-](\d+)#', $url, $m)) {
             return ['shop_id' => $m[1], 'item_id' => $m[2]];
         }
 
@@ -221,7 +221,7 @@ class ShopeeExtractService
             ->get($url);
 
             $effUrl = (string) $resp->effectiveUri();
-            if ($effUrl && preg_match('/(?:i\.|product\/|[-/])(\d+)[.\/-](\d+)/', $effUrl, $m2)) {
+            if ($effUrl && preg_match('#(?:i\.|product/|[-/])(\d+)[./-](\d+)#', $effUrl, $m2)) {
                 return ['shop_id' => $m2[1], 'item_id' => $m2[2]];
             }
         } catch (\Exception $e) {}
