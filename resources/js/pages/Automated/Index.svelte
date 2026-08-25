@@ -7,10 +7,12 @@
         workflows = [],
         socialAccounts = [],
         settings = {},
+        logs: initialLogs = [],
     } = $props<{
         workflows?: Array<any>;
         socialAccounts?: Array<any>;
         settings?: Record<string, any>;
+        logs?: Array<AutomationLog>;
     }>();
 
     const API_BASE = '';
@@ -850,46 +852,14 @@
         },
     ]);
 
-    // Automation Logs Data
-    let logs = $state<AutomationLog[]>([
-        {
-            id: 'log_100',
-            timestamp: '2026-08-06 08:00:00',
-            type: 'scheduled',
-            ruleName: 'Dynamic Time-Aware AI Greeting & Interactive Fan Post',
-            dealTitle: 'Dynamic Time-Aware AI Interactive Greeting Post',
-            targetPage: 'Tech Sulit Deals',
-            status: 'SUCCESS',
-        },
-        {
-            id: 'log_101',
-            timestamp: '2026-08-06 12:00:04',
-            type: 'scheduled',
-            ruleName: 'Interactive Community Question & Poll',
-            dealTitle: 'Which gadget brand should we review next week?',
-            targetPage: 'Tech Sulit Deals',
-            status: 'SUCCESS',
-        },
-        {
-            id: 'log_102',
-            timestamp: '2026-08-06 14:15:30',
-            type: 'event',
-            ruleName: 'Shopee Price Drop > 40% OFF Alert',
-            dealTitle:
-                'Auto Extract & Instant Publish: Anker Fast Charger 50% OFF',
-            targetPage: 'Tech Sulit Deals',
-            status: 'SUCCESS',
-        },
-        {
-            id: 'log_103',
-            timestamp: '2026-08-05 16:00:00',
-            type: 'scheduled',
-            ruleName: 'Featured Brand & Promo Code Showcase',
-            dealTitle: 'Anker Official Brand Spotlight with Voucher',
-            targetPage: 'Tech Sulit Deals',
-            status: 'SUCCESS',
-        },
-    ]);
+    // Automation Logs Data (Initialized from database posts)
+    let logs = $state<AutomationLog[]>(Array.isArray(initialLogs) ? initialLogs : []);
+
+    $effect(() => {
+        if (Array.isArray(initialLogs)) {
+            logs = initialLogs;
+        }
+    });
 
     // Filtered Logs derived computation
     let filteredLogs = $derived(

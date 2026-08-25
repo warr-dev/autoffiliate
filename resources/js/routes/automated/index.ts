@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ exportMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -163,7 +163,7 @@ exportMethod.form = exportMethodForm
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 export const importMethod = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -178,7 +178,7 @@ importMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 importMethod.url = (options?: RouteQueryOptions) => {
@@ -187,7 +187,7 @@ importMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -197,7 +197,7 @@ importMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -207,7 +207,7 @@ const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'pos
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 importMethodForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -219,7 +219,7 @@ importMethod.form = importMethodForm
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -234,7 +234,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -243,7 +243,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -253,7 +253,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -263,7 +263,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -275,7 +275,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 export const execute = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -290,7 +290,7 @@ execute.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 execute.url = (options?: RouteQueryOptions) => {
@@ -299,7 +299,7 @@ execute.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 execute.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -309,7 +309,7 @@ execute.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 const executeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -319,7 +319,7 @@ const executeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 executeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -331,7 +331,7 @@ execute.form = executeForm
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggle
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 export const toggle = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -346,7 +346,7 @@ toggle.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggle
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 toggle.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -373,7 +373,7 @@ toggle.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggle
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 toggle.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -383,7 +383,7 @@ toggle.post = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggle
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 const toggleForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -393,7 +393,7 @@ const toggleForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggle
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 toggleForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -405,7 +405,7 @@ toggle.form = toggleForm
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -420,7 +420,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -447,7 +447,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -457,7 +457,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -472,7 +472,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

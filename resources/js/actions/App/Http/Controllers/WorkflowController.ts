@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 const exportMethod197160f9f4bff9afdb7599c0b7b5d91d = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ exportMethod197160f9f4bff9afdb7599c0b7b5d91d.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod197160f9f4bff9afdb7599c0b7b5d91d.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ exportMethod197160f9f4bff9afdb7599c0b7b5d91d.url = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod197160f9f4bff9afdb7599c0b7b5d91d.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ exportMethod197160f9f4bff9afdb7599c0b7b5d91d.get = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod197160f9f4bff9afdb7599c0b7b5d91d.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ exportMethod197160f9f4bff9afdb7599c0b7b5d91d.head = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 const exportMethod197160f9f4bff9afdb7599c0b7b5d91dForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const exportMethod197160f9f4bff9afdb7599c0b7b5d91dForm = (options?: RouteQueryOp
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod197160f9f4bff9afdb7599c0b7b5d91dForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ exportMethod197160f9f4bff9afdb7599c0b7b5d91dForm.get = (options?: RouteQueryOpti
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/automated/export'
 */
 exportMethod197160f9f4bff9afdb7599c0b7b5d91dForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -162,7 +162,7 @@ exportMethod197160f9f4bff9afdb7599c0b7b5d91dForm.head = (options?: RouteQueryOpt
 exportMethod197160f9f4bff9afdb7599c0b7b5d91d.form = exportMethod197160f9f4bff9afdb7599c0b7b5d91dForm
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/api/workflows/export'
 */
 const exportMethoded033160fa6801c6ed0ea2d1e13b96fe = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -177,7 +177,7 @@ exportMethoded033160fa6801c6ed0ea2d1e13b96fe.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/api/workflows/export'
 */
 exportMethoded033160fa6801c6ed0ea2d1e13b96fe.url = (options?: RouteQueryOptions) => {
@@ -186,7 +186,7 @@ exportMethoded033160fa6801c6ed0ea2d1e13b96fe.url = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/api/workflows/export'
 */
 exportMethoded033160fa6801c6ed0ea2d1e13b96fe.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -196,7 +196,7 @@ exportMethoded033160fa6801c6ed0ea2d1e13b96fe.get = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/api/workflows/export'
 */
 exportMethoded033160fa6801c6ed0ea2d1e13b96fe.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -206,7 +206,7 @@ exportMethoded033160fa6801c6ed0ea2d1e13b96fe.head = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/api/workflows/export'
 */
 const exportMethoded033160fa6801c6ed0ea2d1e13b96feForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -216,7 +216,7 @@ const exportMethoded033160fa6801c6ed0ea2d1e13b96feForm = (options?: RouteQueryOp
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/api/workflows/export'
 */
 exportMethoded033160fa6801c6ed0ea2d1e13b96feForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -226,7 +226,7 @@ exportMethoded033160fa6801c6ed0ea2d1e13b96feForm.get = (options?: RouteQueryOpti
 
 /**
 * @see \App\Http\Controllers\WorkflowController::exportMethod
-* @see app/Http/Controllers/WorkflowController.php:273
+* @see app/Http/Controllers/WorkflowController.php:306
 * @route '/api/workflows/export'
 */
 exportMethoded033160fa6801c6ed0ea2d1e13b96feForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -253,7 +253,7 @@ export const exportMethod = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 const importMethod330408233ea526a475d296bade6283da = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -268,7 +268,7 @@ importMethod330408233ea526a475d296bade6283da.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 importMethod330408233ea526a475d296bade6283da.url = (options?: RouteQueryOptions) => {
@@ -277,7 +277,7 @@ importMethod330408233ea526a475d296bade6283da.url = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 importMethod330408233ea526a475d296bade6283da.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -287,7 +287,7 @@ importMethod330408233ea526a475d296bade6283da.post = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 const importMethod330408233ea526a475d296bade6283daForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -297,7 +297,7 @@ const importMethod330408233ea526a475d296bade6283daForm = (options?: RouteQueryOp
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/automated/import'
 */
 importMethod330408233ea526a475d296bade6283daForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -308,7 +308,7 @@ importMethod330408233ea526a475d296bade6283daForm.post = (options?: RouteQueryOpt
 importMethod330408233ea526a475d296bade6283da.form = importMethod330408233ea526a475d296bade6283daForm
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/api/workflows/import'
 */
 const importMethod379325e14642f8461cbd5d5e7e63296c = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -323,7 +323,7 @@ importMethod379325e14642f8461cbd5d5e7e63296c.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/api/workflows/import'
 */
 importMethod379325e14642f8461cbd5d5e7e63296c.url = (options?: RouteQueryOptions) => {
@@ -332,7 +332,7 @@ importMethod379325e14642f8461cbd5d5e7e63296c.url = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/api/workflows/import'
 */
 importMethod379325e14642f8461cbd5d5e7e63296c.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -342,7 +342,7 @@ importMethod379325e14642f8461cbd5d5e7e63296c.post = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/api/workflows/import'
 */
 const importMethod379325e14642f8461cbd5d5e7e63296cForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -352,7 +352,7 @@ const importMethod379325e14642f8461cbd5d5e7e63296cForm = (options?: RouteQueryOp
 
 /**
 * @see \App\Http\Controllers\WorkflowController::importMethod
-* @see app/Http/Controllers/WorkflowController.php:317
+* @see app/Http/Controllers/WorkflowController.php:350
 * @route '/api/workflows/import'
 */
 importMethod379325e14642f8461cbd5d5e7e63296cForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -374,7 +374,7 @@ export const importMethod = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 const store0ec9c4e992701cfe8f107223c11bc108 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -389,7 +389,7 @@ store0ec9c4e992701cfe8f107223c11bc108.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 store0ec9c4e992701cfe8f107223c11bc108.url = (options?: RouteQueryOptions) => {
@@ -398,7 +398,7 @@ store0ec9c4e992701cfe8f107223c11bc108.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 store0ec9c4e992701cfe8f107223c11bc108.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -408,7 +408,7 @@ store0ec9c4e992701cfe8f107223c11bc108.post = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 const store0ec9c4e992701cfe8f107223c11bc108Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -418,7 +418,7 @@ const store0ec9c4e992701cfe8f107223c11bc108Form = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/automated'
 */
 store0ec9c4e992701cfe8f107223c11bc108Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -429,7 +429,7 @@ store0ec9c4e992701cfe8f107223c11bc108Form.post = (options?: RouteQueryOptions): 
 store0ec9c4e992701cfe8f107223c11bc108.form = store0ec9c4e992701cfe8f107223c11bc108Form
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/api/workflows/rules'
 */
 const store2f2a0c62402f67f7b337c3ece16d90cc = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -444,7 +444,7 @@ store2f2a0c62402f67f7b337c3ece16d90cc.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/api/workflows/rules'
 */
 store2f2a0c62402f67f7b337c3ece16d90cc.url = (options?: RouteQueryOptions) => {
@@ -453,7 +453,7 @@ store2f2a0c62402f67f7b337c3ece16d90cc.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/api/workflows/rules'
 */
 store2f2a0c62402f67f7b337c3ece16d90cc.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -463,7 +463,7 @@ store2f2a0c62402f67f7b337c3ece16d90cc.post = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/api/workflows/rules'
 */
 const store2f2a0c62402f67f7b337c3ece16d90ccForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -473,7 +473,7 @@ const store2f2a0c62402f67f7b337c3ece16d90ccForm = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\WorkflowController::store
-* @see app/Http/Controllers/WorkflowController.php:28
+* @see app/Http/Controllers/WorkflowController.php:61
 * @route '/api/workflows/rules'
 */
 store2f2a0c62402f67f7b337c3ece16d90ccForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -495,7 +495,7 @@ export const store = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 const executef616d2f67c2aca48bea13c99d26d8144 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -510,7 +510,7 @@ executef616d2f67c2aca48bea13c99d26d8144.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 executef616d2f67c2aca48bea13c99d26d8144.url = (options?: RouteQueryOptions) => {
@@ -519,7 +519,7 @@ executef616d2f67c2aca48bea13c99d26d8144.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 executef616d2f67c2aca48bea13c99d26d8144.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -529,7 +529,7 @@ executef616d2f67c2aca48bea13c99d26d8144.post = (options?: RouteQueryOptions): Ro
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 const executef616d2f67c2aca48bea13c99d26d8144Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -539,7 +539,7 @@ const executef616d2f67c2aca48bea13c99d26d8144Form = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/automated/execute'
 */
 executef616d2f67c2aca48bea13c99d26d8144Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -550,7 +550,7 @@ executef616d2f67c2aca48bea13c99d26d8144Form.post = (options?: RouteQueryOptions)
 executef616d2f67c2aca48bea13c99d26d8144.form = executef616d2f67c2aca48bea13c99d26d8144Form
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/api/workflows/execute'
 */
 const execute17e2555789255b87bcca6c09b17de1bb = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -565,7 +565,7 @@ execute17e2555789255b87bcca6c09b17de1bb.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/api/workflows/execute'
 */
 execute17e2555789255b87bcca6c09b17de1bb.url = (options?: RouteQueryOptions) => {
@@ -574,7 +574,7 @@ execute17e2555789255b87bcca6c09b17de1bb.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/api/workflows/execute'
 */
 execute17e2555789255b87bcca6c09b17de1bb.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -584,7 +584,7 @@ execute17e2555789255b87bcca6c09b17de1bb.post = (options?: RouteQueryOptions): Ro
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/api/workflows/execute'
 */
 const execute17e2555789255b87bcca6c09b17de1bbForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -594,7 +594,7 @@ const execute17e2555789255b87bcca6c09b17de1bbForm = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\WorkflowController::execute
-* @see app/Http/Controllers/WorkflowController.php:105
+* @see app/Http/Controllers/WorkflowController.php:138
 * @route '/api/workflows/execute'
 */
 execute17e2555789255b87bcca6c09b17de1bbForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -616,7 +616,7 @@ export const execute = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 const toggleStatusc72446fb39b1b3884ca40b8581d80463 = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -631,7 +631,7 @@ toggleStatusc72446fb39b1b3884ca40b8581d80463.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 toggleStatusc72446fb39b1b3884ca40b8581d80463.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -658,7 +658,7 @@ toggleStatusc72446fb39b1b3884ca40b8581d80463.url = (args: { id: string | number 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 toggleStatusc72446fb39b1b3884ca40b8581d80463.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -668,7 +668,7 @@ toggleStatusc72446fb39b1b3884ca40b8581d80463.post = (args: { id: string | number
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 const toggleStatusc72446fb39b1b3884ca40b8581d80463Form = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -678,7 +678,7 @@ const toggleStatusc72446fb39b1b3884ca40b8581d80463Form = (args: { id: string | n
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/automated/{id}/toggle'
 */
 toggleStatusc72446fb39b1b3884ca40b8581d80463Form.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -689,7 +689,7 @@ toggleStatusc72446fb39b1b3884ca40b8581d80463Form.post = (args: { id: string | nu
 toggleStatusc72446fb39b1b3884ca40b8581d80463.form = toggleStatusc72446fb39b1b3884ca40b8581d80463Form
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/api/workflows/rules/{id}/status'
 */
 const toggleStatus000b49339a52f8090087438a59516318 = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -704,7 +704,7 @@ toggleStatus000b49339a52f8090087438a59516318.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/api/workflows/rules/{id}/status'
 */
 toggleStatus000b49339a52f8090087438a59516318.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -731,7 +731,7 @@ toggleStatus000b49339a52f8090087438a59516318.url = (args: { id: string | number 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/api/workflows/rules/{id}/status'
 */
 toggleStatus000b49339a52f8090087438a59516318.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -741,7 +741,7 @@ toggleStatus000b49339a52f8090087438a59516318.put = (args: { id: string | number 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/api/workflows/rules/{id}/status'
 */
 const toggleStatus000b49339a52f8090087438a59516318Form = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -756,7 +756,7 @@ const toggleStatus000b49339a52f8090087438a59516318Form = (args: { id: string | n
 
 /**
 * @see \App\Http\Controllers\WorkflowController::toggleStatus
-* @see app/Http/Controllers/WorkflowController.php:92
+* @see app/Http/Controllers/WorkflowController.php:125
 * @route '/api/workflows/rules/{id}/status'
 */
 toggleStatus000b49339a52f8090087438a59516318Form.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -783,7 +783,7 @@ export const toggleStatus = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 const destroyad91159fa8c713556c37cc2bf4378fe1 = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -798,7 +798,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 destroyad91159fa8c713556c37cc2bf4378fe1.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -825,7 +825,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1.url = (args: { id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 destroyad91159fa8c713556c37cc2bf4378fe1.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -835,7 +835,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1.delete = (args: { id: string | number } 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 const destroyad91159fa8c713556c37cc2bf4378fe1Form = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -850,7 +850,7 @@ const destroyad91159fa8c713556c37cc2bf4378fe1Form = (args: { id: string | number
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/automated/{id}'
 */
 destroyad91159fa8c713556c37cc2bf4378fe1Form.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -866,7 +866,7 @@ destroyad91159fa8c713556c37cc2bf4378fe1Form.delete = (args: { id: string | numbe
 destroyad91159fa8c713556c37cc2bf4378fe1.form = destroyad91159fa8c713556c37cc2bf4378fe1Form
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/api/workflows/rules/{id}'
 */
 const destroyfe5c3f0ae3aa197d39f29307249517ab = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -881,7 +881,7 @@ destroyfe5c3f0ae3aa197d39f29307249517ab.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/api/workflows/rules/{id}'
 */
 destroyfe5c3f0ae3aa197d39f29307249517ab.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -908,7 +908,7 @@ destroyfe5c3f0ae3aa197d39f29307249517ab.url = (args: { id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/api/workflows/rules/{id}'
 */
 destroyfe5c3f0ae3aa197d39f29307249517ab.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -918,7 +918,7 @@ destroyfe5c3f0ae3aa197d39f29307249517ab.delete = (args: { id: string | number } 
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/api/workflows/rules/{id}'
 */
 const destroyfe5c3f0ae3aa197d39f29307249517abForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -933,7 +933,7 @@ const destroyfe5c3f0ae3aa197d39f29307249517abForm = (args: { id: string | number
 
 /**
 * @see \App\Http\Controllers\WorkflowController::destroy
-* @see app/Http/Controllers/WorkflowController.php:259
+* @see app/Http/Controllers/WorkflowController.php:292
 * @route '/api/workflows/rules/{id}'
 */
 destroyfe5c3f0ae3aa197d39f29307249517abForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

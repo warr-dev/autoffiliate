@@ -18,10 +18,43 @@ class WorkflowController extends Controller
 {
     public function index(): Response
     {
+        $posts = Post::latest()->take(50)->get();
+
+        $executionLogs = $posts->map(function ($post) {
+            $title = $post->product_title ?? 'Community Post';
+            $ruleName = str_contains($title, '·')
+                ? trim(explode('·', $title)[1] ?? $title)
+                : $title;
+
+            $type = (str_contains($title, '✨') || str_contains($title, 'Community Lounge') || str_contains($title, 'wf_'))
+                ? 'scheduled'
+                : 'manual';
+
+            $status = match (strtolower($post->status ?? '')) {
+                'published' => 'SUCCESS',
+                'draft' => 'SUCCESS',
+                'failed' => 'FAILED',
+                default => 'SUCCESS',
+            };
+
+            return [
+                'id' => $post->id,
+                'timestamp' => $post->created_at ? $post->created_at->timezone('Asia/Manila')->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s'),
+                'type' => $type,
+                'ruleName' => $ruleName,
+                'dealTitle' => $title,
+                'targetPage' => Setting::get('default_target_page', 'Tech Sulit Deals'),
+                'status' => $status,
+                'postUrl' => $post->facebook_post_url,
+                'caption' => $post->caption,
+            ];
+        });
+
         return Inertia::render('Automated/Index', [
             'workflows' => WorkflowRule::latest()->get(),
             'socialAccounts' => SocialAccount::where('platform', 'facebook')->get(),
             'settings' => Setting::query()->pluck('value', 'key'),
+            'logs' => $executionLogs,
         ]);
     }
 
