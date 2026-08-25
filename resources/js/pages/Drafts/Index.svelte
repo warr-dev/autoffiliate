@@ -15,6 +15,12 @@
     let creating = $state(false);
     let searchQuery = $state('');
 
+    let stats = $derived({
+        total: posts.length,
+        drafts: posts.filter((p: any) => p.status === 'draft' || !p.status).length,
+        posted: posts.filter((p: any) => p.status === 'posted' || p.status === 'published').length,
+    });
+
     let filteredPosts = $derived(
         posts.filter((p: any) => {
             if (!searchQuery.trim()) return true;
@@ -55,7 +61,10 @@
     let publishingId = $state<string | null>(null);
     let generatingId = $state<string | null>(null);
 
-    function handlePublish(id: string) {
+    function handlePublish(id: string, e: MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
         if (!confirm('Publish this draft to your connected Facebook page(s) now?')) {
             return;
         }
@@ -72,7 +81,10 @@
         );
     }
 
-    function handleGenerateCaption(id: string, style = 'viral_ai') {
+    function handleGenerateCaption(id: string, e: MouseEvent, style = 'viral_ai') {
+        e.preventDefault();
+        e.stopPropagation();
+
         generatingId = id;
         router.post(
             `/drafts/${id}/generate-caption`,
@@ -85,7 +97,10 @@
         );
     }
 
-    function handleDelete(id: string) {
+    function handleDelete(id: string, e: MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
         if (confirm('Are you sure you want to delete this draft?')) {
             router.delete(`/drafts/${id}`);
         }
@@ -93,173 +108,142 @@
 </script>
 
 <AppLayout title="Post Drafts">
-    <div class="px-4 py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-        <!-- Header Row -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-extrabold tracking-tight">
-                    <span
-                        class="bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent"
-                    >
-                        Post Drafts & Media Editor
-                    </span>
-                </h1>
-                <p class="text-gray-400 text-sm mt-1">
-                    Manage, edit with live Facebook preview, and publish your affiliate drafts
-                </p>
+    <div class="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        <!-- Hero Header (Reference Style) -->
+        <div class="text-center animate-slideUp">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-4">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Platform Ready
             </div>
-            <div class="flex items-center gap-2.5">
-                <a
-                    href="/create"
-                    class="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white rounded-xl text-xs font-bold border border-gray-700 transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                    <span>🔗 Paste Shopee Link</span>
-                </a>
-                <button
-                    onclick={() => (showModal = true)}
-                    class="px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/20 transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                    <span>+ New Draft</span>
-                </button>
-            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+                <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
+                    Affiliate Content Generator
+                </span>
+            </h1>
+            <p class="text-gray-400 text-sm max-w-xl mx-auto">
+                Paste a Shopee PH link → auto-extract media → generate viral drafts → publish to Facebook
+            </p>
         </div>
 
-        <!-- Filter & Search Bar -->
-        {#if posts.length > 0}
-            <div class="flex items-center justify-between gap-3 bg-gray-900/60 p-3 rounded-2xl border border-gray-800/80 backdrop-blur-xl">
-                <div class="flex-1 relative">
-                    <input
-                        type="text"
-                        bind:value={searchQuery}
-                        placeholder="Search drafts by title, keyword, or ID..."
-                        class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-indigo-500/60"
-                    />
-                    {#if searchQuery}
-                        <button
-                            type="button"
-                            onclick={() => (searchQuery = '')}
-                            class="absolute right-3 top-2 text-gray-500 hover:text-white text-xs cursor-pointer"
-                        >
-                            ✕
-                        </button>
-                    {/if}
-                </div>
-                <div class="text-xs text-gray-400 font-mono hidden sm:block px-2">
-                    {filteredPosts.length} / {posts.length} draft(s)
-                </div>
-            </div>
-        {/if}
-
-        <!-- Draft Cards Grid -->
-        {#if filteredPosts.length === 0}
-            <div
-                class="p-12 text-center border border-gray-800/80 rounded-2xl bg-gray-900/60 backdrop-blur-xl space-y-3"
+        <!-- Quick Action Create Card (Reference Style) -->
+        <div class="max-w-2xl mx-auto animate-slideUp">
+            <a
+                href="/create"
+                class="block p-6 sm:p-8 text-center group cursor-pointer bg-gray-900/70 hover:bg-gray-900 border border-gray-800/80 hover:border-indigo-500/50 rounded-2xl transition-all shadow-xl hover:shadow-indigo-500/10"
             >
-                <div
-                    class="w-12 h-12 rounded-xl bg-gray-800/60 flex items-center justify-center mx-auto text-2xl"
-                >
-                    📝
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center mx-auto mb-3.5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-indigo-500/20">
+                    <span class="text-2xl text-white font-bold">＋</span>
                 </div>
-                <p class="text-gray-300 font-semibold text-sm">
-                    {searchQuery ? 'No drafts matching your search query.' : 'No post drafts available.'}
-                </p>
-                <p class="text-xs text-gray-500">
-                    Paste a Shopee product link or click "+ New Draft" to create one with AI copy.
-                </p>
-                <div class="pt-2 flex justify-center gap-3">
-                    <a
-                        href="/create"
-                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold"
-                    >
-                        Extract Shopee Link
-                    </a>
+                <h2 class="text-lg font-bold text-gray-100 mb-1">Create New Post</h2>
+                <p class="text-gray-400 text-xs">Paste a Shopee PH affiliate link to extract media & generate copy</p>
+            </a>
+        </div>
+
+        <!-- Stats Counters (Reference Style) -->
+        <div class="grid grid-cols-3 gap-4 max-w-xl mx-auto">
+            {#each [
+                { label: 'Total Posts', value: stats.total, color: 'from-indigo-400 to-purple-500' },
+                { label: 'Drafts', value: stats.drafts, color: 'from-amber-400 to-orange-500' },
+                { label: 'Published', value: stats.posted, color: 'from-emerald-400 to-teal-500' },
+            ] as stat}
+                <div class="p-4 rounded-2xl bg-gray-900/60 border border-gray-800/80 text-center shadow-md">
+                    <div class="text-2xl font-bold bg-gradient-to-r {stat.color} bg-clip-text text-transparent">
+                        {stat.value}
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">{stat.label}</div>
                 </div>
+            {/each}
+        </div>
+
+        <!-- Recent Posts / Drafts Section (Reference List Style) -->
+        <div class="max-w-3xl mx-auto space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-semibold text-gray-200">
+                    Recent Drafts & Posts
+                </h2>
+                {#if posts.length > 0}
+                    <div class="relative w-48 sm:w-64">
+                        <input
+                            type="text"
+                            bind:value={searchQuery}
+                            placeholder="Filter drafts..."
+                            class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-indigo-500"
+                        />
+                    </div>
+                {/if}
             </div>
-        {:else}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {#each filteredPosts as post (post.id)}
-                    {@const mediaCount = Array.isArray(post.media_files) ? post.media_files.length : (post.media_files ? 1 : 0)}
-                    <div
-                        class="bg-gray-900/70 backdrop-blur-xl rounded-2xl border border-gray-800/80 p-5 flex flex-col justify-between hover:border-indigo-500/50 transition-all shadow-xl group hover:shadow-indigo-500/5"
-                    >
-                        <div>
-                            <!-- Card Top Badges -->
-                            <div class="flex items-center justify-between mb-3">
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase
-                                        {post.status === 'published' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400'}"
-                                >
-                                    {post.status || 'draft'}
-                                </span>
-                                <div class="flex items-center gap-2">
-                                    {#if mediaCount > 0}
-                                        <span class="text-[11px] text-gray-400 bg-gray-950/80 px-2 py-0.5 rounded-md border border-gray-800">
-                                            🖼️ {mediaCount}
-                                        </span>
-                                    {/if}
-                                    <span class="text-[11px] text-gray-500 font-mono">ID: {post.id}</span>
+
+            {#if filteredPosts.length === 0}
+                <div class="p-12 text-center border border-gray-800/80 rounded-2xl bg-gray-900/60 backdrop-blur-xl">
+                    <div class="text-4xl mb-3 opacity-30">📦</div>
+                    <p class="text-gray-400 font-medium text-sm">No post drafts available</p>
+                    <p class="text-xs text-gray-500 mt-1">Paste a Shopee link to get started</p>
+                </div>
+            {:else}
+                <div class="space-y-2.5">
+                    {#each filteredPosts as post (post.id)}
+                        {@const mediaCount = Array.isArray(post.media_files) ? post.media_files.length : (post.media_files ? 1 : 0)}
+                        <a
+                            href="/drafts/{post.id}"
+                            class="p-4 rounded-2xl bg-gray-900/70 hover:bg-gray-900 border border-gray-800/80 hover:border-indigo-500/50 flex items-center justify-between gap-3 transition-all cursor-pointer shadow-md group"
+                        >
+                            <div class="flex items-center gap-3.5 min-w-0">
+                                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/60 flex items-center justify-center flex-shrink-0 text-base shadow-sm">
+                                    {mediaCount > 0 ? '🖼️' : '🔗'}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-gray-200 group-hover:text-indigo-300 transition-colors truncate">
+                                        {post.product_title || 'Untitled Post'}
+                                    </p>
+                                    <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
+                                        <span>{new Date(post.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                        <span>·</span>
+                                        <span>{mediaCount} media</span>
+                                        {#if post.product_price}
+                                            <span>·</span>
+                                            <span class="text-emerald-400 font-bold font-mono">{post.product_price}</span>
+                                        {/if}
+                                    </p>
                                 </div>
                             </div>
 
-                            <!-- Clickable Title linking to detail editor -->
-                            <a
-                                href="/drafts/{post.id}"
-                                class="block text-base font-bold text-gray-100 group-hover:text-indigo-300 transition-colors mb-1 line-clamp-2 leading-snug cursor-pointer"
-                            >
-                                {post.product_title || 'Shopee Sulit Deal'}
-                            </a>
+                            <div class="flex items-center gap-2.5 flex-shrink-0 ml-3">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase
+                                    {post.status === 'posted' || post.status === 'published' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
+                                     post.status === 'publishing' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 
+                                     post.status === 'failed' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
+                                     'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
+                                    <span class="w-1.5 h-1.5 rounded-full 
+                                        {post.status === 'posted' || post.status === 'published' ? 'bg-emerald-400' : 
+                                         post.status === 'publishing' ? 'bg-indigo-400 animate-ping' : 
+                                         post.status === 'failed' ? 'bg-red-400' : 
+                                         'bg-amber-400 animate-pulse'}"></span>
+                                    {post.status === 'posted' || post.status === 'published' ? '✓ Posted' : 
+                                     post.status === 'publishing' ? '⌛ Publishing...' : 
+                                     post.status === 'failed' ? '❌ Failed' : 
+                                     '✎ Draft'}
+                                </span>
 
-                            <!-- Price Pill -->
-                            {#if post.product_price}
-                                <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md text-[11px] font-bold text-emerald-400 font-mono mb-2">
-                                    💰 {post.product_price}
-                                </div>
-                            {/if}
-
-                            <!-- Affiliate Link -->
-                            <p class="text-[11px] text-indigo-400 font-mono truncate mb-3">
-                                🔗 {post.affiliate_url}
-                            </p>
-
-                            <!-- Caption Preview Snippet -->
-                            <a
-                                href="/drafts/{post.id}"
-                                class="block text-xs text-gray-300 line-clamp-3 bg-gray-950/60 hover:bg-gray-950 p-3 rounded-xl border border-gray-800/60 mb-4 font-sans leading-relaxed transition-colors cursor-pointer"
-                            >
-                                {post.caption || 'No caption generated yet. Click to write or generate with AI.'}
-                            </a>
-                        </div>
-
-                        <!-- Card Action Footer -->
-                        <div class="flex items-center justify-between pt-3 border-t border-gray-800/60 mt-2">
-                            <a
-                                href="/drafts/{post.id}"
-                                class="px-3 py-1.5 bg-gray-800 hover:bg-indigo-600/30 text-gray-300 hover:text-indigo-200 border border-gray-700/80 hover:border-indigo-500/40 rounded-xl text-xs font-semibold transition-all flex items-center gap-1"
-                            >
-                                <span>✏️ Edit & Preview</span>
-                            </a>
-
-                            <div class="flex items-center gap-1">
                                 <button
                                     type="button"
-                                    onclick={() => handleGenerateCaption(post.id)}
+                                    onclick={(e) => handleGenerateCaption(post.id, e)}
                                     disabled={generatingId === post.id}
-                                    class="p-2 rounded-xl text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 transition-colors cursor-pointer disabled:opacity-50"
-                                    title="Regenerate viral AI caption"
+                                    class="p-1.5 text-gray-400 hover:text-indigo-300 rounded-lg hover:bg-indigo-500/10 transition-colors cursor-pointer"
+                                    title="AI Re-roll caption"
                                 >
                                     {#if generatingId === post.id}
                                         <span class="animate-spin text-xs">🌀</span>
                                     {:else}
-                                        <span>⚡</span>
+                                        <span>✨</span>
                                     {/if}
                                 </button>
 
                                 <button
                                     type="button"
-                                    onclick={() => handlePublish(post.id)}
+                                    onclick={(e) => handlePublish(post.id, e)}
                                     disabled={publishingId === post.id}
-                                    class="p-2 rounded-xl text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-colors cursor-pointer disabled:opacity-50"
-                                    title="Publish to Facebook Page"
+                                    class="p-1.5 text-gray-400 hover:text-emerald-400 rounded-lg hover:bg-emerald-500/10 transition-colors cursor-pointer"
+                                    title="Publish to Facebook"
                                 >
                                     {#if publishingId === post.id}
                                         <span class="animate-spin text-xs">🌀</span>
@@ -270,133 +254,17 @@
 
                                 <button
                                     type="button"
-                                    onclick={() => handleDelete(post.id)}
-                                    class="p-2 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
-                                    title="Delete Draft"
+                                    onclick={(e) => handleDelete(post.id, e)}
+                                    class="p-1.5 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
+                                    title="Delete post draft"
                                 >
                                     🗑️
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                {/each}
-            </div>
-        {/if}
-
-        <!-- New Draft Modal -->
-        {#if showModal}
-            <div
-                class="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fadeIn"
-            >
-                <div
-                    class="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4"
-                >
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-800">
-                        <h2 class="text-base font-bold text-white flex items-center gap-2">
-                            <span>✨</span> Create New AI Draft
-                        </h2>
-                        <button
-                            type="button"
-                            onclick={() => (showModal = false)}
-                            class="text-gray-400 hover:text-white"
-                        >✕</button>
-                    </div>
-
-                    <form onsubmit={handleCreate} class="space-y-4">
-                        <div>
-                            <label
-                                for="modal_url"
-                                class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1"
-                                >Shopee Affiliate Link URL <span class="text-red-400">*</span></label
-                            >
-                            <input
-                                id="modal_url"
-                                type="url"
-                                bind:value={affiliate_url}
-                                placeholder="https://s.shopee.ph/..."
-                                required
-                                class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
-                            />
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label
-                                    for="modal_title"
-                                    class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
-                                    >Title (Optional)</label
-                                >
-                                <input
-                                    id="modal_title"
-                                    type="text"
-                                    bind:value={product_title}
-                                    placeholder="e.g. Wireless Earbuds"
-                                    class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label
-                                    for="modal_price"
-                                    class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1"
-                                    >Price (Optional)</label
-                                >
-                                <input
-                                    id="modal_price"
-                                    type="text"
-                                    bind:value={product_price}
-                                    placeholder="e.g. ₱599"
-                                    class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <span class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">AI Copywriting Style</span>
-                            <div class="grid grid-cols-2 gap-2">
-                                {#each [
-                                    { id: 'viral_ai', label: '✨ Viral Hook', desc: 'FOMO & urgency' },
-                                    { id: 'pinoy_taglish', label: '🇵🇭 Pinoy Tropa', desc: 'Budol vibes' },
-                                    { id: 'specs_tech', label: '💻 Tech Specs', desc: 'Detailed specs' },
-                                    { id: 'urgency_flash', label: '🚨 Flash Sale', desc: 'Price drop alert' },
-                                ] as style}
-                                    <button
-                                        type="button"
-                                        onclick={() => (captionStyle = style.id)}
-                                        class="p-2 rounded-xl text-left border text-xs cursor-pointer transition-colors
-                                            {captionStyle === style.id
-                                            ? 'bg-indigo-500/20 border-indigo-500 text-indigo-200 font-semibold'
-                                            : 'bg-gray-950 border-gray-800 text-gray-400 hover:text-white'}"
-                                    >
-                                        <div>{style.label}</div>
-                                        <div class="text-[10px] opacity-70">{style.desc}</div>
-                                    </button>
-                                {/each}
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end space-x-3 pt-3 border-t border-gray-800">
-                            <button
-                                type="button"
-                                onclick={() => (showModal = false)}
-                                class="px-4 py-2 bg-gray-800 text-gray-300 hover:text-white rounded-xl text-xs font-medium cursor-pointer"
-                                >Cancel</button
-                            >
-                            <button
-                                type="submit"
-                                disabled={creating || !affiliate_url.trim()}
-                                class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-emerald-500 text-white rounded-xl text-xs font-bold shadow-md cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
-                            >
-                                {#if creating}
-                                    <span class="animate-spin">🌀</span>
-                                    <span>Generating...</span>
-                                {:else}
-                                    <span>✨ Create with AI</span>
-                                {/if}
-                            </button>
-                        </div>
-                    </form>
+                        </a>
+                    {/each}
                 </div>
-            </div>
-        {/if}
+            {/if}
+        </div>
     </div>
 </AppLayout>
