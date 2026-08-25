@@ -137,7 +137,7 @@ importMethodForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post
 importMethod.form = importMethodForm
 
 /**
-* @see routes/web.php:53
+* @see routes/web.php:56
 * @route '/settings/social-accounts'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -151,7 +151,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:53
+* @see routes/web.php:56
 * @route '/settings/social-accounts'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -159,7 +159,7 @@ index.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:53
+* @see routes/web.php:56
 * @route '/settings/social-accounts'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -168,7 +168,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:53
+* @see routes/web.php:56
 * @route '/settings/social-accounts'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -177,7 +177,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:53
+* @see routes/web.php:56
 * @route '/settings/social-accounts'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -186,7 +186,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 })
 
 /**
-* @see routes/web.php:53
+* @see routes/web.php:56
 * @route '/settings/social-accounts'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -195,7 +195,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:53
+* @see routes/web.php:56
 * @route '/settings/social-accounts'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

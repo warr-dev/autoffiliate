@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\PostController::custom
-* @see app/Http/Controllers/PostController.php:104
+* @see app/Http/Controllers/PostController.php:135
 * @route '/posts/custom'
 */
 export const custom = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ custom.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::custom
-* @see app/Http/Controllers/PostController.php:104
+* @see app/Http/Controllers/PostController.php:135
 * @route '/posts/custom'
 */
 custom.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ custom.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PostController::custom
-* @see app/Http/Controllers/PostController.php:104
+* @see app/Http/Controllers/PostController.php:135
 * @route '/posts/custom'
 */
 custom.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ custom.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::custom
-* @see app/Http/Controllers/PostController.php:104
+* @see app/Http/Controllers/PostController.php:135
 * @route '/posts/custom'
 */
 const customForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ const customForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =>
 
 /**
 * @see \App\Http\Controllers\PostController::custom
-* @see app/Http/Controllers/PostController.php:104
+* @see app/Http/Controllers/PostController.php:135
 * @route '/posts/custom'
 */
 customForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

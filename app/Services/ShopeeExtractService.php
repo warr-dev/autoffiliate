@@ -118,8 +118,8 @@ class ShopeeExtractService
     private static function extractMetaTag(string $html, string $property): ?string
     {
         // Support property before content AND content before property
-        $pattern1 = '/<meta[^>]*property=["\']' . preg_escape($property) . '["\'][^>]*content=["\']([^"\']*)["\']/i';
-        $pattern2 = '/<meta[^>]*content=["\']([^"\']*)["\'][^>]*property=["\']' . preg_escape($property) . '["\']/i';
+        $pattern1 = '/<meta[^>]*property=["\']' . self::preg_escape($property) . '["\'][^>]*content=["\']([^"\']*)["\']/i';
+        $pattern2 = '/<meta[^>]*content=["\']([^"\']*)["\'][^>]*property=["\']' . self::preg_escape($property) . '["\']/i';
 
         if (preg_match($pattern1, $html, $m) || preg_match($pattern2, $html, $m)) {
             return html_entity_decode(trim($m[1]), ENT_QUOTES | ENT_HTML5);
@@ -130,8 +130,8 @@ class ShopeeExtractService
 
     private static function extractMetaByName(string $html, string $name): ?string
     {
-        $pattern1 = '/<meta[^>]*name=["\']' . preg_escape($name) . '["\'][^>]*content=["\']([^"\']*)["\']/i';
-        $pattern2 = '/<meta[^>]*content=["\']([^"\']*)["\'][^>]*name=["\']' . preg_escape($name) . '["\']/i';
+        $pattern1 = '/<meta[^>]*name=["\']' . self::preg_escape($name) . '["\'][^>]*content=["\']([^"\']*)["\']/i';
+        $pattern2 = '/<meta[^>]*content=["\']([^"\']*)["\'][^>]*name=["\']' . self::preg_escape($name) . '["\']/i';
 
         if (preg_match($pattern1, $html, $m) || preg_match($pattern2, $html, $m)) {
             return html_entity_decode(trim($m[1]), ENT_QUOTES | ENT_HTML5);
@@ -154,8 +154,9 @@ class ShopeeExtractService
         $cleaned = preg_replace('/\s*-\s*Enjoy best prices with free shipping vouchers\.?$/i', '', $cleaned);
         return trim($cleaned);
     }
-}
 
-function preg_escape(string $str): string {
-    return preg_quote($str, '/');
+    private static function preg_escape(string $str): string
+    {
+        return preg_quote($str, '/');
+    }
 }

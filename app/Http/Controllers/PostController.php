@@ -382,6 +382,9 @@ class PostController extends Controller
             ]);
         }
 
+        return back()->with('success', 'AI Caption generated successfully.');
+    }
+
     public function show(string $id): Response
     {
         $post = Post::findOrFail($id);
