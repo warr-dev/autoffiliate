@@ -120,7 +120,7 @@ class ShopeeExtractService
                 // a. OG images (exact product cover photos)
                 foreach (['og:square_image', 'og:image', 'og:image:secure_url', 'twitter:image'] as $prop) {
                     $ogImg = self::extractMetaTag($html, $prop);
-                    if ($ogImg && ! isset($seenMedia[$ogImg])) {
+                    if ($ogImg && self::isValidProductPhoto($ogImg) && ! isset($seenMedia[$ogImg])) {
                         $seenMedia[$ogImg] = true;
                         $mediaFiles[] = $ogImg;
                     }
@@ -130,7 +130,7 @@ class ShopeeExtractService
                 if (preg_match_all('/(?:cn|ph|sg|id|my|vn|th|br|mx|tw)-\d{8,10}-[a-z0-9\-_]+/i', $html, $regMatches)) {
                     foreach ($regMatches[0] as $h) {
                         $imgUrl = "https://down-ph.img.susercontent.com/file/{$h}";
-                        if (! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
+                        if (self::isValidProductPhoto($imgUrl) && ! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
                             $seenMedia[$imgUrl] = true;
                             $mediaFiles[] = $imgUrl;
                         }
@@ -141,7 +141,7 @@ class ShopeeExtractService
                 if (preg_match_all('/"(?:images?|cover|tier_images)":\s*(?:\[\s*)?"([a-f0-9]{32})"/i', $html, $hexMatches)) {
                     foreach ($hexMatches[1] as $h) {
                         $imgUrl = "https://down-ph.img.susercontent.com/file/{$h}";
-                        if (! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
+                        if (self::isValidProductPhoto($imgUrl) && ! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
                             $seenMedia[$imgUrl] = true;
                             $mediaFiles[] = $imgUrl;
                         }
@@ -151,7 +151,7 @@ class ShopeeExtractService
                 // d. Shopee CDN full URLs
                 if (preg_match_all('/https:\/\/[a-zA-Z0-9\.\-]*susercontent\.com\/file\/([a-zA-Z0-9_\-]+)/i', $html, $imMatches)) {
                     foreach ($imMatches[0] as $imgUrl) {
-                        if (! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
+                        if (self::isValidProductPhoto($imgUrl) && ! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
                             $seenMedia[$imgUrl] = true;
                             $mediaFiles[] = $imgUrl;
                         }
@@ -180,7 +180,7 @@ class ShopeeExtractService
                 $html = $headResp->body();
                 foreach (['og:square_image', 'og:image'] as $prop) {
                     $img = self::extractMetaTag($html, $prop);
-                    if ($img && ! in_array($img, $mediaFiles)) {
+                    if ($img && self::isValidProductPhoto($img) && ! in_array($img, $mediaFiles)) {
                         $mediaFiles[] = $img;
                     }
                 }
@@ -197,6 +197,90 @@ class ShopeeExtractService
             'canonical_url' => $canonicalUrl ?: $url,
             'media_files' => array_values($mediaFiles),
         ];
+    }
+
+    /**
+     * Determine if a media URL is a valid product photograph, stripping out SPayLater frames,
+     * promotional borders, badges, vouchers, and transparent PNG overlays.
+     */
+    public static function isValidProductPhoto(string $url): bool
+    {
+        $urlLower = strtolower($url);
+
+        // 1. Exclude known frame and overlay keywords
+        $blacklistedKeywords = [
+            'spaylater',
+            'spay_later',
+            'frame',
+            'overlay',
+            'border',
+            'watermark',
+            'voucher',
+            'badge',
+            'banner',
+            'campaign_frame',
+            'promo_frame',
+            'cutout',
+            'layer',
+            'icon',
+            'logo',
+            'shopee_mall_badge',
+        ];
+
+        foreach ($blacklistedKeywords as $kw) {
+            if (str_contains($urlLower, $kw)) {
+                return false;
+            }
+        }
+
+        // 2. Reject non-image or placeholder assets
+        if (str_starts_with($url, 'data:image') || strlen($url) < 15) {
+            return false;
+        }
+
+        // 3. Optional deep inspection for transparent PNG / WebP cutouts (if GD is available)
+        if (extension_loaded('gd')) {
+            try {
+                // If the URL ends with .png, perform a lightweight check to reject transparent cutout frames
+                if (str_ends_with($urlLower, '.png')) {
+                    $imgData = @file_get_contents($url, false, stream_context_create([
+                        'http' => ['timeout' => 3, 'user_agent' => 'Mozilla/5.0'],
+                        'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
+                    ]));
+
+                    if ($imgData && strlen($imgData) > 500) {
+                        $im = @imagecreatefromstring($imgData);
+                        if ($im) {
+                            $w = imagesx($im);
+                            $h = imagesy($im);
+
+                            // Reject tiny icons (< 250px) or banner strips (aspect ratio > 2.2)
+                            if ($w < 250 || $h < 250 || (max($w, $h) / max(1, min($w, $h)) > 2.2)) {
+                                imagedestroy($im);
+                                return false;
+                            }
+
+                            // Probe center pixel for alpha transparency (hollow center frames like SPayLater)
+                            $centerX = (int)($w / 2);
+                            $centerY = (int)($h / 2);
+                            $rgba = imagecolorat($im, $centerX, $centerY);
+                            $alpha = ($rgba >> 24) & 0x7F; // In GD: 0 = opaque, 127 = fully transparent
+
+                            imagedestroy($im);
+
+                            if ($alpha > 90) {
+                                // Center is transparent -> this is a hollow border/frame!
+                                return false;
+                            }
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Keep image if probe check fails safely
+            }
+        }
+
+        return true;
     }
 
     /**
