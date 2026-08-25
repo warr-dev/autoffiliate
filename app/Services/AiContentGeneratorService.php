@@ -246,18 +246,6 @@ class AiContentGeneratorService
 
         $captionBody = "{$opener}\n\n{$question}";
 
-        if (! empty($ctx['general_context'])) {
-            $captionBody .= "\n\n📌 Spotlight: ".$ctx['general_context'];
-        }
-
-        if (! empty($ctx['weather_context'])) {
-            $captionBody .= "\n\n🌤️ Weather Note: ".$ctx['weather_context'];
-        }
-
-        if (! empty($ctx['occasion_context'])) {
-            $captionBody .= "\n\n🎉 Special Feature: ".$ctx['occasion_context'];
-        }
-
         if (! empty($ctx['manual_prompt'])) {
             $captionBody .= "\n\n".$ctx['manual_prompt'];
         }

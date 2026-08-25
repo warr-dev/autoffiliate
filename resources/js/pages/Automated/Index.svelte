@@ -726,9 +726,9 @@
                 lastRun: 'Monday at 04:00 PM',
                 nextRun: 'Thursday at 04:00 PM',
                 lastGeneratedPost: {
-                    title: '📢 Anker Official Brand Spotlight',
+                    title: '📢 Anker Official Brand Deal',
                     caption:
-                        '⚡ EXCLUSIVE BRAND SPOTLIGHT! Grab 40% OFF Anker Soundcore Headphones with voucher code "ANKERTECH88"!\n\n🛒 Buy Link: https://shope.ee/anker-q30-deal\n\n#AnkerPH #TechDeals #ShopeeFinds',
+                        '⚡ EXCLUSIVE BRAND DEAL! Grab 40% OFF Anker Soundcore Headphones with voucher code "ANKERTECH88"!\n\n🛒 Buy Link: https://shope.ee/anker-q30-deal\n\n#AnkerPH #TechDeals #ShopeeFinds',
                     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
                     postedAt: 'Monday at 04:00 PM',
                     targetPage: 'Tech Sulit Deals',
@@ -1417,7 +1417,7 @@
         },
         {
             value: 'Brand Promotion',
-            label: '📢 Brand Promotion (Spotlights, Vouchers)',
+            label: '📢 Brand Promotion (Deals, Vouchers)',
         },
         {
             value: 'Affiliate Deals',
