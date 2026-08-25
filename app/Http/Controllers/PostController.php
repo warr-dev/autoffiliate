@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Setting;
 use App\Models\SocialAccount;
 use App\Services\AiContentGeneratorService;
+use App\Services\ShopeeExtractService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -44,20 +45,46 @@ class PostController extends Controller
             'media_files' => 'nullable|array',
         ]);
 
-        $title = ! empty($validated['product_title']) && $validated['product_title'] !== 'Shopee Deal'
-            ? $validated['product_title']
-            : 'Shopee Sulit Deal';
+        $affiliateUrl = $validated['affiliate_url'];
+        $title = $validated['product_title'] ?? null;
+        $price = $validated['product_price'] ?? null;
+        $desc = $validated['product_description'] ?? null;
+        $shop = $validated['shop_name'] ?? null;
+        $mediaFiles = $validated['media_files'] ?? [];
 
+        // Auto-extract from Shopee if title or media was not provided
+        if (empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal' || empty($mediaFiles)) {
+            $extracted = ShopeeExtractService::extract($affiliateUrl);
+            if ($extracted['success']) {
+                if (empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal') {
+                    $title = $extracted['product_title'];
+                }
+                if (empty($price)) {
+                    $price = $extracted['product_price'];
+                }
+                if (empty($desc)) {
+                    $desc = $extracted['product_description'];
+                }
+                if (empty($shop)) {
+                    $shop = $extracted['shop_name'];
+                }
+                if (empty($mediaFiles) && ! empty($extracted['media_files'])) {
+                    $mediaFiles = $extracted['media_files'];
+                }
+            }
+        }
+
+        $title = $title ?: 'Shopee Sulit Deal';
         $caption = $validated['caption'] ?? '';
         $style = $validated['caption_style'] ?? $request->input('caption_style', 'viral_ai');
 
         if (empty($caption) || str_starts_with($caption, 'Caption Style:')) {
             $aiGen = AiContentGeneratorService::generateProductDeal([
                 'product_title' => $title,
-                'product_description' => $validated['product_description'] ?? '',
-                'product_price' => $validated['product_price'] ?? '',
-                'shop_name' => $validated['shop_name'] ?? '',
-                'affiliate_url' => $validated['affiliate_url'],
+                'product_description' => $desc ?? '',
+                'product_price' => $price ?? '',
+                'shop_name' => $shop ?? '',
+                'affiliate_url' => $affiliateUrl,
                 'caption_style' => $style,
             ]);
 
@@ -84,21 +111,25 @@ class PostController extends Controller
         $post = Post::create([
             'id' => $postId,
             'product_title' => $title,
-            'product_description' => $validated['product_description'] ?? null,
-            'product_price' => $validated['product_price'] ?? null,
-            'shop_name' => $validated['shop_name'] ?? null,
-            'affiliate_url' => $validated['affiliate_url'],
+            'product_description' => $desc,
+            'product_price' => $price,
+            'shop_name' => $shop,
+            'affiliate_url' => $affiliateUrl,
             'caption' => $caption,
             'tags' => $tags,
             'status' => 'draft',
-            'media_files' => $validated['media_files'] ?? [],
+            'media_files' => $mediaFiles,
         ]);
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'post' => $post]);
+            return response()->json([
+                'success' => true,
+                'post' => $post,
+                'redirect_url' => route('drafts.show', $post->id),
+            ]);
         }
 
-        return redirect()->route('drafts.index')->with('success', 'Post draft created with AI copy.');
+        return redirect()->route('drafts.show', $post->id)->with('success', 'Draft post extracted & created with AI copy.');
     }
 
     public function storeCustom(Request $request)
