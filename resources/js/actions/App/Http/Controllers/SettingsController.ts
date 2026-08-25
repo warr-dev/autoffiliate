@@ -85,12 +85,12 @@ index.form = indexForm
 * @see app/Http/Controllers/SettingsController.php:27
 * @route '/settings/app'
 */
-export const update = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: update.url(options),
+const update2cd785c5be4fcaa9b72a40c88a729ca5 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: update2cd785c5be4fcaa9b72a40c88a729ca5.url(options),
     method: 'post',
 })
 
-update.definition = {
+update2cd785c5be4fcaa9b72a40c88a729ca5.definition = {
     methods: ["post"],
     url: '/settings/app',
 } satisfies RouteDefinition<["post"]>
@@ -100,8 +100,8 @@ update.definition = {
 * @see app/Http/Controllers/SettingsController.php:27
 * @route '/settings/app'
 */
-update.url = (options?: RouteQueryOptions) => {
-    return update.definition.url + queryParams(options)
+update2cd785c5be4fcaa9b72a40c88a729ca5.url = (options?: RouteQueryOptions) => {
+    return update2cd785c5be4fcaa9b72a40c88a729ca5.definition.url + queryParams(options)
 }
 
 /**
@@ -109,8 +109,8 @@ update.url = (options?: RouteQueryOptions) => {
 * @see app/Http/Controllers/SettingsController.php:27
 * @route '/settings/app'
 */
-update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: update.url(options),
+update2cd785c5be4fcaa9b72a40c88a729ca5.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: update2cd785c5be4fcaa9b72a40c88a729ca5.url(options),
     method: 'post',
 })
 
@@ -119,8 +119,8 @@ update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 * @see app/Http/Controllers/SettingsController.php:27
 * @route '/settings/app'
 */
-const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(options),
+const update2cd785c5be4fcaa9b72a40c88a729ca5Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update2cd785c5be4fcaa9b72a40c88a729ca5.url(options),
     method: 'post',
 })
 
@@ -129,12 +129,77 @@ const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =>
 * @see app/Http/Controllers/SettingsController.php:27
 * @route '/settings/app'
 */
-updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(options),
+update2cd785c5be4fcaa9b72a40c88a729ca5Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update2cd785c5be4fcaa9b72a40c88a729ca5.url(options),
     method: 'post',
 })
 
-update.form = updateForm
+update2cd785c5be4fcaa9b72a40c88a729ca5.form = update2cd785c5be4fcaa9b72a40c88a729ca5Form
+/**
+* @see \App\Http\Controllers\SettingsController::update
+* @see app/Http/Controllers/SettingsController.php:27
+* @route '/api/settings'
+*/
+const update68a6718475f44f9c38857865541e66e3 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: update68a6718475f44f9c38857865541e66e3.url(options),
+    method: 'post',
+})
+
+update68a6718475f44f9c38857865541e66e3.definition = {
+    methods: ["post"],
+    url: '/api/settings',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::update
+* @see app/Http/Controllers/SettingsController.php:27
+* @route '/api/settings'
+*/
+update68a6718475f44f9c38857865541e66e3.url = (options?: RouteQueryOptions) => {
+    return update68a6718475f44f9c38857865541e66e3.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::update
+* @see app/Http/Controllers/SettingsController.php:27
+* @route '/api/settings'
+*/
+update68a6718475f44f9c38857865541e66e3.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: update68a6718475f44f9c38857865541e66e3.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::update
+* @see app/Http/Controllers/SettingsController.php:27
+* @route '/api/settings'
+*/
+const update68a6718475f44f9c38857865541e66e3Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update68a6718475f44f9c38857865541e66e3.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::update
+* @see app/Http/Controllers/SettingsController.php:27
+* @route '/api/settings'
+*/
+update68a6718475f44f9c38857865541e66e3Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update68a6718475f44f9c38857865541e66e3.url(options),
+    method: 'post',
+})
+
+update68a6718475f44f9c38857865541e66e3.form = update68a6718475f44f9c38857865541e66e3Form
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\SettingsController::update, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `update['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const update = {
+    '/settings/app': update2cd785c5be4fcaa9b72a40c88a729ca5,
+    '/api/settings': update68a6718475f44f9c38857865541e66e3,
+}
 
 /**
 * @see \App\Http\Controllers\SettingsController::exportSocialAccounts
@@ -861,12 +926,12 @@ storeUser.form = storeUserForm
 * @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
-export const testWebhook = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: testWebhook.url(options),
+const testWebhook9ce0bb787073a659857cdf79189fb7af = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: testWebhook9ce0bb787073a659857cdf79189fb7af.url(options),
     method: 'post',
 })
 
-testWebhook.definition = {
+testWebhook9ce0bb787073a659857cdf79189fb7af.definition = {
     methods: ["post"],
     url: '/settings/test-webhook',
 } satisfies RouteDefinition<["post"]>
@@ -876,8 +941,8 @@ testWebhook.definition = {
 * @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
-testWebhook.url = (options?: RouteQueryOptions) => {
-    return testWebhook.definition.url + queryParams(options)
+testWebhook9ce0bb787073a659857cdf79189fb7af.url = (options?: RouteQueryOptions) => {
+    return testWebhook9ce0bb787073a659857cdf79189fb7af.definition.url + queryParams(options)
 }
 
 /**
@@ -885,8 +950,8 @@ testWebhook.url = (options?: RouteQueryOptions) => {
 * @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
-testWebhook.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: testWebhook.url(options),
+testWebhook9ce0bb787073a659857cdf79189fb7af.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: testWebhook9ce0bb787073a659857cdf79189fb7af.url(options),
     method: 'post',
 })
 
@@ -895,8 +960,8 @@ testWebhook.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 * @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
-const testWebhookForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: testWebhook.url(options),
+const testWebhook9ce0bb787073a659857cdf79189fb7afForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: testWebhook9ce0bb787073a659857cdf79189fb7af.url(options),
     method: 'post',
 })
 
@@ -905,24 +970,89 @@ const testWebhookForm = (options?: RouteQueryOptions): RouteFormDefinition<'post
 * @see app/Http/Controllers/SettingsController.php:320
 * @route '/settings/test-webhook'
 */
-testWebhookForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: testWebhook.url(options),
+testWebhook9ce0bb787073a659857cdf79189fb7afForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: testWebhook9ce0bb787073a659857cdf79189fb7af.url(options),
     method: 'post',
 })
 
-testWebhook.form = testWebhookForm
+testWebhook9ce0bb787073a659857cdf79189fb7af.form = testWebhook9ce0bb787073a659857cdf79189fb7afForm
+/**
+* @see \App\Http\Controllers\SettingsController::testWebhook
+* @see app/Http/Controllers/SettingsController.php:320
+* @route '/api/webhooks/test'
+*/
+const testWebhook7086faa651d2080c96ba07426cba0cfd = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: testWebhook7086faa651d2080c96ba07426cba0cfd.url(options),
+    method: 'post',
+})
+
+testWebhook7086faa651d2080c96ba07426cba0cfd.definition = {
+    methods: ["post"],
+    url: '/api/webhooks/test',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::testWebhook
+* @see app/Http/Controllers/SettingsController.php:320
+* @route '/api/webhooks/test'
+*/
+testWebhook7086faa651d2080c96ba07426cba0cfd.url = (options?: RouteQueryOptions) => {
+    return testWebhook7086faa651d2080c96ba07426cba0cfd.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::testWebhook
+* @see app/Http/Controllers/SettingsController.php:320
+* @route '/api/webhooks/test'
+*/
+testWebhook7086faa651d2080c96ba07426cba0cfd.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: testWebhook7086faa651d2080c96ba07426cba0cfd.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::testWebhook
+* @see app/Http/Controllers/SettingsController.php:320
+* @route '/api/webhooks/test'
+*/
+const testWebhook7086faa651d2080c96ba07426cba0cfdForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: testWebhook7086faa651d2080c96ba07426cba0cfd.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::testWebhook
+* @see app/Http/Controllers/SettingsController.php:320
+* @route '/api/webhooks/test'
+*/
+testWebhook7086faa651d2080c96ba07426cba0cfdForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: testWebhook7086faa651d2080c96ba07426cba0cfd.url(options),
+    method: 'post',
+})
+
+testWebhook7086faa651d2080c96ba07426cba0cfd.form = testWebhook7086faa651d2080c96ba07426cba0cfdForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\SettingsController::testWebhook, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `testWebhook['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const testWebhook = {
+    '/settings/test-webhook': testWebhook9ce0bb787073a659857cdf79189fb7af,
+    '/api/webhooks/test': testWebhook7086faa651d2080c96ba07426cba0cfd,
+}
 
 /**
 * @see \App\Http\Controllers\SettingsController::exchangeToken
 * @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
-export const exchangeToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: exchangeToken.url(options),
+const exchangeToken3da3b66a33ace2dd2478f7d90752846e = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: exchangeToken3da3b66a33ace2dd2478f7d90752846e.url(options),
     method: 'post',
 })
 
-exchangeToken.definition = {
+exchangeToken3da3b66a33ace2dd2478f7d90752846e.definition = {
     methods: ["post"],
     url: '/settings/token/exchange',
 } satisfies RouteDefinition<["post"]>
@@ -932,8 +1062,8 @@ exchangeToken.definition = {
 * @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
-exchangeToken.url = (options?: RouteQueryOptions) => {
-    return exchangeToken.definition.url + queryParams(options)
+exchangeToken3da3b66a33ace2dd2478f7d90752846e.url = (options?: RouteQueryOptions) => {
+    return exchangeToken3da3b66a33ace2dd2478f7d90752846e.definition.url + queryParams(options)
 }
 
 /**
@@ -941,8 +1071,8 @@ exchangeToken.url = (options?: RouteQueryOptions) => {
 * @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
-exchangeToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: exchangeToken.url(options),
+exchangeToken3da3b66a33ace2dd2478f7d90752846e.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: exchangeToken3da3b66a33ace2dd2478f7d90752846e.url(options),
     method: 'post',
 })
 
@@ -951,8 +1081,8 @@ exchangeToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 * @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
-const exchangeTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: exchangeToken.url(options),
+const exchangeToken3da3b66a33ace2dd2478f7d90752846eForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: exchangeToken3da3b66a33ace2dd2478f7d90752846e.url(options),
     method: 'post',
 })
 
@@ -961,24 +1091,89 @@ const exchangeTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'po
 * @see app/Http/Controllers/SettingsController.php:351
 * @route '/settings/token/exchange'
 */
-exchangeTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: exchangeToken.url(options),
+exchangeToken3da3b66a33ace2dd2478f7d90752846eForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: exchangeToken3da3b66a33ace2dd2478f7d90752846e.url(options),
     method: 'post',
 })
 
-exchangeToken.form = exchangeTokenForm
+exchangeToken3da3b66a33ace2dd2478f7d90752846e.form = exchangeToken3da3b66a33ace2dd2478f7d90752846eForm
+/**
+* @see \App\Http\Controllers\SettingsController::exchangeToken
+* @see app/Http/Controllers/SettingsController.php:351
+* @route '/api/token/exchange'
+*/
+const exchangeToken2c889469ba47348ef45a6881dbb6b42f = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: exchangeToken2c889469ba47348ef45a6881dbb6b42f.url(options),
+    method: 'post',
+})
+
+exchangeToken2c889469ba47348ef45a6881dbb6b42f.definition = {
+    methods: ["post"],
+    url: '/api/token/exchange',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::exchangeToken
+* @see app/Http/Controllers/SettingsController.php:351
+* @route '/api/token/exchange'
+*/
+exchangeToken2c889469ba47348ef45a6881dbb6b42f.url = (options?: RouteQueryOptions) => {
+    return exchangeToken2c889469ba47348ef45a6881dbb6b42f.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::exchangeToken
+* @see app/Http/Controllers/SettingsController.php:351
+* @route '/api/token/exchange'
+*/
+exchangeToken2c889469ba47348ef45a6881dbb6b42f.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: exchangeToken2c889469ba47348ef45a6881dbb6b42f.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exchangeToken
+* @see app/Http/Controllers/SettingsController.php:351
+* @route '/api/token/exchange'
+*/
+const exchangeToken2c889469ba47348ef45a6881dbb6b42fForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: exchangeToken2c889469ba47348ef45a6881dbb6b42f.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::exchangeToken
+* @see app/Http/Controllers/SettingsController.php:351
+* @route '/api/token/exchange'
+*/
+exchangeToken2c889469ba47348ef45a6881dbb6b42fForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: exchangeToken2c889469ba47348ef45a6881dbb6b42f.url(options),
+    method: 'post',
+})
+
+exchangeToken2c889469ba47348ef45a6881dbb6b42f.form = exchangeToken2c889469ba47348ef45a6881dbb6b42fForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\SettingsController::exchangeToken, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `exchangeToken['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const exchangeToken = {
+    '/settings/token/exchange': exchangeToken3da3b66a33ace2dd2478f7d90752846e,
+    '/api/token/exchange': exchangeToken2c889469ba47348ef45a6881dbb6b42f,
+}
 
 /**
 * @see \App\Http\Controllers\SettingsController::verifyToken
 * @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
-export const verifyToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: verifyToken.url(options),
+const verifyToken16db7258f6fca8bf3894a43c17ebe34d = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: verifyToken16db7258f6fca8bf3894a43c17ebe34d.url(options),
     method: 'post',
 })
 
-verifyToken.definition = {
+verifyToken16db7258f6fca8bf3894a43c17ebe34d.definition = {
     methods: ["post"],
     url: '/settings/token/verify',
 } satisfies RouteDefinition<["post"]>
@@ -988,8 +1183,8 @@ verifyToken.definition = {
 * @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
-verifyToken.url = (options?: RouteQueryOptions) => {
-    return verifyToken.definition.url + queryParams(options)
+verifyToken16db7258f6fca8bf3894a43c17ebe34d.url = (options?: RouteQueryOptions) => {
+    return verifyToken16db7258f6fca8bf3894a43c17ebe34d.definition.url + queryParams(options)
 }
 
 /**
@@ -997,8 +1192,8 @@ verifyToken.url = (options?: RouteQueryOptions) => {
 * @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
-verifyToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: verifyToken.url(options),
+verifyToken16db7258f6fca8bf3894a43c17ebe34d.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: verifyToken16db7258f6fca8bf3894a43c17ebe34d.url(options),
     method: 'post',
 })
 
@@ -1007,8 +1202,8 @@ verifyToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 * @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
-const verifyTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: verifyToken.url(options),
+const verifyToken16db7258f6fca8bf3894a43c17ebe34dForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: verifyToken16db7258f6fca8bf3894a43c17ebe34d.url(options),
     method: 'post',
 })
 
@@ -1017,24 +1212,114 @@ const verifyTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post
 * @see app/Http/Controllers/SettingsController.php:464
 * @route '/settings/token/verify'
 */
-verifyTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: verifyToken.url(options),
+verifyToken16db7258f6fca8bf3894a43c17ebe34dForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: verifyToken16db7258f6fca8bf3894a43c17ebe34d.url(options),
     method: 'post',
 })
 
-verifyToken.form = verifyTokenForm
+verifyToken16db7258f6fca8bf3894a43c17ebe34d.form = verifyToken16db7258f6fca8bf3894a43c17ebe34dForm
+/**
+* @see \App\Http\Controllers\SettingsController::verifyToken
+* @see app/Http/Controllers/SettingsController.php:464
+* @route '/api/token/verify'
+*/
+const verifyToken4bbd093b6ce3f59218745a9fd5db48bd = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: verifyToken4bbd093b6ce3f59218745a9fd5db48bd.url(options),
+    method: 'get',
+})
+
+verifyToken4bbd093b6ce3f59218745a9fd5db48bd.definition = {
+    methods: ["get","head"],
+    url: '/api/token/verify',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::verifyToken
+* @see app/Http/Controllers/SettingsController.php:464
+* @route '/api/token/verify'
+*/
+verifyToken4bbd093b6ce3f59218745a9fd5db48bd.url = (options?: RouteQueryOptions) => {
+    return verifyToken4bbd093b6ce3f59218745a9fd5db48bd.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::verifyToken
+* @see app/Http/Controllers/SettingsController.php:464
+* @route '/api/token/verify'
+*/
+verifyToken4bbd093b6ce3f59218745a9fd5db48bd.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: verifyToken4bbd093b6ce3f59218745a9fd5db48bd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::verifyToken
+* @see app/Http/Controllers/SettingsController.php:464
+* @route '/api/token/verify'
+*/
+verifyToken4bbd093b6ce3f59218745a9fd5db48bd.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: verifyToken4bbd093b6ce3f59218745a9fd5db48bd.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::verifyToken
+* @see app/Http/Controllers/SettingsController.php:464
+* @route '/api/token/verify'
+*/
+const verifyToken4bbd093b6ce3f59218745a9fd5db48bdForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: verifyToken4bbd093b6ce3f59218745a9fd5db48bd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::verifyToken
+* @see app/Http/Controllers/SettingsController.php:464
+* @route '/api/token/verify'
+*/
+verifyToken4bbd093b6ce3f59218745a9fd5db48bdForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: verifyToken4bbd093b6ce3f59218745a9fd5db48bd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::verifyToken
+* @see app/Http/Controllers/SettingsController.php:464
+* @route '/api/token/verify'
+*/
+verifyToken4bbd093b6ce3f59218745a9fd5db48bdForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: verifyToken4bbd093b6ce3f59218745a9fd5db48bd.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+verifyToken4bbd093b6ce3f59218745a9fd5db48bd.form = verifyToken4bbd093b6ce3f59218745a9fd5db48bdForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\SettingsController::verifyToken, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `verifyToken['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const verifyToken = {
+    '/settings/token/verify': verifyToken16db7258f6fca8bf3894a43c17ebe34d,
+    '/api/token/verify': verifyToken4bbd093b6ce3f59218745a9fd5db48bd,
+}
 
 /**
 * @see \App\Http\Controllers\SettingsController::suggestHashtags
 * @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
-export const suggestHashtags = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: suggestHashtags.url(options),
+const suggestHashtagsd021a4a4da2083878bc31b9348b50dce = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: suggestHashtagsd021a4a4da2083878bc31b9348b50dce.url(options),
     method: 'post',
 })
 
-suggestHashtags.definition = {
+suggestHashtagsd021a4a4da2083878bc31b9348b50dce.definition = {
     methods: ["post"],
     url: '/settings/suggest-hashtags',
 } satisfies RouteDefinition<["post"]>
@@ -1044,8 +1329,8 @@ suggestHashtags.definition = {
 * @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
-suggestHashtags.url = (options?: RouteQueryOptions) => {
-    return suggestHashtags.definition.url + queryParams(options)
+suggestHashtagsd021a4a4da2083878bc31b9348b50dce.url = (options?: RouteQueryOptions) => {
+    return suggestHashtagsd021a4a4da2083878bc31b9348b50dce.definition.url + queryParams(options)
 }
 
 /**
@@ -1053,8 +1338,8 @@ suggestHashtags.url = (options?: RouteQueryOptions) => {
 * @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
-suggestHashtags.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: suggestHashtags.url(options),
+suggestHashtagsd021a4a4da2083878bc31b9348b50dce.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: suggestHashtagsd021a4a4da2083878bc31b9348b50dce.url(options),
     method: 'post',
 })
 
@@ -1063,8 +1348,8 @@ suggestHashtags.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
 * @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
-const suggestHashtagsForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: suggestHashtags.url(options),
+const suggestHashtagsd021a4a4da2083878bc31b9348b50dceForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: suggestHashtagsd021a4a4da2083878bc31b9348b50dce.url(options),
     method: 'post',
 })
 
@@ -1073,12 +1358,77 @@ const suggestHashtagsForm = (options?: RouteQueryOptions): RouteFormDefinition<'
 * @see app/Http/Controllers/SettingsController.php:532
 * @route '/settings/suggest-hashtags'
 */
-suggestHashtagsForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: suggestHashtags.url(options),
+suggestHashtagsd021a4a4da2083878bc31b9348b50dceForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: suggestHashtagsd021a4a4da2083878bc31b9348b50dce.url(options),
     method: 'post',
 })
 
-suggestHashtags.form = suggestHashtagsForm
+suggestHashtagsd021a4a4da2083878bc31b9348b50dce.form = suggestHashtagsd021a4a4da2083878bc31b9348b50dceForm
+/**
+* @see \App\Http\Controllers\SettingsController::suggestHashtags
+* @see app/Http/Controllers/SettingsController.php:532
+* @route '/api/integrations/suggest-hashtags'
+*/
+const suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.url(options),
+    method: 'post',
+})
+
+suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.definition = {
+    methods: ["post"],
+    url: '/api/integrations/suggest-hashtags',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SettingsController::suggestHashtags
+* @see app/Http/Controllers/SettingsController.php:532
+* @route '/api/integrations/suggest-hashtags'
+*/
+suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.url = (options?: RouteQueryOptions) => {
+    return suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SettingsController::suggestHashtags
+* @see app/Http/Controllers/SettingsController.php:532
+* @route '/api/integrations/suggest-hashtags'
+*/
+suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::suggestHashtags
+* @see app/Http/Controllers/SettingsController.php:532
+* @route '/api/integrations/suggest-hashtags'
+*/
+const suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SettingsController::suggestHashtags
+* @see app/Http/Controllers/SettingsController.php:532
+* @route '/api/integrations/suggest-hashtags'
+*/
+suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.url(options),
+    method: 'post',
+})
+
+suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031.form = suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031Form
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\SettingsController::suggestHashtags, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `suggestHashtags['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const suggestHashtags = {
+    '/settings/suggest-hashtags': suggestHashtagsd021a4a4da2083878bc31b9348b50dce,
+    '/api/integrations/suggest-hashtags': suggestHashtagsa30b4477e066ae6c9cb0a49bf9b54031,
+}
 
 const SettingsController = { index, update, exportSocialAccounts, importSocialAccounts, storeSocialAccount, updateSocialAccount, destroySocialAccount, toggleSocialAccount, testPostSocialAccount, storeUser, testWebhook, exchangeToken, verifyToken, suggestHashtags }
 

@@ -184,12 +184,12 @@ show.form = showForm
 * @see app/Http/Controllers/PostController.php:34
 * @route '/drafts'
 */
-export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+const storeedcf40b67c26e1a7099d7088201cc860 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: storeedcf40b67c26e1a7099d7088201cc860.url(options),
     method: 'post',
 })
 
-store.definition = {
+storeedcf40b67c26e1a7099d7088201cc860.definition = {
     methods: ["post"],
     url: '/drafts',
 } satisfies RouteDefinition<["post"]>
@@ -199,8 +199,8 @@ store.definition = {
 * @see app/Http/Controllers/PostController.php:34
 * @route '/drafts'
 */
-store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options)
+storeedcf40b67c26e1a7099d7088201cc860.url = (options?: RouteQueryOptions) => {
+    return storeedcf40b67c26e1a7099d7088201cc860.definition.url + queryParams(options)
 }
 
 /**
@@ -208,8 +208,8 @@ store.url = (options?: RouteQueryOptions) => {
 * @see app/Http/Controllers/PostController.php:34
 * @route '/drafts'
 */
-store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+storeedcf40b67c26e1a7099d7088201cc860.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: storeedcf40b67c26e1a7099d7088201cc860.url(options),
     method: 'post',
 })
 
@@ -218,8 +218,8 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 * @see app/Http/Controllers/PostController.php:34
 * @route '/drafts'
 */
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
+const storeedcf40b67c26e1a7099d7088201cc860Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeedcf40b67c26e1a7099d7088201cc860.url(options),
     method: 'post',
 })
 
@@ -228,12 +228,77 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 * @see app/Http/Controllers/PostController.php:34
 * @route '/drafts'
 */
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
+storeedcf40b67c26e1a7099d7088201cc860Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeedcf40b67c26e1a7099d7088201cc860.url(options),
     method: 'post',
 })
 
-store.form = storeForm
+storeedcf40b67c26e1a7099d7088201cc860.form = storeedcf40b67c26e1a7099d7088201cc860Form
+/**
+* @see \App\Http\Controllers\PostController::store
+* @see app/Http/Controllers/PostController.php:34
+* @route '/api/posts'
+*/
+const storebf19ef06ce1388ecdeb1fea63820e3bd = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: storebf19ef06ce1388ecdeb1fea63820e3bd.url(options),
+    method: 'post',
+})
+
+storebf19ef06ce1388ecdeb1fea63820e3bd.definition = {
+    methods: ["post"],
+    url: '/api/posts',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\PostController::store
+* @see app/Http/Controllers/PostController.php:34
+* @route '/api/posts'
+*/
+storebf19ef06ce1388ecdeb1fea63820e3bd.url = (options?: RouteQueryOptions) => {
+    return storebf19ef06ce1388ecdeb1fea63820e3bd.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PostController::store
+* @see app/Http/Controllers/PostController.php:34
+* @route '/api/posts'
+*/
+storebf19ef06ce1388ecdeb1fea63820e3bd.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: storebf19ef06ce1388ecdeb1fea63820e3bd.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PostController::store
+* @see app/Http/Controllers/PostController.php:34
+* @route '/api/posts'
+*/
+const storebf19ef06ce1388ecdeb1fea63820e3bdForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storebf19ef06ce1388ecdeb1fea63820e3bd.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PostController::store
+* @see app/Http/Controllers/PostController.php:34
+* @route '/api/posts'
+*/
+storebf19ef06ce1388ecdeb1fea63820e3bdForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storebf19ef06ce1388ecdeb1fea63820e3bd.url(options),
+    method: 'post',
+})
+
+storebf19ef06ce1388ecdeb1fea63820e3bd.form = storebf19ef06ce1388ecdeb1fea63820e3bdForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\PostController::store, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `store['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const store = {
+    '/drafts': storeedcf40b67c26e1a7099d7088201cc860,
+    '/api/posts': storebf19ef06ce1388ecdeb1fea63820e3bd,
+}
 
 /**
 * @see \App\Http\Controllers\PostController::storeCustom
@@ -759,12 +824,12 @@ deleteMedia.form = deleteMediaForm
 * @see app/Http/Controllers/PostController.php:447
 * @route '/drafts/{id}'
 */
-export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
-    url: destroy.url(args, options),
+const destroy710c9cd3b91985fda9cac0eabb3d3885 = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy710c9cd3b91985fda9cac0eabb3d3885.url(args, options),
     method: 'delete',
 })
 
-destroy.definition = {
+destroy710c9cd3b91985fda9cac0eabb3d3885.definition = {
     methods: ["delete"],
     url: '/drafts/{id}',
 } satisfies RouteDefinition<["delete"]>
@@ -774,7 +839,7 @@ destroy.definition = {
 * @see app/Http/Controllers/PostController.php:447
 * @route '/drafts/{id}'
 */
-destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
+destroy710c9cd3b91985fda9cac0eabb3d3885.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { id: args }
     }
@@ -791,7 +856,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
         id: args.id,
     }
 
-    return destroy.definition.url
+    return destroy710c9cd3b91985fda9cac0eabb3d3885.definition.url
             .replace('{id}', parsedArgs.id.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
@@ -801,8 +866,8 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 * @see app/Http/Controllers/PostController.php:447
 * @route '/drafts/{id}'
 */
-destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
-    url: destroy.url(args, options),
+destroy710c9cd3b91985fda9cac0eabb3d3885.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy710c9cd3b91985fda9cac0eabb3d3885.url(args, options),
     method: 'delete',
 })
 
@@ -811,8 +876,8 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 * @see app/Http/Controllers/PostController.php:447
 * @route '/drafts/{id}'
 */
-const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
+const destroy710c9cd3b91985fda9cac0eabb3d3885Form = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy710c9cd3b91985fda9cac0eabb3d3885.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -826,8 +891,8 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 * @see app/Http/Controllers/PostController.php:447
 * @route '/drafts/{id}'
 */
-destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
+destroy710c9cd3b91985fda9cac0eabb3d3885Form.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy710c9cd3b91985fda9cac0eabb3d3885.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -836,7 +901,100 @@ destroyForm.delete = (args: { id: string | number } | [id: string | number ] | s
     method: 'post',
 })
 
-destroy.form = destroyForm
+destroy710c9cd3b91985fda9cac0eabb3d3885.form = destroy710c9cd3b91985fda9cac0eabb3d3885Form
+/**
+* @see \App\Http\Controllers\PostController::destroy
+* @see app/Http/Controllers/PostController.php:447
+* @route '/api/posts/{id}'
+*/
+const destroybd0f2547ef8ce52742985460f62803fe = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroybd0f2547ef8ce52742985460f62803fe.url(args, options),
+    method: 'delete',
+})
+
+destroybd0f2547ef8ce52742985460f62803fe.definition = {
+    methods: ["delete"],
+    url: '/api/posts/{id}',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\PostController::destroy
+* @see app/Http/Controllers/PostController.php:447
+* @route '/api/posts/{id}'
+*/
+destroybd0f2547ef8ce52742985460f62803fe.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { id: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            id: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        id: args.id,
+    }
+
+    return destroybd0f2547ef8ce52742985460f62803fe.definition.url
+            .replace('{id}', parsedArgs.id.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PostController::destroy
+* @see app/Http/Controllers/PostController.php:447
+* @route '/api/posts/{id}'
+*/
+destroybd0f2547ef8ce52742985460f62803fe.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroybd0f2547ef8ce52742985460f62803fe.url(args, options),
+    method: 'delete',
+})
+
+/**
+* @see \App\Http\Controllers\PostController::destroy
+* @see app/Http/Controllers/PostController.php:447
+* @route '/api/posts/{id}'
+*/
+const destroybd0f2547ef8ce52742985460f62803feForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroybd0f2547ef8ce52742985460f62803fe.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PostController::destroy
+* @see app/Http/Controllers/PostController.php:447
+* @route '/api/posts/{id}'
+*/
+destroybd0f2547ef8ce52742985460f62803feForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroybd0f2547ef8ce52742985460f62803fe.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroybd0f2547ef8ce52742985460f62803fe.form = destroybd0f2547ef8ce52742985460f62803feForm
+
+/**
+* Multiple routes resolve to \App\Http\Controllers\PostController::destroy, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `destroy['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
+export const destroy = {
+    '/drafts/{id}': destroy710c9cd3b91985fda9cac0eabb3d3885,
+    '/api/posts/{id}': destroybd0f2547ef8ce52742985460f62803fe,
+}
 
 /**
 * @see \App\Http\Controllers\PostController::history
