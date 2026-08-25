@@ -45,6 +45,12 @@ class AuthenticateApiToken
 
                 return $next($request);
             }
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Invalid or expired API token.',
+                'status' => 401,
+            ], 401);
         }
 
         // 2. Allow logged-in session user

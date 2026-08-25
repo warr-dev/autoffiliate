@@ -1,27 +1,28 @@
 # Autoffiliate — Master Operations, Architecture & Deployment Documentation
 
-Comprehensive guide and architectural blueprint for the **Autoffiliate** platform — an AI-powered affiliate marketing studio and automated social media syndication system built with **Laravel 13**, **Svelte 5 (Runes)**, **Inertia.js v3**, **Tailwind CSS v4**, and **Vite 8**.
+Comprehensive guide and architectural blueprint for the **Autoffiliate** platform — an AI-powered affiliate marketing studio, automated social media syndication system, and API suite built with **Laravel 13**, **Svelte 5 (Runes)**, **Inertia.js v3**, **Tailwind CSS v4**, and **Vite 8**.
 
 ---
 
 ## 📑 Table of Contents
 
 1. [Executive Overview & Tech Stack](#-executive-overview--tech-stack)
-2. [System Architecture & Data Flows](#-system-architecture--data-flows)
-3. [Background Automation & Scheduling](#-background-automation--scheduling)
-4. [Facebook Graph API & Multi-Page Management](#-facebook-graph-api--multi-page-management)
-5. [AI Token Tracking & Cost Analytics](#-ai-token-tracking--cost-analytics)
-6. [CI/CD Pipeline: Build with Node ➔ Deploy via SSH](#-cicd-pipeline-build-with-node--deploy-via-ssh)
-7. [Hostinger Deployment Guide](#-hostinger-deployment-guide)
-8. [CLI Tooling & Quality Assurance](#-cli-tooling--quality-assurance)
-9. [Database Entity-Relationship Model](#-database-entity-relationship-model)
-10. [Security & Credential Management](#-security--credential-management)
+2. [System Architecture & Component Blueprint](#-system-architecture--component-blueprint)
+3. [AI Telemetry, Token Tracking & Cost Analytics](#-ai-telemetry-token-tracking--cost-analytics)
+4. [Background Automation & Workflow Engine](#-background-automation--workflow-engine)
+5. [Token-Based REST API Suite](#-token-based-rest-api-suite)
+6. [Facebook Graph API & Multi-Page Management](#-facebook-graph-api--multi-page-management)
+7. [Shopee PH Deal Extraction & Media Pipeline](#-shopee-ph-deal-extraction--media-pipeline)
+8. [CI/CD Pipeline: Build with Node ➔ Deploy via SSH](#-cicd-pipeline-build-with-node--deploy-via-ssh)
+9. [Hostinger Deployment Guide](#-hostinger-deployment-guide)
+10. [Database Entity-Relationship Model](#-database-entity-relationship-model)
+11. [Security, Authentication & Credential Management](#-security-authentication--credential-management)
 
 ---
 
 ## ⚡ Executive Overview & Tech Stack
 
-Autoffiliate streamlines automated deal hunting, dynamic AI content generation, and multi-channel publication (Facebook Pages, Webhooks, Telegram).
+Autoffiliate streamlines automated deal hunting, dynamic AI copywriting, token analytics, and multi-channel publication (Facebook Pages, Webhooks, Telegram).
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -33,15 +34,17 @@ Autoffiliate streamlines automated deal hunting, dynamic AI content generation, 
 │ Backend Framework        │ Laravel 13 (PHP 8.3+) with Fortify (2FA)    │
 │ Background Queue & Cache │ Redis 7 + Laravel Queued Jobs               │
 │ Database Persistence     │ MariaDB 11 / MySQL 8.0                      │
-│ AI Intelligence Engines  │ OpenAI (GPT-4o-mini), DeepSeek, Gemini      │
+│ AI Intelligence Engines  │ OpenAI, DeepSeek, Google Gemini, Anthropic  │
+│ Telemetry & Analytics    │ Token usage, model latency, USD cost audit  │
 │ Social Media Publishing  │ Meta Facebook Graph API v20.0               │
-│ Task Automation Daemon   │ Supervisor / Laravel Scheduler              │
+│ API Authentication       │ Personal Access Tokens (Sanctum/Bearer)     │
+│ Task Automation Daemon   │ Supervisor / Laravel Scheduler / Web-Cron   │
 └──────────────────────────┴─────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🏛️ System Architecture & Data Flows
+## 🏛️ System Architecture & Component Blueprint
 
 ### High-Level Component Architecture
 
@@ -59,47 +62,55 @@ graph TD
         Nginx["Nginx Web Server / Gateway"]
         Router["Laravel Router & Fortify Auth"]
         InertiaMiddleware["Inertia Page Response Middleware"]
+        ApiTokenMiddleware["AuthenticateApiToken Middleware"]
 
         subgraph Controllers ["Controllers & Services"]
             DC["DashboardController<br/>(AI Analytics & Summaries)"]
+            AC["AnalyticsController<br/>(Metrics, Export & Pruning)"]
             PC["PostController<br/>(Drafts, Captions & Publishing)"]
             WC["WorkflowController<br/>(Studio, Pipelines & Triggers)"]
             SC["SettingsController<br/>(Tokens, Keys & Multi-Page)"]
+            API_Auth["AuthController<br/>(API Tokens & Auth)"]
         end
 
         Nginx --> Router
         Router --> InertiaMiddleware
+        Router --> ApiTokenMiddleware
         InertiaMiddleware --> DC
+        InertiaMiddleware --> AC
         InertiaMiddleware --> PC
         InertiaMiddleware --> WC
         InertiaMiddleware --> SC
+        ApiTokenMiddleware --> API_Auth
     end
 
     subgraph Background_Layer ["Background Automation & Queue Worker"]
         Scheduler["Laravel Scheduler<br/>(workflows:run every minute)"]
         JobQueue["Queue Worker<br/>(ExecuteWorkflowRuleJob)"]
-        Supervisor["Supervisor / Cron Daemon"]
+        Supervisor["Supervisor / Cron Daemon / Web-Cron"]
         Supervisor --> Scheduler
         Scheduler --> JobQueue
     end
 
     subgraph Data_Layer ["Persistence & Cache Layer"]
-        MySQL[("MariaDB 11 / MySQL 8.0<br/>posts, workflow_rules, ai_usage_logs,<br/>social_accounts, settings, users")]
+        MySQL[("MariaDB 11 / MySQL 8.0<br/>posts, workflow_rules, ai_usage_logs,<br/>personal_access_tokens, social_accounts,<br/>settings, users")]
         Redis[("Redis 7<br/>Queues, Cache, Sessions")]
     end
 
     subgraph External_Layer ["External APIs & Integrations"]
         FB["Meta Facebook Graph API v20.0<br/>(Page Feed & Engagement)"]
-        AI["AI LLM Engines<br/>(OpenAI, DeepSeek, Gemini)"]
+        AI["AI LLM Engines<br/>(OpenAI, DeepSeek, Gemini, Claude, Groq)"]
         Shopee["Shopee Affiliate Link Resolver"]
         Webhook["n8n Webhook & Telegram Bot"]
     end
 
     InertiaClient <==>|Inertia JSON / State Bridge| Nginx
     DC --> MySQL
+    AC --> MySQL
     PC --> MySQL
     WC --> MySQL
     SC --> MySQL
+    API_Auth --> MySQL
 
     DC --> Redis
     JobQueue --> MySQL
@@ -117,23 +128,97 @@ graph TD
 
 ---
 
-## ⚙️ Background Automation & Scheduling
+## 🤖 AI Telemetry, Token Tracking & Cost Analytics
 
-Automated publishing executes seamlessly 24/7 in the background without keeping browser tabs open:
+The AI Analytics engine logs every AI prompt generation, completion token, USD cost, latency in milliseconds, and entry source.
 
-1. **Artisan Scheduler Command:** `php artisan workflows:run`
+### 1. Telemetry Data Model (`ai_usage_logs`)
+- `id`: Unique random string (`ai_...`)
+- `timestamp`: Execution datetime (`Asia/Manila` timezone)
+- `post_id`: Associated post record ID (nullable)
+- `provider`: `openai`, `deepseek`, `gemini`, `anthropic`, `groq`, `openrouter`, or `internal`
+- `model`: Model name (e.g. `gpt-4o-mini`, `deepseek-chat`, `gemini-1.5-flash`)
+- `style`: Caption tone (`viral_ai`, `pinoy_taglish`, `specs_tech`, `urgency_flash`, `aesthetic`, `minimal`)
+- `source`: Trigger origin (`manual_draft`, `regenerate`, `automated_workflow`, `api_endpoint`)
+- `prompt_tokens`: Token count of the input context & user instructions
+- `completion_tokens`: Token count of the generated response
+- `total_tokens`: Sum of prompt and completion tokens
+- `estimated_cost`: Cumulative cost calculated in USD
+- `execution_time_ms`: API latency in milliseconds
+- `status`: Execution outcome (`success`, `fallback`)
+
+### 2. Live Pricing Calculation Engine
+
+| Provider | Model | Prompt Tokens (per 1M) | Completion Tokens (per 1M) |
+|---|---|---|---|
+| **OpenAI** | `gpt-4o-mini` | $0.15 | $0.60 |
+| **OpenAI** | `gpt-4o` | $2.50 | $10.00 |
+| **OpenAI** | `o1` / `o3-mini` | $1.10 | $4.40 |
+| **DeepSeek** | `deepseek-chat` (V3) | $0.14 | $0.28 |
+| **DeepSeek** | `deepseek-reasoner` (R1) | $0.55 | $2.19 |
+| **Google Gemini** | `gemini-1.5-flash` / `gemini-2.0-flash` | $0.075 | $0.30 |
+| **Google Gemini** | `gemini-1.5-pro` / `gemini-2.0-pro` | $1.25 | $5.00 |
+| **Anthropic** | `claude-3-5-sonnet` | $3.00 | $15.00 |
+| **Anthropic** | `claude-3-5-haiku` | $0.80 | $4.00 |
+| **Groq** | `llama-3.3-70b` | $0.59 | $0.79 |
+| **Groq** | `llama-3.1-8b` | $0.05 | $0.08 |
+| **Dynamic Engine** | `dynamic-engine` (Fallback) | $0.00 | $0.00 |
+
+### 3. Analytics User Interface (`/analytics`)
+- **Period Filter:** `Today`, `7 Days`, `30 Days`, `90 Days`, `All Time`.
+- **KPI Summary Cards:** Total Generations, Input/Output Token Ratio, Total Spend ($), Active Model & Avg Latency.
+- **Daily Volume Bar Chart:** Visual token activity and cost trend over the selected period.
+- **Distribution Breakdowns:** Usage by AI Provider, Model, Caption Style, and Source.
+- **Searchable Audit Table:** Real-time search across post titles, models, and timestamps with direct links to edit drafts.
+- **Data Export:** Instant CSV and JSON downloadable reports.
+- **Log Pruning:** Configurable retention policy (delete records older than 30, 60, 90 days or full reset).
+
+---
+
+## ⚙️ Background Automation & Workflow Engine
+
+Automated publishing executes seamlessly 24/7 in the background without requiring active browser sessions:
+
+1. **Artisan Command:** `php artisan workflows:run`
    - Evaluates active rules in Philippine Time (`Asia/Manila`, `UTC+8`).
    - Checks matching weekdays, weekends, specific days (`Mon`, `Tue`), and time slots (`08:00 AM`, `13:00`).
+   - Features a **10-minute grace period window** for shared hosting environments (Hostinger) where cron triggers might experience brief server delays.
    - Enforces a 2-minute debounce window via `last_run` timestamp.
 2. **Queued Asynchronous Job:** [`ExecuteWorkflowRuleJob`](../app/Jobs/ExecuteWorkflowRuleJob.php)
    - Evaluates dynamic context (time-of-day greetings, weather, occasions).
-   - Generates AI captions and logs token usage in `ai_usage_logs`.
+   - Generates AI captions and logs token telemetry to `ai_usage_logs`.
    - Creates post records and publishes to the Meta Graph API.
    - Dispatches outbound webhooks (e.g. n8n).
-3. **Scheduler Registration:** Scheduled to run every minute in [`routes/console.php`](../routes/console.php):
-   ```php
-   Schedule::command('workflows:run')->everyMinute();
-   ```
+3. **Web-Cron Remote Trigger:** `GET /api/cron/workflows?token=<SECRET>`
+   - Enables Hostinger web-cron pings or external uptime services to trigger the automation runner over HTTPS.
+
+---
+
+## 🔐 Token-Based REST API Suite
+
+Autoffiliate includes a complete Bearer token authentication system for third-party automation tools (n8n, Make, Telegram bots, iOS Shortcuts, CLI scripts):
+
+### Authentication Middleware
+Pass your token via standard HTTP headers:
+- `Authorization: Bearer <API_TOKEN>`
+- `X-API-Key: <API_TOKEN>`
+
+### Core API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/auth/login` | Authenticate and obtain personal access token |
+| `GET` | `/api/auth/tokens` | List active named API keys and last used dates |
+| `POST` | `/api/auth/tokens` | Generate new permanent named API key |
+| `DELETE` | `/api/auth/tokens/{id}` | Revoke an API key immediately |
+| `POST` | `/api/extract` | Extract product details & media from Shopee URL |
+| `GET` | `/api/posts` | List recent posts and drafts with pagination |
+| `POST` | `/api/posts` | Create new post draft from affiliate link |
+| `POST` | `/api/draft/generate` | Generate AI caption with style and track tokens |
+| `POST` | `/api/publish` | Publish post to connected Facebook page |
+| `GET` | `/api/analytics/ai` | Fetch JSON AI token analytics and breakdowns |
+| `GET` | `/api/analytics/ai/export` | Download CSV/JSON analytics report |
+| `POST` | `/api/analytics/ai/clear` | Prune or reset telemetry logs |
 
 ---
 
@@ -167,26 +252,23 @@ All generated posts adhere to strict compliance guidelines:
 ┌─────────────────────────────────────────────────────────────┐
 │ [Dynamic Hook / Time Greeting / Selling Points Body]        │
 │                                                             │
-│ Affiliate link. Price and availability may change anytime.  │
-│ (Condition: Only appended if affiliate URL is present)      │
+│ 🛒 Order / Buy Link: https://shopee.ph/product-link         │
 │                                                             │
-│ #TechSulitDeals #ShopeePH #automated (Trailing Tags at End) │
+│ Affiliate link. Price and availability may change anytime.  │
+│                                                             │
+│ #TechSulitDeals #ShopeePH #BudolFinds                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🤖 AI Token Tracking & Cost Analytics
+## 🛍️ Shopee PH Deal Extraction & Media Pipeline
 
-Every AI generation is tracked in the database `ai_usage_logs` table:
-
-- **Metrics Tracked:** `post_id`, `provider` (OpenAI, DeepSeek, Gemini), `model`, `style`, `prompt_tokens`, `completion_tokens`, `total_tokens`, `estimated_cost`.
-- **Live Dashboard Stats:**
-  - Total AI Generations
-  - Cumulative Token Count (Prompt vs Completion)
-  - Estimated Total Spend ($ USD)
-  - Usage Breakdown by Provider & Tone Preset
-  - Real-Time AI Generation Feed
+[`ShopeeExtractService`](../app/Services/ShopeeExtractService.php) automatically extracts product metadata from standard or shortened Shopee PH URLs (`shopee.ph/...` or `ph.shp.ee/...`):
+- Resolves HTTP 301/302 short link redirects to canonical product URLs.
+- Extracts `itemid` and `shopid` identifiers.
+- Fetches official Shopee Open Graph and product image carousels.
+- Formats Philippine Peso prices (`₱1,299`).
 
 ---
 
@@ -218,7 +300,7 @@ sequenceDiagram
 
     Dev->>CI: Trigger Build & Deploy Pipeline
     Note over CI: 1. Compiles frontend assets (npm ci && npm run build)
-    Note over CI: 2. Runs linters, type checks & 53 PHPUnit tests
+    Note over CI: 2. Runs linters, type checks & 69 PHPUnit tests
     CI->>Server: Connect over SSH (Port 65002 / 22)
     Note over Server: Server does NOT need Node.js!
     Server->>Server: 3. php artisan down (Maintenance mode)
@@ -249,62 +331,17 @@ sequenceDiagram
    cp .env.example .env
    # Configure DB details in .env
    php artisan key:generate
-   php artisan migrate --seed --force
-   php artisan config:cache
-   php artisan route:cache
-   php artisan view:cache
+   php artisan migrate --force
    ```
-5. **hPanel Cron Job Setup:**
-   - Go to **Advanced ➔ Cron Jobs** ➔ **Custom**.
-   - Schedule: `* * * * *` (Every Minute).
-   - Command:
-     ```bash
-     cd /home/u123456789/domains/yourdomain.com/app && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
-     ```
-
-### Option 2: Hostinger VPS (Ubuntu 22.04 / 24.04)
-
-1. **Install Packages:**
+5. **Cron Job Setup:**
+   In **Advanced ➔ Cron Jobs**, add:
    ```bash
-   sudo apt update && sudo apt install -y nginx php8.3-fpm php8.3-mysql php8.3-curl php8.3-mbstring php8.3-xml php8.3-zip php8.3-bcmath php8.3-redis mariadb-server redis-server supervisor certbot python3-certbot-nginx
+   * * * * * cd /home/u123456789/domains/yourdomain.com/app && php artisan schedule:run >> /dev/null 2>&1
    ```
-2. **Supervisor Daemon:**
-   Configure `/etc/supervisor/conf.d/autoffiliate-scheduler.conf`:
-   ```ini
-   [program:autoffiliate-scheduler]
-   process_name=%(program_name)s
-   command=/usr/bin/php /var/www/autoffiliate/artisan schedule:work
-   autostart=true
-   autorestart=true
-   user=www-data
-   redirect_stderr=true
-   stdout_logfile=/var/www/autoffiliate/storage/logs/scheduler-supervisor.log
+   Or configure a 1-minute Web-Cron ping hitting:
    ```
-3. **1-Click Local Deploy Command:**
-   ```bash
-   npm run deploy
-   # or
-   composer run deploy
+   https://yourdomain.com/api/cron/workflows?token=YOUR_CRON_SECRET
    ```
-
----
-
-## 🛠️ CLI Tooling & Quality Assurance
-
-Autoffiliate includes automated test and code-quality commands:
-
-| Command | Purpose |
-|---|---|
-| `composer run dev` | Runs PHP server, Vite, and background Scheduler concurrently |
-| `composer run ci:check` | Executes ESLint, Prettier, Svelte-Check, Pint, PHPStan, and Pest |
-| `composer run test` | Clears config and executes Pest / PHPUnit test suite |
-| `composer run lint` | Auto-fixes PHP code style via Laravel Pint |
-| `npm run lint` | Auto-fixes JavaScript/Svelte via ESLint |
-| `npm run format` | Auto-formats codebase via Prettier |
-| `npm run types:check` | Validates TypeScript & Svelte compiler types |
-| `npm run deploy` | Compiles assets and deploys to remote Hostinger via SSH |
-| `php artisan workflows:run` | Evaluates and executes scheduled workflow rules immediately |
-| `php artisan make:user` | Creates administrative users via interactive CLI |
 
 ---
 
@@ -312,33 +349,65 @@ Autoffiliate includes automated test and code-quality commands:
 
 ```mermaid
 erDiagram
-    USERS ||--o{ POSTS : creates
+    USERS ||--o{ PERSONAL_ACCESS_TOKENS : "owns"
+    POSTS ||--o{ AI_USAGE_LOGS : "logs telemetry"
+    SOCIAL_ACCOUNTS ||--o{ POSTS : "publishes to"
+
     USERS {
         bigint id PK
         string name
         string email UK
-        timestamp email_verified_at
         string password
-        text two_factor_secret
-        timestamp created_at
+        string two_factor_secret
+        timestamps created_at
     }
 
-    POSTS ||--o{ AI_USAGE_LOGS : generates
+    PERSONAL_ACCESS_TOKENS {
+        bigint id PK
+        string tokenable_type
+        bigint tokenable_id FK
+        string name
+        string token UK
+        json abilities
+        timestamp last_used_at
+        timestamps created_at
+    }
+
     POSTS {
-        string id PK
+        string id PK "post_..."
         string product_title
+        text product_description
+        string product_price
+        string shop_name
         text affiliate_url
         text caption
-        text tags
-        string status
         json media_files
+        string status "draft | approved | published | failed"
         string facebook_post_id
         string facebook_post_url
-        timestamp created_at
+        text tags
+        timestamps created_at
+    }
+
+    AI_USAGE_LOGS {
+        string id PK "ai_..."
+        timestamp timestamp
+        string post_id FK
+        string provider
+        string model
+        string style
+        string source "manual | automated | api"
+        string status "success | fallback"
+        int prompt_tokens
+        int completion_tokens
+        int total_tokens
+        decimal estimated_cost
+        int execution_time_ms
+        timestamps created_at
     }
 
     WORKFLOW_RULES {
-        string id PK
+        string id PK "rule_..."
         string name
         string category
         string frequency
@@ -346,97 +415,37 @@ erDiagram
         json days
         string target_page
         json workflow_actions
-        json action_contexts
         text general_context
-        text weather_context
-        text occasion_context
         json tones
-        json personas
-        string status
+        string status "active | paused"
         timestamp last_run
-        timestamp created_at
+        timestamps created_at
     }
 
     SOCIAL_ACCOUNTS {
-        bigint id PK
-        string platform
-        string account_id
+        string id PK "uuid"
+        string platform "facebook"
         string name
+        string account_id
         text access_token
-        boolean is_enabled
         json extra_config
-        timestamp token_expires_at
-        timestamp created_at
-    }
-
-    AI_USAGE_LOGS {
-        bigint id PK
-        string post_id
-        string provider
-        string model
-        string style
-        integer prompt_tokens
-        integer completion_tokens
-        integer total_tokens
-        decimal estimated_cost
-        timestamp created_at
+        boolean is_enabled
+        string status
+        timestamps created_at
     }
 
     SETTINGS {
-        bigint id PK
-        string key UK
+        string key PK
         text value
-        timestamp created_at
+        timestamps created_at
     }
 ```
 
 ---
 
-## 🛡️ Security & Credential Management
+## 🛡️ Security, Authentication & Credential Management
 
-1. **Database Key Storage:** API keys and access tokens are stored in the database `settings` and `social_accounts` tables — never hardcoded in client templates.
-2. **Frontend Masking:** Secrets in the Settings interface are masked by default (`••••••••`) with client-side visibility toggles.
-3. **Authentication & 2FA:** Fortify authentication with brute-force rate-limiting, CSRF token validation, and Passkey / Two-Factor Authentication support.
-
----
-
-## ⏰ Background 24/7 Automation (Closed Frontend Execution)
-
-### How Automated Flows Trigger Without the Browser Open
-The frontend is **purely a management UI**. Once rules are configured and enabled (`status: 'active'`), execution happens entirely on the **backend server** in the background:
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Cron as Hostinger Cron / Web Cron
-    participant Artisan as workflows:run Command
-    participant DB as MariaDB (workflow_rules)
-    participant Worker as ExecuteWorkflowRuleJob
-    participant Meta as Facebook Graph API
-
-    Note over Cron: Runs every minute 24/7 (Browser CLOSED)
-    Cron->>Artisan: php artisan workflows:run (or GET /api/cron/workflows)
-    Artisan->>DB: Fetch active rules & evaluate isDue() with 30-min grace window
-    Artisan->>Worker: dispatchSync(rule) (Synchronous Execution)
-    Worker->>Worker: Generate dynamic AI greeting & compliance tags
-    Worker->>Meta: POST /v20.0/{page_id}/feed
-    Worker->>DB: Store Post record & update last_run timestamp
-```
-
-### Setting Up Hostinger 24/7 Triggers
-
-#### Option 1: Hostinger hPanel CLI Cron (Recommended)
-1. In hPanel, go to **Advanced ➔ Cron Jobs**.
-2. Select **Custom** / **PHP Command**.
-3. Frequency: `* * * * *` (Every Minute).
-4. Command:
-   ```bash
-   /usr/bin/php /home/u123456789/domains/yourdomain.com/app/artisan workflows:run >> /dev/null 2>&1
-   ```
-
-#### Option 2: External Web-Cron (100% Reliable Backup)
-If Hostinger's CLI cron has path or timing issues, use a free service like [cron-job.org](https://cron-job.org) or [UptimeRobot](https://uptimerobot.com) to ping:
-```text
-GET https://yourdomain.com/api/cron/workflows
-```
-Every 1, 5, or 15 minutes.
+1. **Two-Factor Authentication (2FA):** Fortify TOTP authentication with QR codes and recovery keys.
+2. **Token Security:** Bearer tokens are hashed with SHA-256 in `personal_access_tokens`.
+3. **Webhook Signatures:** Outbound webhooks include signed payloads and optional bearer secrets.
+4. **Rate Limiting:** Login endpoints and public API routes enforce standard throttle limits (5 requests/min for login, 60 requests/min for API).

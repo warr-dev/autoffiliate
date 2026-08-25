@@ -41,7 +41,7 @@ class AiContentGeneratorService
         $model = Setting::get('ai_model', 'gpt-4o-mini');
         $systemPrompt = Setting::get('ai_system_prompt', 'You are an engaging, friendly Filipino community manager and affiliate creator. Write viral Taglish/English Facebook community engagement posts.');
 
-        if (! empty($apiKey)) {
+        if (! empty($apiKey) && strtolower($provider) !== 'internal') {
             $aiResult = self::callAiApi($provider, $apiKey, $model, $systemPrompt, [
                 'name' => $name,
                 'target_page' => $targetPage,
@@ -70,13 +70,16 @@ class AiContentGeneratorService
                     'prompt_tokens' => $aiResult['prompt_tokens'],
                     'completion_tokens' => $aiResult['completion_tokens'],
                     'total_tokens' => $aiResult['total_tokens'],
+                    'execution_time_ms' => $aiResult['execution_time_ms'] ?? null,
+                    'provider' => $provider,
+                    'model' => $model,
                     'is_live_ai' => true,
                 ];
             }
         }
 
         // Fallback: Use Diverse Randomized Dynamic Template Engine
-        return self::generateDynamicFallback([
+        $fallback = self::generateDynamicFallback([
             'name' => $name,
             'target_page' => $targetPage,
             'category' => $category,
@@ -91,10 +94,16 @@ class AiContentGeneratorService
             'disclosure' => $disclosure,
             'default_tags' => $defaultTags,
         ]);
+
+        $fallback['provider'] = 'internal';
+        $fallback['model'] = 'dynamic-engine';
+        $fallback['execution_time_ms'] = 5;
+
+        return $fallback;
     }
 
     /**
-     * Call Live AI APIs (OpenAI, Gemini, Groq, OpenRouter, Anthropic)
+     * Call Live AI APIs (OpenAI, Gemini, DeepSeek, Groq, OpenRouter, Anthropic)
      */
     protected static function callAiApi(string $provider, string $apiKey, string $model, string $systemPrompt, array $ctx): array
     {
@@ -108,25 +117,38 @@ class AiContentGeneratorService
                       (! empty($ctx['manual_prompt']) ? "Custom User Instructions: {$ctx['manual_prompt']}\n" : '').
                       "Rules: Include relevant emojis, interactive question/poll to drive comments, keep it authentic, natural Taglish or English depending on tone. Do NOT output markdown code blocks or quotes around the whole text.";
 
+        $startTime = microtime(true);
+
         try {
-            if ($provider === 'openai' || $provider === 'groq' || $provider === 'openrouter') {
-                $endpoint = match ($provider) {
+            $provLower = strtolower($provider);
+
+            if ($provLower === 'openai' || $provLower === 'groq' || $provLower === 'openrouter' || $provLower === 'deepseek') {
+                $endpoint = match ($provLower) {
                     'groq' => 'https://api.groq.com/openai/v1/chat/completions',
                     'openrouter' => 'https://openrouter.ai/api/v1/chat/completions',
+                    'deepseek' => 'https://api.deepseek.com/chat/completions',
                     default => 'https://api.openai.com/v1/chat/completions',
+                };
+
+                $defaultModel = match ($provLower) {
+                    'deepseek' => 'deepseek-chat',
+                    'groq' => 'llama-3.3-70b-versatile',
+                    default => 'gpt-4o-mini',
                 };
 
                 $resp = Http::timeout(30)->withHeaders([
                     'Authorization' => "Bearer {$apiKey}",
                     'Content-Type' => 'application/json',
                 ])->post($endpoint, [
-                    'model' => $model ?: 'gpt-4o-mini',
+                    'model' => $model ?: $defaultModel,
                     'messages' => [
                         ['role' => 'system', 'content' => $systemPrompt],
                         ['role' => 'user', 'content' => $userPrompt],
                     ],
                     'temperature' => 0.85,
                 ]);
+
+                $execMs = (int) round((microtime(true) - $startTime) * 1000);
 
                 if ($resp->successful()) {
                     $data = $resp->json();
@@ -140,9 +162,10 @@ class AiContentGeneratorService
                         'prompt_tokens' => $usage['prompt_tokens'] ?? 60,
                         'completion_tokens' => $usage['completion_tokens'] ?? 120,
                         'total_tokens' => $usage['total_tokens'] ?? 180,
+                        'execution_time_ms' => $execMs,
                     ];
                 }
-            } elseif ($provider === 'gemini') {
+            } elseif ($provLower === 'gemini') {
                 $geminiModel = $model ?: 'gemini-1.5-flash';
                 $resp = Http::timeout(30)->post("https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$apiKey}", [
                     'contents' => [
@@ -153,6 +176,8 @@ class AiContentGeneratorService
                         ],
                     ],
                 ]);
+
+                $execMs = (int) round((microtime(true) - $startTime) * 1000);
 
                 if ($resp->successful()) {
                     $data = $resp->json();
@@ -166,6 +191,39 @@ class AiContentGeneratorService
                         'prompt_tokens' => $meta['promptTokenCount'] ?? 70,
                         'completion_tokens' => $meta['candidatesTokenCount'] ?? 130,
                         'total_tokens' => $meta['totalTokenCount'] ?? 200,
+                        'execution_time_ms' => $execMs,
+                    ];
+                }
+            } elseif ($provLower === 'anthropic' || $provLower === 'claude') {
+                $claudeModel = $model ?: 'claude-3-5-haiku-20241022';
+                $resp = Http::timeout(30)->withHeaders([
+                    'x-api-key' => $apiKey,
+                    'anthropic-version' => '2023-06-01',
+                    'content-type' => 'application/json',
+                ])->post('https://api.anthropic.com/v1/messages', [
+                    'model' => $claudeModel,
+                    'max_tokens' => 1024,
+                    'system' => $systemPrompt,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $userPrompt],
+                    ],
+                ]);
+
+                $execMs = (int) round((microtime(true) - $startTime) * 1000);
+
+                if ($resp->successful()) {
+                    $data = $resp->json();
+                    $content = $data['content'][0]['text'] ?? '';
+                    $usage = $data['usage'] ?? [];
+
+                    return [
+                        'success' => true,
+                        'title' => "✨ {$ctx['name']}",
+                        'caption' => trim($content),
+                        'prompt_tokens' => $usage['input_tokens'] ?? 65,
+                        'completion_tokens' => $usage['output_tokens'] ?? 125,
+                        'total_tokens' => ($usage['input_tokens'] ?? 65) + ($usage['output_tokens'] ?? 125),
+                        'execution_time_ms' => $execMs,
                     ];
                 }
             }
@@ -292,7 +350,7 @@ class AiContentGeneratorService
         $model = Setting::get('ai_model', 'gpt-4o-mini');
         $systemPrompt = Setting::get('ai_system_prompt', 'You are an expert affiliate marketer and copywriter specializing in high-converting viral social media posts.');
 
-        if (! empty($apiKey)) {
+        if (! empty($apiKey) && strtolower($provider) !== 'internal') {
             $aiResult = self::callAiProductApi($provider, $apiKey, $model, $systemPrompt, [
                 'title' => $title,
                 'desc' => $desc,
@@ -317,13 +375,16 @@ class AiContentGeneratorService
                     'prompt_tokens' => $aiResult['prompt_tokens'],
                     'completion_tokens' => $aiResult['completion_tokens'],
                     'total_tokens' => $aiResult['total_tokens'],
+                    'execution_time_ms' => $aiResult['execution_time_ms'] ?? null,
+                    'provider' => $provider,
+                    'model' => $model,
                     'is_live_ai' => true,
                 ];
             }
         }
 
         // Dynamic Rich Fallback Template for Products
-        return self::generateProductFallback([
+        $fallback = self::generateProductFallback([
             'title' => $title,
             'desc' => $desc,
             'price' => $price,
@@ -335,6 +396,12 @@ class AiContentGeneratorService
             'default_tags' => $defaultTags,
             'has_link' => $hasAffiliateLink,
         ]);
+
+        $fallback['provider'] = 'internal';
+        $fallback['model'] = 'dynamic-engine';
+        $fallback['execution_time_ms'] = 5;
+
+        return $fallback;
     }
 
     /**
@@ -360,25 +427,38 @@ class AiContentGeneratorService
                       "Style Requirement: {$styleInstructions}\n\n".
                       "Rules: Do NOT include links or hashtags in your response (they will be appended automatically). Do NOT output quotes or markdown code blocks.";
 
+        $startTime = microtime(true);
+
         try {
-            if ($provider === 'openai' || $provider === 'groq' || $provider === 'openrouter') {
-                $endpoint = match ($provider) {
+            $provLower = strtolower($provider);
+
+            if ($provLower === 'openai' || $provLower === 'groq' || $provLower === 'openrouter' || $provLower === 'deepseek') {
+                $endpoint = match ($provLower) {
                     'groq' => 'https://api.groq.com/openai/v1/chat/completions',
                     'openrouter' => 'https://openrouter.ai/api/v1/chat/completions',
+                    'deepseek' => 'https://api.deepseek.com/chat/completions',
                     default => 'https://api.openai.com/v1/chat/completions',
+                };
+
+                $defaultModel = match ($provLower) {
+                    'deepseek' => 'deepseek-chat',
+                    'groq' => 'llama-3.3-70b-versatile',
+                    default => 'gpt-4o-mini',
                 };
 
                 $resp = Http::timeout(30)->withHeaders([
                     'Authorization' => "Bearer {$apiKey}",
                     'Content-Type' => 'application/json',
                 ])->post($endpoint, [
-                    'model' => $model ?: 'gpt-4o-mini',
+                    'model' => $model ?: $defaultModel,
                     'messages' => [
                         ['role' => 'system', 'content' => $systemPrompt],
                         ['role' => 'user', 'content' => $userPrompt],
                     ],
                     'temperature' => 0.85,
                 ]);
+
+                $execMs = (int) round((microtime(true) - $startTime) * 1000);
 
                 if ($resp->successful()) {
                     $data = $resp->json();
@@ -391,9 +471,10 @@ class AiContentGeneratorService
                         'prompt_tokens' => $usage['prompt_tokens'] ?? 80,
                         'completion_tokens' => $usage['completion_tokens'] ?? 150,
                         'total_tokens' => $usage['total_tokens'] ?? 230,
+                        'execution_time_ms' => $execMs,
                     ];
                 }
-            } elseif ($provider === 'gemini') {
+            } elseif ($provLower === 'gemini') {
                 $geminiModel = $model ?: 'gemini-1.5-flash';
                 $resp = Http::timeout(30)->post("https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$apiKey}", [
                     'contents' => [
@@ -404,6 +485,8 @@ class AiContentGeneratorService
                         ],
                     ],
                 ]);
+
+                $execMs = (int) round((microtime(true) - $startTime) * 1000);
 
                 if ($resp->successful()) {
                     $data = $resp->json();
@@ -416,6 +499,38 @@ class AiContentGeneratorService
                         'prompt_tokens' => $meta['promptTokenCount'] ?? 85,
                         'completion_tokens' => $meta['candidatesTokenCount'] ?? 160,
                         'total_tokens' => $meta['totalTokenCount'] ?? 245,
+                        'execution_time_ms' => $execMs,
+                    ];
+                }
+            } elseif ($provLower === 'anthropic' || $provLower === 'claude') {
+                $claudeModel = $model ?: 'claude-3-5-haiku-20241022';
+                $resp = Http::timeout(30)->withHeaders([
+                    'x-api-key' => $apiKey,
+                    'anthropic-version' => '2023-06-01',
+                    'content-type' => 'application/json',
+                ])->post('https://api.anthropic.com/v1/messages', [
+                    'model' => $claudeModel,
+                    'max_tokens' => 1024,
+                    'system' => $systemPrompt,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $userPrompt],
+                    ],
+                ]);
+
+                $execMs = (int) round((microtime(true) - $startTime) * 1000);
+
+                if ($resp->successful()) {
+                    $data = $resp->json();
+                    $content = $data['content'][0]['text'] ?? '';
+                    $usage = $data['usage'] ?? [];
+
+                    return [
+                        'success' => true,
+                        'caption' => trim($content),
+                        'prompt_tokens' => $usage['input_tokens'] ?? 80,
+                        'completion_tokens' => $usage['output_tokens'] ?? 150,
+                        'total_tokens' => ($usage['input_tokens'] ?? 80) + ($usage['output_tokens'] ?? 150),
+                        'execution_time_ms' => $execMs,
                     ];
                 }
             }

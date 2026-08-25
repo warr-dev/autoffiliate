@@ -16,6 +16,7 @@
         { href: '/drafts', label: 'Drafts', icon: '📝' },
         { href: '/automated', label: 'Automated', icon: '⚡' },
         { href: '/history', label: 'History', icon: '☰' },
+        { href: '/analytics', label: 'Analytics', icon: '📊' },
         { href: '/settings/app', label: 'Settings', icon: '⚙' },
     ];
 
@@ -24,6 +25,7 @@
         { href: '/create', label: 'Create', icon: '＋' },
         { href: '/drafts', label: 'Drafts', icon: '📝' },
         { href: '/automated', label: 'Auto', icon: '⚡' },
+        { href: '/analytics', label: 'Analytics', icon: '📊' },
         { href: '/settings/app', label: 'Settings', icon: '⚙' },
     ];
 

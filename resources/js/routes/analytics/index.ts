@@ -1,75 +1,75 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
-* @see \App\Http\Controllers\DashboardController::ai
-* @see app/Http/Controllers/DashboardController.php:27
-* @route '/api/analytics/ai'
+* @see \App\Http\Controllers\AnalyticsController::index
+* @see app/Http/Controllers/AnalyticsController.php:19
+* @route '/analytics'
 */
-export const ai = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: ai.url(options),
+export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
     method: 'get',
 })
 
-ai.definition = {
+index.definition = {
     methods: ["get","head"],
-    url: '/api/analytics/ai',
+    url: '/analytics',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\DashboardController::ai
-* @see app/Http/Controllers/DashboardController.php:27
-* @route '/api/analytics/ai'
+* @see \App\Http\Controllers\AnalyticsController::index
+* @see app/Http/Controllers/AnalyticsController.php:19
+* @route '/analytics'
 */
-ai.url = (options?: RouteQueryOptions) => {
-    return ai.definition.url + queryParams(options)
+index.url = (options?: RouteQueryOptions) => {
+    return index.definition.url + queryParams(options)
 }
 
 /**
-* @see \App\Http\Controllers\DashboardController::ai
-* @see app/Http/Controllers/DashboardController.php:27
-* @route '/api/analytics/ai'
+* @see \App\Http\Controllers\AnalyticsController::index
+* @see app/Http/Controllers/AnalyticsController.php:19
+* @route '/analytics'
 */
-ai.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: ai.url(options),
+index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
     method: 'get',
 })
 
 /**
-* @see \App\Http\Controllers\DashboardController::ai
-* @see app/Http/Controllers/DashboardController.php:27
-* @route '/api/analytics/ai'
+* @see \App\Http\Controllers\AnalyticsController::index
+* @see app/Http/Controllers/AnalyticsController.php:19
+* @route '/analytics'
 */
-ai.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: ai.url(options),
+index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(options),
     method: 'head',
 })
 
 /**
-* @see \App\Http\Controllers\DashboardController::ai
-* @see app/Http/Controllers/DashboardController.php:27
-* @route '/api/analytics/ai'
+* @see \App\Http\Controllers\AnalyticsController::index
+* @see app/Http/Controllers/AnalyticsController.php:19
+* @route '/analytics'
 */
-const aiForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: ai.url(options),
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
     method: 'get',
 })
 
 /**
-* @see \App\Http\Controllers\DashboardController::ai
-* @see app/Http/Controllers/DashboardController.php:27
-* @route '/api/analytics/ai'
+* @see \App\Http\Controllers\AnalyticsController::index
+* @see app/Http/Controllers/AnalyticsController.php:19
+* @route '/analytics'
 */
-aiForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: ai.url(options),
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
     method: 'get',
 })
 
 /**
-* @see \App\Http\Controllers\DashboardController::ai
-* @see app/Http/Controllers/DashboardController.php:27
-* @route '/api/analytics/ai'
+* @see \App\Http\Controllers\AnalyticsController::index
+* @see app/Http/Controllers/AnalyticsController.php:19
+* @route '/analytics'
 */
-aiForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: ai.url({
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -78,10 +78,92 @@ aiForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     method: 'get',
 })
 
-ai.form = aiForm
+index.form = indexForm
+
+/**
+* @see \App\Http\Controllers\AnalyticsController::exportMethod
+* @see app/Http/Controllers/AnalyticsController.php:56
+* @route '/analytics/export'
+*/
+export const exportMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportMethod.url(options),
+    method: 'get',
+})
+
+exportMethod.definition = {
+    methods: ["get","head"],
+    url: '/analytics/export',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\AnalyticsController::exportMethod
+* @see app/Http/Controllers/AnalyticsController.php:56
+* @route '/analytics/export'
+*/
+exportMethod.url = (options?: RouteQueryOptions) => {
+    return exportMethod.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\AnalyticsController::exportMethod
+* @see app/Http/Controllers/AnalyticsController.php:56
+* @route '/analytics/export'
+*/
+exportMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: exportMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AnalyticsController::exportMethod
+* @see app/Http/Controllers/AnalyticsController.php:56
+* @route '/analytics/export'
+*/
+exportMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: exportMethod.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\AnalyticsController::exportMethod
+* @see app/Http/Controllers/AnalyticsController.php:56
+* @route '/analytics/export'
+*/
+const exportMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AnalyticsController::exportMethod
+* @see app/Http/Controllers/AnalyticsController.php:56
+* @route '/analytics/export'
+*/
+exportMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AnalyticsController::exportMethod
+* @see app/Http/Controllers/AnalyticsController.php:56
+* @route '/analytics/export'
+*/
+exportMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: exportMethod.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+exportMethod.form = exportMethodForm
 
 const analytics = {
-    ai: Object.assign(ai, ai),
+    index: Object.assign(index, index),
+    export: Object.assign(exportMethod, exportMethod),
 }
 
 export default analytics

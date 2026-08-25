@@ -1,6 +1,6 @@
-# Autoffiliate - System Architecture & Design
+# Autoffiliate - System Architecture & Technical Blueprint
 
-This document details the architectural design, component interactions, data models, and execution pipelines of the **Autoffiliate** platform.
+Technical architecture, component interaction contracts, data models, and execution pipelines of the **Autoffiliate** platform.
 
 ---
 
@@ -9,58 +9,68 @@ This document details the architectural design, component interactions, data mod
 ```mermaid
 graph TD
     subgraph Client_Layer ["Client & Frontend Layer (SPA)"]
-        UI["Svelte 5 (Runes) + Tailwind CSS v4"]
+        UI["Svelte 5 (Runes: $state, $derived, $effect)"]
+        Tailwind["Tailwind CSS v4 + Bits UI"]
         InertiaClient["Inertia.js v3 Client Adapter"]
         Wayfinder["Wayfinder TypeScript Route Bridge"]
         UI --> InertiaClient
         UI --> Wayfinder
+        UI --> Tailwind
     end
 
     subgraph App_Layer ["Application & Backend Layer (Laravel 13)"]
-        Nginx["Nginx Web Server"]
-        Router["Laravel Router & Fortify Auth"]
+        Nginx["Nginx Web Server / Reverse Proxy"]
+        Router["Laravel 13 Router & Fortify 2FA"]
         InertiaMiddleware["Inertia Page Response Middleware"]
+        ApiAuthMiddleware["AuthenticateApiToken Middleware"]
 
         subgraph Controllers ["Controllers & Services"]
             DC["DashboardController<br/>(AI Analytics & Summaries)"]
+            AC["AnalyticsController<br/>(Telemetry, Exports & Pruning)"]
             PC["PostController<br/>(Drafts, Captions & Publishing)"]
             WC["WorkflowController<br/>(Studio, Pipelines & Triggers)"]
             SC["SettingsController<br/>(Tokens, Keys & Multi-Page)"]
+            API_Auth["AuthController<br/>(Bearer Tokens & API)"]
         end
 
         Nginx --> Router
         Router --> InertiaMiddleware
+        Router --> ApiAuthMiddleware
         InertiaMiddleware --> DC
+        InertiaMiddleware --> AC
         InertiaMiddleware --> PC
         InertiaMiddleware --> WC
         InertiaMiddleware --> SC
+        ApiAuthMiddleware --> API_Auth
     end
 
     subgraph Background_Layer ["Background Automation & Queue Worker"]
         Scheduler["Laravel Scheduler<br/>(workflows:run every minute)"]
         JobQueue["Queue Worker<br/>(ExecuteWorkflowRuleJob)"]
-        Supervisor["Supervisor / Cron Daemon"]
+        Supervisor["Supervisor / Cron Daemon / Web-Cron"]
         Supervisor --> Scheduler
         Scheduler --> JobQueue
     end
 
     subgraph Data_Layer ["Persistence & Cache Layer"]
-        MySQL[("MariaDB 11 / MySQL 8.0<br/>posts, workflow_rules, ai_usage_logs,<br/>social_accounts, settings, users")]
+        MySQL[("MariaDB 11 / MySQL 8.0<br/>posts, workflow_rules, ai_usage_logs,<br/>personal_access_tokens, social_accounts,<br/>settings, users")]
         Redis[("Redis 7<br/>Queues, Cache, Sessions")]
     end
 
     subgraph External_Layer ["External APIs & Integrations"]
         FB["Meta Facebook Graph API v20.0<br/>(Page Feed & Engagement)"]
-        AI["AI LLM Engines<br/>(OpenAI, DeepSeek, Gemini)"]
+        AI["AI LLM Engines<br/>(OpenAI, DeepSeek, Gemini, Claude, Groq)"]
         Shopee["Shopee Affiliate Link Resolver"]
         Webhook["n8n Webhook & Telegram Bot"]
     end
 
-    InertiaClient <==>|Inertia JSON / SSR| Nginx
+    InertiaClient <==>|Inertia JSON / State Bridge| Nginx
     DC --> MySQL
+    AC --> MySQL
     PC --> MySQL
     WC --> MySQL
     SC --> MySQL
+    API_Auth --> MySQL
 
     DC --> Redis
     JobQueue --> MySQL
@@ -88,166 +98,79 @@ sequenceDiagram
     participant S as Scheduler (workflows:run)
     participant J as ExecuteWorkflowRuleJob
     participant DB as MariaDB (workflow_rules & posts)
-    participant AI as AI Provider (OpenAI/DeepSeek)
+    participant AI as AI Provider (OpenAI/DeepSeek/Gemini)
     participant FB as Meta Graph API v20.0
     participant WH as Outbound Webhook (n8n)
 
     S->>DB: Query active rules (status = 'active')
-    S->>S: Check rule.isDue() in Asia/Manila timezone
+    S->>S: Check rule.isDue() in Asia/Manila timezone (with 10-min grace window)
     alt Rule is Due
         S->>J: Dispatch ExecuteWorkflowRuleJob
         J->>AI: Generate dynamic time/weather hook & body
-        AI-->>J: Return styled caption & token counts
-        J->>DB: Record post draft & log AI usage (ai_usage_logs)
-        alt Action includes Publish
-            J->>FB: POST /v20.0/{page_id}/feed (caption + affiliate_url)
-            FB-->>J: Return post_id (live URL)
-            J->>DB: Update post status to 'published' + facebook_post_id
+        AI-->>J: Return styled caption, token counts & execution time
+        J->>DB: Create Post record (status = 'draft')
+        J->>DB: Record AI telemetry in ai_usage_logs
+        alt Action includes 'Publish'
+            J->>FB: POST /{page_id}/feed with caption & media
+            FB-->>J: Return Facebook Post ID
+            J->>DB: Update Post (status = 'published', facebook_post_id)
         end
-        opt Outbound Webhook Configured
-            J->>WH: POST post.published payload
+        alt Outbound Webhook configured
+            J->>WH: POST payload to n8n / Telegram
         end
         J->>DB: Update rule.last_run = now()
     end
 ```
 
----
-
-### 2. Facebook Permanent Page Token Exchange Flow
+### 2. Shopee Deal Creation & AI Caption Pipeline
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant User as Admin User (Settings UI)
-    participant Backend as SettingsController
-    participant Meta as Meta Graph API v20.0
-    participant DB as MariaDB (social_accounts)
+    participant U as Admin User
+    participant P as PostController
+    participant S as ShopeeExtractService
+    participant AI as AiContentGeneratorService
+    participant DB as MariaDB
 
-    User->>Backend: Provide App ID, App Secret & Short-Lived User Token (EAAB...)
-    Backend->>Meta: GET /oauth/access_token (grant_type=fb_exchange_token)
-    Meta-->>Backend: Return 60-day Long-Lived User Token
-    Backend->>Meta: GET /me/accounts?access_token={60_day_token}
-    Meta-->>Backend: Return Managed Pages list with Permanent Page Tokens
-    Backend->>DB: Store / Update SocialAccount record (token, page_id, name)
-    Backend-->>User: Auto-populate and show active status (Never Expires ♾️)
+    U->>P: Submit Shopee URL & Caption Style (e.g. viral_ai)
+    P->>S: Extract product title, price & high-res media
+    S-->>P: Return canonical info & images
+    P->>AI: Generate structured deal post with style
+    AI-->>P: Return formatted body, disclosure & token counts
+    P->>DB: Insert Post (status = 'draft')
+    P->>DB: Log usage in ai_usage_logs (cost & latency)
+    P-->>U: Return Draft preview in UI
 ```
 
----
-
-### 3. Caption & Compliance Formatting Pipeline
+### 3. AI Token Telemetry & Analytics Pipeline
 
 ```mermaid
-flowchart TD
-    A["Raw Product Deal / Prompt Context"] --> B{"Style Selected"}
-    B -->|viral| C1["🔥 SUPER SALE ALERT! Hook"]
-    B -->|taglish| C2["Sobrang sulit nito mga besh! Hook"]
-    B -->|specs| C3["📌 Product Specs & Highlights"]
-    B -->|standard| C4["✨ Great deal showcase"]
+sequenceDiagram
+    autonumber
+    participant Client as Analytics Dashboard (/analytics)
+    participant Controller as AnalyticsController
+    participant Model as AiUsageLog
+    participant DB as MariaDB
 
-    C1 --> D["Assemble Post Body & Selling Points"]
-    C2 --> D
-    C3 --> D
-    C4 --> D
-
-    D --> E{"Contains Affiliate Link?"}
-    E -->|Yes| F["Append Affiliate Disclosure<br/>'Affiliate link. Price and availability may change anytime.'"]
-    E -->|No| G["Skip Disclosure Notice"]
-
-    F --> H["Append Trailing Hashtags at VERY END<br/>#TechSulitDeals #ShopeePH #automated"]
-    G --> H
-
-    H --> I["Final Publication Message"]
+    Client->>Controller: GET /analytics?period=30d&provider=all
+    Controller->>Model: getAnalytics(['period' => '30d'])
+    Model->>DB: Query aggregated token sums, cost totals & daily series
+    DB-->>Model: Raw database aggregations
+    Model->>Model: Calculate model price multipliers & breakdown percentages
+    Model-->>Controller: Structured telemetry payload
+    Controller-->>Client: Render Analytics/Index with KPI cards & charts
 ```
 
 ---
 
-## 🗄️ Database Entity-Relationship Diagram
+## 🧩 Component Responsibilities
 
-```mermaid
-erDiagram
-    USERS ||--o{ POSTS : creates
-    USERS {
-        bigint id PK
-        string name
-        string email UK
-        timestamp email_verified_at
-        string password
-        text two_factor_secret
-        timestamp created_at
-    }
-
-    POSTS ||--o{ AI_USAGE_LOGS : generates
-    POSTS {
-        string id PK
-        string product_title
-        text affiliate_url
-        text caption
-        text tags
-        string status
-        json media_files
-        string facebook_post_id
-        string facebook_post_url
-        timestamp created_at
-    }
-
-    WORKFLOW_RULES {
-        string id PK
-        string name
-        string category
-        string frequency
-        json times
-        json days
-        string target_page
-        json workflow_actions
-        json action_contexts
-        text general_context
-        text weather_context
-        text occasion_context
-        json tones
-        json personas
-        string status
-        timestamp last_run
-        timestamp created_at
-    }
-
-    SOCIAL_ACCOUNTS {
-        bigint id PK
-        string platform
-        string account_id
-        string name
-        text access_token
-        boolean is_enabled
-        json extra_config
-        timestamp token_expires_at
-        timestamp created_at
-    }
-
-    AI_USAGE_LOGS {
-        bigint id PK
-        string post_id
-        string provider
-        string model
-        string style
-        integer prompt_tokens
-        integer completion_tokens
-        integer total_tokens
-        decimal estimated_cost
-        timestamp created_at
-    }
-
-    SETTINGS {
-        bigint id PK
-        string key UK
-        text value
-        timestamp created_at
-    }
-```
-
----
-
-## 🛡️ Security Architecture
-
-1. **Credential Segregation**: AI API keys, Meta App Secrets, and webhook secrets are stored securely in the database `settings` table and never exposed in frontend Inertia props.
-2. **UI Masking**: Sensitive fields in the Settings page (`Settings/Index.svelte`) are masked (`••••••••`) by default with client-side toggle controls.
-3. **Session & Auth Protection**: Built on Laravel Fortify with 2FA support, rate-limiting on authentication endpoints, and strict CSRF token validation.
-4. **Permanent Token Isolation**: Page Access Tokens are tied to specific Page IDs with explicit minimal scopes (`pages_manage_posts`, `pages_read_engagement`).
+| Component | Class / File | Primary Responsibility |
+|---|---|---|
+| **AI Generator** | [`AiContentGeneratorService`](../app/Services/AiContentGeneratorService.php) | Connects to OpenAI, DeepSeek, Gemini, Claude, Groq, and fallback template engine; tracks latency. |
+| **Telemetry Logger** | [`AiUsageLog`](../app/Models/AiUsageLog.php) | Persists token metrics, applies accurate model pricing rates, and computes analytics breakdowns. |
+| **Analytics Controller** | [`AnalyticsController`](../app/Http/Controllers/AnalyticsController.php) | Renders analytics UI, exports CSV/JSON reports, and manages log pruning. |
+| **Product Extractor** | [`ShopeeExtractService`](../app/Services/ShopeeExtractService.php) | Unshortens Shopee links, extracts media carousels, and formats prices. |
+| **Workflow Engine** | [`WorkflowController`](../app/Http/Controllers/WorkflowController.php) & [`ExecuteWorkflowRuleJob`](../app/Jobs/ExecuteWorkflowRuleJob.php) | Schedules, triggers, and executes autonomous syndication rules. |
+| **API Auth Middleware** | [`AuthenticateApiToken`](../app/Http/Middleware/AuthenticateApiToken.php) | Authenticates API requests via Bearer token or X-API-Key header. |
