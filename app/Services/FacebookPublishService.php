@@ -70,7 +70,7 @@ class FacebookPublishService
         if (empty($attachedMedia)) {
             return [
                 'success' => false,
-                'error' => 'Failed to upload any photo attachments to Facebook.',
+                'error' => 'Failed to upload photo attachments to Facebook.',
             ];
         }
 
@@ -100,6 +100,7 @@ class FacebookPublishService
             }
 
             $err = $resp->json();
+            Log::warning("[FacebookPublishService] Feed post with attached_media failed: " . json_encode($err));
             return [
                 'success' => false,
                 'error' => $err['error']['message'] ?? 'Graph API error attaching multi-photos',
@@ -118,11 +119,11 @@ class FacebookPublishService
     protected static function uploadUnpublishedPhoto(string $pageId, string $token, string $mediaUrl): array
     {
         try {
-            $localPath = self::resolveLocalPath($mediaUrl);
+            $mediaData = self::getMediaBytes($mediaUrl);
 
-            if ($localPath && file_exists($localPath)) {
-                $resp = Http::timeout(30)
-                    ->attach('source', file_get_contents($localPath), basename($localPath))
+            if ($mediaData) {
+                $resp = Http::timeout(45)
+                    ->attach('source', $mediaData['bytes'], $mediaData['filename'])
                     ->post("https://graph.facebook.com/v20.0/{$pageId}/photos", [
                         'published' => 'false',
                         'access_token' => $token,
@@ -141,6 +142,7 @@ class FacebookPublishService
             }
 
             $err = $resp->json();
+            Log::warning("[FacebookPublishService] Unpublished photo upload failed for {$mediaUrl}: " . json_encode($err));
             return ['success' => false, 'error' => $err['error']['message'] ?? 'Failed photo upload'];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -153,11 +155,11 @@ class FacebookPublishService
     protected static function publishSinglePhoto(string $pageId, string $token, string $mediaUrl, string $message): array
     {
         try {
-            $localPath = self::resolveLocalPath($mediaUrl);
+            $mediaData = self::getMediaBytes($mediaUrl);
 
-            if ($localPath && file_exists($localPath)) {
+            if ($mediaData) {
                 $resp = Http::timeout(45)
-                    ->attach('source', file_get_contents($localPath), basename($localPath))
+                    ->attach('source', $mediaData['bytes'], $mediaData['filename'])
                     ->post("https://graph.facebook.com/v20.0/{$pageId}/photos", [
                         'caption' => $message,
                         'access_token' => $token,
@@ -183,6 +185,7 @@ class FacebookPublishService
             }
 
             $err = $resp->json();
+            Log::warning("[FacebookPublishService] Single photo publish failed for {$mediaUrl}: " . json_encode($err));
             return ['success' => false, 'error' => $err['error']['message'] ?? 'Single photo publish error'];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -195,11 +198,11 @@ class FacebookPublishService
     protected static function publishVideo(string $pageId, string $token, string $videoUrl, string $message): array
     {
         try {
-            $localPath = self::resolveLocalPath($videoUrl);
+            $mediaData = self::getMediaBytes($videoUrl);
 
-            if ($localPath && file_exists($localPath)) {
+            if ($mediaData) {
                 $resp = Http::timeout(60)
-                    ->attach('source', file_get_contents($localPath), basename($localPath))
+                    ->attach('source', $mediaData['bytes'], $mediaData['filename'])
                     ->post("https://graph.facebook.com/v20.0/{$pageId}/videos", [
                         'description' => $message,
                         'access_token' => $token,
@@ -225,6 +228,7 @@ class FacebookPublishService
             }
 
             $err = $resp->json();
+            Log::warning("[FacebookPublishService] Video publish failed for {$videoUrl}: " . json_encode($err));
             return ['success' => false, 'error' => $err['error']['message'] ?? 'Video publish error'];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -268,6 +272,55 @@ class FacebookPublishService
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
+    }
+
+    /**
+     * Retrieve binary image/video content from local storage or remote CDN (e.g. Shopee).
+     */
+    protected static function getMediaBytes(string $mediaUrl): ?array
+    {
+        $localPath = self::resolveLocalPath($mediaUrl);
+        if ($localPath && file_exists($localPath)) {
+            $content = file_get_contents($localPath);
+            if ($content !== false && strlen($content) > 0) {
+                return [
+                    'bytes' => $content,
+                    'filename' => basename($localPath),
+                ];
+            }
+        }
+
+        // Remote HTTP / HTTPS URL
+        if (str_starts_with($mediaUrl, 'http://') || str_starts_with($mediaUrl, 'https://')) {
+            try {
+                $resp = Http::withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Referer' => 'https://shopee.ph/',
+                    'Accept' => 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                ])
+                ->withoutVerifying()
+                ->timeout(20)
+                ->get($mediaUrl);
+
+                if ($resp->successful() && strlen($resp->body()) > 50) {
+                    $cleanUrl = strtok($mediaUrl, '?');
+                    $filename = basename($cleanUrl);
+                    if (! str_contains($filename, '.')) {
+                        $contentType = $resp->header('Content-Type') ?? '';
+                        $ext = str_contains($contentType, 'png') ? 'png' : (str_contains($contentType, 'webp') ? 'webp' : 'jpg');
+                        $filename = "{$filename}.{$ext}";
+                    }
+                    return [
+                        'bytes' => $resp->body(),
+                        'filename' => $filename,
+                    ];
+                }
+            } catch (\Exception $e) {
+                Log::warning("[FacebookPublishService] Failed to download media bytes for {$mediaUrl}: " . $e->getMessage());
+            }
+        }
+
+        return null;
     }
 
     /**

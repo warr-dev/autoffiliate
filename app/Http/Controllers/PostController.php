@@ -53,8 +53,8 @@ class PostController extends Controller
         $shop = $validated['shop_name'] ?? null;
         $mediaFiles = $validated['media_files'] ?? [];
 
-        // Auto-extract from Shopee if title was not provided or is placeholder
-        if (empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal') {
+        // Auto-extract from Shopee if mediaFiles is empty OR title was not provided or is placeholder
+        if (empty($mediaFiles) || empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal') {
             $extracted = ShopeeExtractService::extract($affiliateUrl);
             if ($extracted['success']) {
                 if (empty($title) || $title === 'Shopee Deal' || $title === 'Shopee Sulit Deal') {
@@ -224,6 +224,15 @@ class PostController extends Controller
                 }
 
                 return back()->with('error', 'No active Facebook Page or Access Token configured.');
+            }
+        }
+
+        // Auto-extract product media if post currently has no media files
+        if ((empty($post->media_files) || count($post->media_files) === 0) && ! empty($post->affiliate_url)) {
+            $extracted = ShopeeExtractService::extract($post->affiliate_url);
+            if ($extracted['success'] && ! empty($extracted['media_files'])) {
+                $post->update(['media_files' => $extracted['media_files']]);
+                $post->refresh();
             }
         }
 
