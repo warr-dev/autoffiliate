@@ -425,8 +425,10 @@
                         {#if publishing || post.status === 'publishing'}
                             <span class="animate-spin text-xs">🌀</span>
                             <span>Publishing...</span>
+                        {:else if post.status === 'posted' || post.status === 'published'}
+                            <span>👁️ Preview Post</span>
                         {:else}
-                            <span>🚀 {post.status === 'posted' || post.status === 'published' ? 'Re-Publish' : 'Preview & Publish'}</span>
+                            <span>🚀 Preview & Publish</span>
                         {/if}
                     </button>
                 </div>

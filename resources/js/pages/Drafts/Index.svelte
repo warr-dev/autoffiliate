@@ -14,6 +14,7 @@
     let captionStyle = $state('viral_ai');
     let creating = $state(false);
     let searchQuery = $state('');
+    let previewingPost = $state<any | null>(null);
 
     let stats = $derived({
         total: posts.length,
@@ -245,66 +246,89 @@
                             <!-- Bottom Row: Touch-Friendly Action Toolbar & Edit Post Link -->
                             <div class="pt-2.5 border-t border-gray-800/60 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    {#if post.facebook_post_url}
-                                        <a
-                                            href={post.facebook_post_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="px-2.5 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 border border-blue-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm"
-                                            title="Open live post on Facebook"
+                                    {#if post.status === 'posted' || post.status === 'published'}
+                                        <!-- Posted Bottom Actions: Preview Post, View on FB, Delete -->
+                                        <button
+                                            type="button"
+                                            onclick={(e) => { e.stopPropagation(); previewingPost = post; }}
+                                            class="px-2.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 hover:text-purple-200 border border-purple-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm"
+                                            title="Preview published post card"
                                         >
-                                            <span>🌐</span>
-                                            <span>View Post ↗</span>
-                                        </a>
+                                            <span>👁️</span>
+                                            <span>Preview Post</span>
+                                        </button>
+
+                                        {#if post.facebook_post_url}
+                                            <a
+                                                href={post.facebook_post_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="px-2.5 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 border border-blue-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm"
+                                                title="Open live post on Facebook"
+                                            >
+                                                <span>🌐</span>
+                                                <span>View on FB ↗</span>
+                                            </a>
+                                        {/if}
+
+                                        <button
+                                            type="button"
+                                            onclick={(e) => handleDelete(post.id, e)}
+                                            class="p-1.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+                                            title="Delete post record"
+                                        >
+                                            🗑️
+                                        </button>
+                                    {:else}
+                                        <!-- Draft Bottom Actions: AI Re-roll, Publish, Delete -->
+                                        <button
+                                            type="button"
+                                            onclick={(e) => handleGenerateCaption(post.id, e)}
+                                            disabled={generatingId === post.id}
+                                            class="px-2.5 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-indigo-200 border border-indigo-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                                            title="AI Re-roll caption"
+                                        >
+                                            {#if generatingId === post.id}
+                                                <span class="animate-spin text-xs">🌀</span>
+                                                <span>Generating...</span>
+                                            {:else}
+                                                <span>✨</span>
+                                                <span>AI Re-roll</span>
+                                            {/if}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onclick={(e) => handlePublish(post.id, e)}
+                                            disabled={publishingId === post.id}
+                                            class="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:text-emerald-200 border border-emerald-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                                            title="Publish to Facebook"
+                                        >
+                                            {#if publishingId === post.id}
+                                                <span class="animate-spin text-xs">🌀</span>
+                                                <span>Publishing...</span>
+                                            {:else}
+                                                <span>🚀</span>
+                                                <span>Publish</span>
+                                            {/if}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onclick={(e) => handleDelete(post.id, e)}
+                                            class="p-1.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+                                            title="Delete post draft"
+                                        >
+                                            🗑️
+                                        </button>
                                     {/if}
-
-                                    <button
-                                        type="button"
-                                        onclick={(e) => handleGenerateCaption(post.id, e)}
-                                        disabled={generatingId === post.id}
-                                        class="px-2.5 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-indigo-200 border border-indigo-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-                                        title="AI Re-roll caption"
-                                    >
-                                        {#if generatingId === post.id}
-                                            <span class="animate-spin text-xs">🌀</span>
-                                            <span>Generating...</span>
-                                        {:else}
-                                            <span>✨</span>
-                                            <span>AI Re-roll</span>
-                                        {/if}
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onclick={(e) => handlePublish(post.id, e)}
-                                        disabled={publishingId === post.id}
-                                        class="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:text-emerald-200 border border-emerald-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-                                        title="Publish to Facebook"
-                                    >
-                                        {#if publishingId === post.id}
-                                            <span class="animate-spin text-xs">🌀</span>
-                                            <span>Publishing...</span>
-                                        {:else}
-                                            <span>🚀</span>
-                                            <span>{post.status === 'posted' || post.status === 'published' ? 'Re-Publish' : 'Publish'}</span>
-                                        {/if}
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onclick={(e) => handleDelete(post.id, e)}
-                                        class="p-1.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
-                                        title="Delete post draft"
-                                    >
-                                        🗑️
-                                    </button>
                                 </div>
 
                                 <a
                                     href="/drafts/{post.id}"
                                     class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 ml-auto transition-colors py-1 cursor-pointer"
                                 >
-                                    <span>Edit Draft</span>
+                                    <span>{post.status === 'posted' || post.status === 'published' ? 'Edit Post' : 'Edit Draft'}</span>
                                     <span>→</span>
                                 </a>
                             </div>
@@ -314,4 +338,122 @@
             {/if}
         </div>
     </div>
+
+    <!-- Quick Preview Post Modal -->
+    {#if previewingPost}
+        <div
+            class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overscroll-contain animate-fadeIn"
+            onclick={() => (previewingPost = null)}
+            role="dialog"
+            aria-modal="true"
+            tabindex="-1"
+        >
+            <div
+                class="bg-gray-950 border border-purple-500/30 rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative animate-scaleIn flex flex-col max-h-[92vh]"
+                onclick={(e) => e.stopPropagation()}
+                role="document"
+            >
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-sm">
+                            👁️
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="font-bold text-sm text-gray-100 truncate">Post Preview</h3>
+                            <p class="text-[11px] text-gray-400 truncate">{previewingPost.product_title || 'Post'}</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onclick={() => (previewingPost = null)}
+                        class="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors cursor-pointer"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Preview Body (Facebook Mockup) -->
+                <div class="py-4 overflow-y-auto space-y-4 flex-1">
+                    <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 shadow-inner space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-xs">
+                                FB
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-gray-200">
+                                    {socialAccounts && socialAccounts[0]?.name ? socialAccounts[0].name : 'Facebook Page'}
+                                </p>
+                                <p class="text-[10px] text-gray-500 font-mono">
+                                    {new Date(previewingPost.created_at || Date.now()).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })} · 🌐 Public
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Caption & Link -->
+                        <div class="text-xs text-gray-200 whitespace-pre-line leading-relaxed font-sans">
+                            {previewingPost.caption || 'No caption generated.'}
+                        </div>
+
+                        <!-- Hashtags -->
+                        {#if previewingPost.tags}
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                {#each previewingPost.tags.split(/\s+/) as tag}
+                                    {#if tag.trim()}
+                                        <span class="text-[11px] font-semibold text-blue-400 hover:underline">{tag}</span>
+                                    {/if}
+                                {/each}
+                            </div>
+                        {/if}
+
+                        <!-- Media Preview -->
+                        {#if previewingPost.media_files && previewingPost.media_files.length > 0}
+                            <div class="grid grid-cols-2 gap-2 pt-2 rounded-xl overflow-hidden">
+                                {#each previewingPost.media_files.slice(0, 4) as mediaUrl}
+                                    <img
+                                        src={mediaUrl}
+                                        alt="Post media preview"
+                                        class="w-full h-36 object-cover rounded-lg border border-gray-800"
+                                        onerror={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                                    />
+                                {/each}
+                            </div>
+                        {/if}
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="pt-3 border-t border-gray-800 flex items-center justify-between gap-2 flex-wrap">
+                    <div class="flex items-center gap-2">
+                        {#if previewingPost.facebook_post_url}
+                            <a
+                                href={previewingPost.facebook_post_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+                            >
+                                <span>🌐 Open in Facebook ↗</span>
+                            </a>
+                        {/if}
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <a
+                            href="/drafts/{previewingPost.id}"
+                            class="px-3.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition-all flex items-center gap-1"
+                        >
+                            <span>Open Editor →</span>
+                        </a>
+                        <button
+                            type="button"
+                            onclick={() => (previewingPost = null)}
+                            class="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold transition-colors cursor-pointer"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {/if}
 </AppLayout>
