@@ -18,12 +18,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('/create', 'Create/Index')->name('create');
 
     Route::get('/drafts', [PostController::class, 'index'])->name('drafts.index');
+    Route::get('/drafts/{id}', [PostController::class, 'show'])->name('drafts.show');
     Route::post('/drafts', [PostController::class, 'store'])->name('drafts.store');
     Route::post('/posts/custom', [PostController::class, 'storeCustom'])->name('posts.custom');
     Route::patch('/drafts/{id}', [PostController::class, 'update'])->name('drafts.update');
     Route::post('/drafts/{id}/approve', [PostController::class, 'approve'])->name('drafts.approve');
     Route::post('/drafts/{id}/publish', [PostController::class, 'publish'])->name('drafts.publish');
     Route::post('/drafts/{id}/generate-caption', [PostController::class, 'generateCaption'])->name('drafts.generateCaption');
+    Route::post('/drafts/{id}/media', [PostController::class, 'uploadMedia'])->name('drafts.media.upload');
+    Route::delete('/drafts/{id}/media/{filename}', [PostController::class, 'deleteMedia'])->name('drafts.media.delete');
     Route::delete('/drafts/{id}', [PostController::class, 'destroy'])->name('drafts.destroy');
 
     Route::get('/history', [PostController::class, 'history'])->name('history.index');

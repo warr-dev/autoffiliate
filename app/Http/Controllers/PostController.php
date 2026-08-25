@@ -351,7 +351,63 @@ class PostController extends Controller
             ]);
         }
 
-        return back()->with('success', 'AI Caption generated successfully.');
+    public function show(string $id): Response
+    {
+        $post = Post::findOrFail($id);
+
+        return Inertia::render('Drafts/Show', [
+            'post' => $post,
+            'socialAccounts' => SocialAccount::where('platform', 'facebook')->where('is_enabled', true)->get(),
+            'settings' => Setting::query()->pluck('value', 'key'),
+        ]);
+    }
+
+    public function uploadMedia(Request $request, string $id)
+    {
+        $post = Post::findOrFail($id);
+
+        $request->validate([
+            'file' => 'required|file|mimes:jpg,jpeg,png,webp,mp4|max:51200',
+        ]);
+
+        $file = $request->file('file');
+        $filename = 'media_'.time().'_'.Str::random(8).'.'.$file->getClientOriginalExtension();
+        $path = $file->storeAs('uploads/posts', $filename, 'public');
+        $url = '/storage/'.$path;
+
+        $media = $post->media_files ?? [];
+        $media[] = $url;
+        $post->update(['media_files' => $media]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'media_files' => $media,
+                'url' => $url,
+            ]);
+        }
+
+        return back()->with('success', 'Media uploaded successfully.');
+    }
+
+    public function deleteMedia(Request $request, string $id, string $filename)
+    {
+        $post = Post::findOrFail($id);
+
+        $media = array_values(array_filter($post->media_files ?? [], function ($item) use ($filename) {
+            return ! str_ends_with($item, $filename);
+        }));
+
+        $post->update(['media_files' => $media]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'media_files' => $media,
+            ]);
+        }
+
+        return back()->with('success', 'Media deleted.');
     }
 
     public function destroy(string $id)
@@ -359,6 +415,6 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $post->delete();
 
-        return back()->with('success', 'Post deleted.');
+        return redirect()->route('drafts.index')->with('success', 'Post deleted.');
     }
 }
