@@ -17,16 +17,26 @@ class ShopeeExtractService
         $description = null;
         $price = null;
         $mediaFiles = [];
-        $canonicalUrl = $url;
+        $seenMedia = [];
+        $canonicalUrl = null;
         $shopName = null;
+
+        // 1. Resolve shop_id and item_id if present to build canonical URL
+        $ids = self::extractShopeeIds($url);
+        if ($ids['shop_id'] && $ids['item_id']) {
+            $canonicalUrl = "https://shopee.ph/product/{$ids['shop_id']}/{$ids['item_id']}";
+        }
+
+        $targetUrl = $canonicalUrl ?: $url;
 
         $userAgents = [
             'facebook' => 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.html)',
             'twitter' => 'Twitterbot/1.0',
+            'android' => 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
             'desktop' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         ];
 
-        foreach ($userAgents as $ua) {
+        foreach ($userAgents as $uaKey => $ua) {
             try {
                 $response = Http::withHeaders([
                     'User-Agent' => $ua,
@@ -35,7 +45,7 @@ class ShopeeExtractService
                 ])
                 ->timeout(15)
                 ->withoutVerifying()
-                ->get($url);
+                ->get($targetUrl);
 
                 if (! $response->successful()) {
                     continue;
@@ -43,11 +53,11 @@ class ShopeeExtractService
 
                 $html = $response->body();
                 $effectiveUrl = (string) $response->effectiveUri();
-                if ($effectiveUrl) {
+                if ($effectiveUrl && ! $canonicalUrl) {
                     $canonicalUrl = $effectiveUrl;
                 }
 
-                // 1. Extract Title
+                // 1. Title from OG meta or <title>
                 if (! $title) {
                     $ogTitle = self::extractMetaTag($html, 'og:title') ?: self::extractMetaTag($html, 'twitter:title');
                     if ($ogTitle) {
@@ -57,7 +67,7 @@ class ShopeeExtractService
                     }
                 }
 
-                // 2. Extract Description
+                // 2. Description from OG meta or meta description
                 if (! $description) {
                     $ogDesc = self::extractMetaTag($html, 'og:description') ?: self::extractMetaByName($html, 'description');
                     if ($ogDesc) {
@@ -65,26 +75,84 @@ class ShopeeExtractService
                     }
                 }
 
-                // 3. Extract Price
+                // 3. Price from OG or micro-units in JSON state
                 if (! $price) {
+                    $pricesFound = [];
+
                     $ogPrice = self::extractMetaTag($html, 'product:price:amount') ?: self::extractMetaTag($html, 'og:price:amount');
                     if ($ogPrice && is_numeric($ogPrice) && (float)$ogPrice > 0) {
-                        $price = '₱' . number_format((float)$ogPrice, 2);
-                    } else if (preg_match('/(?:₱|PHP)\s*([\d,]+(?:\.\d{2})?)/i', $html, $pm)) {
-                        $price = '₱' . $pm[1];
+                        $pricesFound[] = (float)$ogPrice;
+                    }
+
+                    // Regex for ₱ or PHP patterns
+                    foreach ([$title, $description, $html] as $src) {
+                        if (! $src) continue;
+                        if (preg_match_all('/(?:₱|PHP)\s*([\d,]+(?:\.\d{2})?)/i', $src, $pMatches)) {
+                            foreach ($pMatches[1] as $pStr) {
+                                $num = (float) str_replace(',', '', $pStr);
+                                if ($num >= 1 && $num <= 1000000) {
+                                    $pricesFound[] = $num;
+                                }
+                            }
+                        }
+                    }
+
+                    // Micro-units in JSON state (e.g. 29900000 -> 299)
+                    if (preg_match_all('/"(?:price_min|price|price_min_before_discount)"\s*:\s*(\d+)/i', $html, $rawPrices)) {
+                        foreach ($rawPrices[1] as $rVal) {
+                            $rNum = (int)$rVal;
+                            if ($rNum > 0) {
+                                $val = $rNum > 100000 ? ($rNum / 100000.0) : (float)$rNum;
+                                if ($val >= 1 && $val <= 1000000) {
+                                    $pricesFound[] = $val;
+                                }
+                            }
+                        }
+                    }
+
+                    if (! empty($pricesFound)) {
+                        $dealPrice = min($pricesFound);
+                        $price = '₱' . number_format($dealPrice, $dealPrice == (int)$dealPrice ? 0 : 2);
                     }
                 }
 
-                // 4. Extract Images / Media
-                $ogImage = self::extractMetaTag($html, 'og:image') ?: self::extractMetaTag($html, 'og:image:secure_url');
-                if ($ogImage && ! in_array($ogImage, $mediaFiles)) {
-                    $mediaFiles[] = $ogImage;
+                // 4. Media Extraction:
+                // a. OG images (exact product cover photos)
+                foreach (['og:square_image', 'og:image', 'og:image:secure_url', 'twitter:image'] as $prop) {
+                    $ogImg = self::extractMetaTag($html, $prop);
+                    if ($ogImg && ! isset($seenMedia[$ogImg])) {
+                        $seenMedia[$ogImg] = true;
+                        $mediaFiles[] = $ogImg;
+                    }
                 }
 
-                // Check for Shopee CDN image hashes (e.g. https://down-ph.img.susercontent.com/file/...)
+                // b. Product-specific regional CDN hashes (ph-*, cn-*, sg-*, id-*, my-*, etc.)
+                if (preg_match_all('/(?:cn|ph|sg|id|my|vn|th|br|mx|tw)-\d{8,10}-[a-z0-9\-_]+/i', $html, $regMatches)) {
+                    foreach ($regMatches[0] as $h) {
+                        $imgUrl = "https://down-ph.img.susercontent.com/file/{$h}";
+                        if (! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
+                            $seenMedia[$imgUrl] = true;
+                            $mediaFiles[] = $imgUrl;
+                        }
+                    }
+                }
+
+                // c. 32-char hex image hashes in JSON gallery
+                if (preg_match_all('/"(?:images?|cover|tier_images)":\s*(?:\[\s*)?"([a-f0-9]{32})"/i', $html, $hexMatches)) {
+                    foreach ($hexMatches[1] as $h) {
+                        $imgUrl = "https://down-ph.img.susercontent.com/file/{$h}";
+                        if (! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
+                            $seenMedia[$imgUrl] = true;
+                            $mediaFiles[] = $imgUrl;
+                        }
+                    }
+                }
+
+                // d. Shopee CDN full URLs
                 if (preg_match_all('/https:\/\/[a-zA-Z0-9\.\-]*susercontent\.com\/file\/([a-zA-Z0-9_\-]+)/i', $html, $imMatches)) {
                     foreach ($imMatches[0] as $imgUrl) {
-                        if (! in_array($imgUrl, $mediaFiles) && count($mediaFiles) < 8) {
+                        if (! isset($seenMedia[$imgUrl]) && count($mediaFiles) < 16) {
+                            $seenMedia[$imgUrl] = true;
                             $mediaFiles[] = $imgUrl;
                         }
                     }
@@ -95,12 +163,28 @@ class ShopeeExtractService
                     $shopName = self::extractMetaTag($html, 'og:site_name');
                 }
 
-                if ($title && count($mediaFiles) > 0) {
+                if ($title && count($mediaFiles) >= 4) {
                     break;
                 }
             } catch (\Exception $e) {
-                Log::warning("[ShopeeExtract] Scrape attempt with UA {$ua} failed: " . $e->getMessage());
+                Log::warning("[ShopeeExtract] Scrape attempt with UA {$uaKey} failed: " . $e->getMessage());
             }
+        }
+
+        // Fallback: If still no media and we have shortlink, do a follow-redirect GET
+        if (empty($mediaFiles) && (str_contains($url, 's.shopee.ph') || str_contains($url, 'shope.ee'))) {
+            try {
+                $headResp = Http::withHeaders(['User-Agent' => $userAgents['facebook']])
+                    ->withoutVerifying()
+                    ->get($url);
+                $html = $headResp->body();
+                foreach (['og:square_image', 'og:image'] as $prop) {
+                    $img = self::extractMetaTag($html, $prop);
+                    if ($img && ! in_array($img, $mediaFiles)) {
+                        $mediaFiles[] = $img;
+                    }
+                }
+            } catch (\Exception $e) {}
         }
 
         return [
@@ -110,14 +194,43 @@ class ShopeeExtractService
             'product_price' => $price ?: '',
             'shop_name' => $shopName ?: 'Shopee Philippines',
             'affiliate_url' => $url,
-            'canonical_url' => $canonicalUrl,
-            'media_files' => $mediaFiles,
+            'canonical_url' => $canonicalUrl ?: $url,
+            'media_files' => array_values($mediaFiles),
         ];
+    }
+
+    /**
+     * Extract shop_id and item_id from any Shopee URL format or follow shortlink.
+     */
+    public static function extractShopeeIds(string $url): array
+    {
+        $shopId = null;
+        $itemId = null;
+
+        if (preg_match('/(?:i\.|product\/|[-/])(\d+)[.\/-](\d+)/', $url, $m)) {
+            return ['shop_id' => $m[1], 'item_id' => $m[2]];
+        }
+
+        // Shortlink redirect resolution
+        try {
+            $resp = Http::withHeaders([
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            ])
+            ->timeout(10)
+            ->withoutVerifying()
+            ->get($url);
+
+            $effUrl = (string) $resp->effectiveUri();
+            if ($effUrl && preg_match('/(?:i\.|product\/|[-/])(\d+)[.\/-](\d+)/', $effUrl, $m2)) {
+                return ['shop_id' => $m2[1], 'item_id' => $m2[2]];
+            }
+        } catch (\Exception $e) {}
+
+        return ['shop_id' => null, 'item_id' => null];
     }
 
     private static function extractMetaTag(string $html, string $property): ?string
     {
-        // Support property before content AND content before property
         $pattern1 = '/<meta[^>]*property=["\']' . self::preg_escape($property) . '["\'][^>]*content=["\']([^"\']*)["\']/i';
         $pattern2 = '/<meta[^>]*content=["\']([^"\']*)["\'][^>]*property=["\']' . self::preg_escape($property) . '["\']/i';
 

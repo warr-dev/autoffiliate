@@ -180,7 +180,7 @@
 
         try {
             const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
-            const res = await fetch(`/drafts`, {
+            const res = await fetch('/api/posts/extract-media', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,21 +188,30 @@
                     Accept: 'application/json',
                 },
                 body: JSON.stringify({
-                    affiliate_url: affiliate_url || post.affiliate_url,
-                    caption_style: selectedStyle,
+                    post_id: post.id,
+                    url: affiliate_url || post.affiliate_url,
                 }),
             });
 
-            if (res.ok) {
-                const data = await res.json();
-                if (data.post && data.post.media_files) {
-                    mediaFiles = data.post.media_files;
-                    if (data.post.product_title) product_title = data.post.product_title;
-                    if (data.post.product_price) product_price = data.post.product_price;
-                }
-                extractMessage = `Extracted media files successfully!`;
-                setTimeout(() => (extractMessage = ''), 3500);
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || 'Failed to extract media from link');
             }
+
+            const data = await res.json();
+            if (data.media_files) {
+                mediaFiles = data.media_files;
+                selectedMedia = 0;
+            }
+            if (data.product_title && (!product_title || product_title === 'Shopee Sulit Deal')) {
+                product_title = data.product_title;
+            }
+            if (data.product_price && !product_price) {
+                product_price = data.product_price;
+            }
+
+            extractMessage = `Extracted ${data.new_media_count || data.media_count || mediaFiles.length} media file(s) successfully!`;
+            setTimeout(() => (extractMessage = ''), 3500);
         } catch (e: any) {
             error = e.message || 'Extraction failed';
         } finally {
