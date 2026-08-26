@@ -9,6 +9,7 @@ use App\Models\SocialAccount;
 use App\Services\AiContentGeneratorService;
 use App\Services\FacebookPublishService;
 use App\Services\ShopeeExtractService;
+use App\Services\ShopeeMediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -112,6 +113,18 @@ class PostController extends Controller
             $postId = 'post_'.Str::random(12);
             $tags = $validated['tags'] ?? Setting::get('default_hashtags', '#TechSulitDeals #ShopeePH');
         }
+
+        // Download media locally mirroring reference implementation
+        $downloadedMedia = [];
+        foreach ($mediaFiles as $i => $mediaUrl) {
+            if (str_starts_with($mediaUrl, '/storage/')) {
+                $downloadedMedia[] = $mediaUrl;
+            } else {
+                $path = ShopeeMediaService::downloadMedia($mediaUrl, $postId, $i);
+                $downloadedMedia[] = $path ?: $mediaUrl;
+            }
+        }
+        $mediaFiles = $downloadedMedia;
 
         $post = Post::create([
             'id' => $postId,
@@ -227,11 +240,16 @@ class PostController extends Controller
             }
         }
 
-        // Auto-extract product media if post currently has no media files
+        // Auto-extract and download product media if post currently has no media files
         if ((empty($post->media_files) || count($post->media_files) === 0) && ! empty($post->affiliate_url)) {
             $extracted = ShopeeExtractService::extract($post->affiliate_url);
             if ($extracted['success'] && ! empty($extracted['media_files'])) {
-                $post->update(['media_files' => $extracted['media_files']]);
+                $downloaded = [];
+                foreach ($extracted['media_files'] as $i => $mediaUrl) {
+                    $path = ShopeeMediaService::downloadMedia($mediaUrl, $post->id, $i);
+                    $downloaded[] = $path ?: $mediaUrl;
+                }
+                $post->update(['media_files' => $downloaded]);
                 $post->refresh();
             }
         }

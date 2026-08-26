@@ -189,8 +189,13 @@ Route::middleware([\App\Http\Middleware\AuthenticateApiToken::class])->group(fun
         $url = $request->input('url') ?: $post->affiliate_url;
         $extracted = \App\Services\ShopeeExtractService::extract($url);
         if ($extracted['success']) {
+            $downloadedMedia = [];
+            foreach ($extracted['media_files'] as $i => $mediaUrl) {
+                $path = \App\Services\ShopeeMediaService::downloadMedia($mediaUrl, $post->id, $i);
+                $downloadedMedia[] = $path ?: $mediaUrl;
+            }
             $existing = $post->media_files ?? [];
-            $merged = array_values(array_unique(array_merge($existing, $extracted['media_files'])));
+            $merged = array_values(array_unique(array_merge($existing, $downloadedMedia)));
             $post->update([
                 'media_files' => $merged,
                 'product_title' => $extracted['product_title'] ?: $post->product_title,
@@ -200,7 +205,7 @@ Route::middleware([\App\Http\Middleware\AuthenticateApiToken::class])->group(fun
                 'success' => true,
                 'post_id' => $post->id,
                 'media_count' => count($merged),
-                'new_media_count' => count($extracted['media_files']),
+                'new_media_count' => count($downloadedMedia),
                 'media_files' => $merged,
                 'product_title' => $post->product_title,
             ]);
