@@ -365,8 +365,7 @@ class AiContentGeneratorService
                 $caption = trim(
                     $aiResult['caption'].
                     ($hasAffiliateLink ? "\n\n🛒 Order / Buy Link: {$affiliateUrl}" : '').
-                    ($disclosure ? "\n\n".$disclosure : '').
-                    ($defaultTags ? "\n\n".$defaultTags : '')
+                    ($disclosure ? "\n\n".$disclosure : '')
                 );
 
                 return [
@@ -566,8 +565,7 @@ class AiContentGeneratorService
         $finalCaption = trim(
             $body.
             $link.
-            ($ctx['disclosure'] ? "\n\n".$ctx['disclosure'] : '').
-            ($ctx['default_tags'] ? "\n\n".$ctx['default_tags'] : '')
+            ($ctx['disclosure'] ? "\n\n".$ctx['disclosure'] : '')
         );
 
         $promptTokens = max(30, (int) (str_word_count($title) * 1.35));
