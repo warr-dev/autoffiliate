@@ -207,7 +207,7 @@ class ShopeeExtractService
     {
         $urlLower = strtolower($url);
 
-        // 1. Exclude known frame and overlay keywords
+        // 1. Exclude known frame, icon, and overlay keywords
         $blacklistedKeywords = [
             'spaylater',
             'spay_later',
@@ -224,6 +224,22 @@ class ShopeeExtractService
             'layer',
             'icon',
             'logo',
+            'avatar',
+            'rating',
+            'star',
+            'mall',
+            'free_shipping',
+            'coin',
+            'sprite',
+            'flag',
+            'live_tag',
+            'official',
+            'verified',
+            'shop_logo',
+            'category',
+            'seller',
+            'button',
+            'arrow',
             'shopee_mall_badge',
         ];
 

@@ -76,6 +76,44 @@ class ShopeeMediaService
             $localPath = "{$mediaDir}/{$filename}";
             file_put_contents($localPath, $body);
 
+            // Validate image dimensions & aspect ratio (drop tiny icons < 300px, badges, and wide banners)
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif']) && file_exists($localPath)) {
+                $info = @getimagesize($localPath);
+                if ($info && isset($info[0], $info[1])) {
+                    $width = (int) $info[0];
+                    $height = (int) $info[1];
+
+                    // 1. Drop tiny icons, rating stars, badges (< 300px)
+                    if ($width < 300 || $height < 300) {
+                        @unlink($localPath);
+                        return null;
+                    }
+
+                    // 2. Drop extreme aspect ratio banners or promotional strips (> 2.2:1)
+                    if ((max($width, $height) / max(1, min($width, $height))) > 2.2) {
+                        @unlink($localPath);
+                        return null;
+                    }
+
+                    // 3. Drop transparent SPayLater frames and campaign cutouts (PNG with transparent center)
+                    if ($ext === 'png' && function_exists('imagecreatefromstring')) {
+                        $im = @imagecreatefromstring($body);
+                        if ($im) {
+                            $centerX = (int) ($width / 2);
+                            $centerY = (int) ($height / 2);
+                            $rgba = imagecolorat($im, $centerX, $centerY);
+                            $alpha = ($rgba >> 24) & 0x7F;
+                            imagedestroy($im);
+
+                            if ($alpha > 90) {
+                                @unlink($localPath);
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }
+
             return "/storage/media/{$filename}";
         } catch (\Exception $e) {
             Log::warning("[ShopeeMediaService] Failed downloading media from {$url}: " . $e->getMessage());

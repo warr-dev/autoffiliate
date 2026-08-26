@@ -151,10 +151,19 @@ class FacebookPublishService
                 ->get($mediaUrl);
 
                 if ($resp->successful() && strlen($resp->body()) > 500) {
+                    $body = $resp->body();
+                    $info = @getimagesizefromstring($body);
+                    if ($info && isset($info[0], $info[1])) {
+                        $w = (int) $info[0];
+                        $h = (int) $info[1];
+                        if ($w < 300 || $h < 300 || ((max($w, $h) / max(1, min($w, $h))) > 2.2)) {
+                            return null;
+                        }
+                    }
                     $clean = strtok(basename($mediaUrl), '?');
                     $filename = str_contains($clean, '.') ? $clean : "{$clean}.jpg";
                     return [
-                        'content' => $resp->body(),
+                        'content' => $body,
                         'filename' => $filename,
                     ];
                 }
