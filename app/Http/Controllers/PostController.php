@@ -238,6 +238,15 @@ class PostController extends Controller
 
                 return back()->with('error', 'No active Facebook Page or Access Token configured.');
             }
+
+            $accounts = collect([
+                new SocialAccount([
+                    'id' => 'fb_main',
+                    'name' => Setting::get('fb_page_name', 'Facebook Page'),
+                    'account_id' => $defaultPageId,
+                    'access_token' => $defaultToken,
+                ]),
+            ]);
         }
 
         // Auto-extract and download product media if post currently has no media files
@@ -250,6 +259,25 @@ class PostController extends Controller
                     $downloaded[] = $path ?: $mediaUrl;
                 }
                 $post->update(['media_files' => $downloaded]);
+                $post->refresh();
+            }
+        }
+
+        // Ensure all existing remote media files are downloaded locally to disk
+        if (! empty($post->media_files) && is_array($post->media_files)) {
+            $hasRemote = false;
+            $updatedMedia = [];
+            foreach ($post->media_files as $i => $m) {
+                if (is_string($m) && (str_starts_with($m, 'http://') || str_starts_with($m, 'https://')) && ! str_contains($m, '/storage/')) {
+                    $hasRemote = true;
+                    $local = ShopeeMediaService::downloadMedia($m, $post->id, $i);
+                    $updatedMedia[] = $local ?: $m;
+                } else {
+                    $updatedMedia[] = $m;
+                }
+            }
+            if ($hasRemote) {
+                $post->update(['media_files' => $updatedMedia]);
                 $post->refresh();
             }
         }

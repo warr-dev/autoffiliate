@@ -171,9 +171,9 @@ class FacebookPublishService
      */
     protected static function resolveLocalPath(string $url): ?string
     {
-        if (str_starts_with($url, '/storage/')) {
-            $relativePath = substr($url, strlen('/storage/'));
-            return storage_path('app/public/' . $relativePath);
+        if (str_contains($url, '/storage/')) {
+            $parts = explode('/storage/', $url, 2);
+            return storage_path('app/public/' . $parts[1]);
         }
 
         if (str_starts_with($url, 'storage/')) {

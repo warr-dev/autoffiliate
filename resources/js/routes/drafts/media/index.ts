@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PostController::upload
-* @see app/Http/Controllers/PostController.php:421
+* @see app/Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 export const upload = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ upload.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::upload
-* @see app/Http/Controllers/PostController.php:421
+* @see app/Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 upload.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ upload.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\PostController::upload
-* @see app/Http/Controllers/PostController.php:421
+* @see app/Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 upload.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -53,7 +53,7 @@ upload.post = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\PostController::upload
-* @see app/Http/Controllers/PostController.php:421
+* @see app/Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 const uploadForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -63,7 +63,7 @@ const uploadForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\PostController::upload
-* @see app/Http/Controllers/PostController.php:421
+* @see app/Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 uploadForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -75,7 +75,7 @@ upload.form = uploadForm
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMethod
-* @see app/Http/Controllers/PostController.php:449
+* @see app/Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 export const deleteMethod = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -90,7 +90,7 @@ deleteMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMethod
-* @see app/Http/Controllers/PostController.php:449
+* @see app/Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 deleteMethod.url = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions) => {
@@ -116,7 +116,7 @@ deleteMethod.url = (args: { id: string | number, filename: string | number } | [
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMethod
-* @see app/Http/Controllers/PostController.php:449
+* @see app/Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 deleteMethod.delete = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -126,7 +126,7 @@ deleteMethod.delete = (args: { id: string | number, filename: string | number } 
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMethod
-* @see app/Http/Controllers/PostController.php:449
+* @see app/Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 const deleteMethodForm = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -141,7 +141,7 @@ const deleteMethodForm = (args: { id: string | number, filename: string | number
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMethod
-* @see app/Http/Controllers/PostController.php:449
+* @see app/Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 deleteMethodForm.delete = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
