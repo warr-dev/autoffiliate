@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:21
+* @see Http/Controllers/PostController.php:21
 * @route '/drafts'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:21
+* @see Http/Controllers/PostController.php:21
 * @route '/drafts'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:21
+* @see Http/Controllers/PostController.php:21
 * @route '/drafts'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:21
+* @see Http/Controllers/PostController.php:21
 * @route '/drafts'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:21
+* @see Http/Controllers/PostController.php:21
 * @route '/drafts'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:21
+* @see Http/Controllers/PostController.php:21
 * @route '/drafts'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::index
-* @see app/Http/Controllers/PostController.php:21
+* @see Http/Controllers/PostController.php:21
 * @route '/drafts'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:438
+* @see Http/Controllers/PostController.php:438
 * @route '/drafts/{id}'
 */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:438
+* @see Http/Controllers/PostController.php:438
 * @route '/drafts/{id}'
 */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:438
+* @see Http/Controllers/PostController.php:438
 * @route '/drafts/{id}'
 */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -134,7 +134,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:438
+* @see Http/Controllers/PostController.php:438
 * @route '/drafts/{id}'
 */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -144,7 +144,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:438
+* @see Http/Controllers/PostController.php:438
 * @route '/drafts/{id}'
 */
 const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -154,7 +154,7 @@ const showForm = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:438
+* @see Http/Controllers/PostController.php:438
 * @route '/drafts/{id}'
 */
 showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -164,7 +164,7 @@ showForm.get = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PostController::show
-* @see app/Http/Controllers/PostController.php:438
+* @see Http/Controllers/PostController.php:438
 * @route '/drafts/{id}'
 */
 showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -181,7 +181,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/drafts'
 */
 const storeedcf40b67c26e1a7099d7088201cc860 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -196,7 +196,7 @@ storeedcf40b67c26e1a7099d7088201cc860.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/drafts'
 */
 storeedcf40b67c26e1a7099d7088201cc860.url = (options?: RouteQueryOptions) => {
@@ -205,7 +205,7 @@ storeedcf40b67c26e1a7099d7088201cc860.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/drafts'
 */
 storeedcf40b67c26e1a7099d7088201cc860.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -215,7 +215,7 @@ storeedcf40b67c26e1a7099d7088201cc860.post = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/drafts'
 */
 const storeedcf40b67c26e1a7099d7088201cc860Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -225,7 +225,7 @@ const storeedcf40b67c26e1a7099d7088201cc860Form = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/drafts'
 */
 storeedcf40b67c26e1a7099d7088201cc860Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -236,7 +236,7 @@ storeedcf40b67c26e1a7099d7088201cc860Form.post = (options?: RouteQueryOptions): 
 storeedcf40b67c26e1a7099d7088201cc860.form = storeedcf40b67c26e1a7099d7088201cc860Form
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/api/posts'
 */
 const storebf19ef06ce1388ecdeb1fea63820e3bd = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -251,7 +251,7 @@ storebf19ef06ce1388ecdeb1fea63820e3bd.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/api/posts'
 */
 storebf19ef06ce1388ecdeb1fea63820e3bd.url = (options?: RouteQueryOptions) => {
@@ -260,7 +260,7 @@ storebf19ef06ce1388ecdeb1fea63820e3bd.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/api/posts'
 */
 storebf19ef06ce1388ecdeb1fea63820e3bd.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -270,7 +270,7 @@ storebf19ef06ce1388ecdeb1fea63820e3bd.post = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/api/posts'
 */
 const storebf19ef06ce1388ecdeb1fea63820e3bdForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -280,7 +280,7 @@ const storebf19ef06ce1388ecdeb1fea63820e3bdForm = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\PostController::store
-* @see app/Http/Controllers/PostController.php:36
+* @see Http/Controllers/PostController.php:36
 * @route '/api/posts'
 */
 storebf19ef06ce1388ecdeb1fea63820e3bdForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -302,7 +302,7 @@ export const store = {
 
 /**
 * @see \App\Http\Controllers\PostController::storeCustom
-* @see app/Http/Controllers/PostController.php:153
+* @see Http/Controllers/PostController.php:153
 * @route '/posts/custom'
 */
 export const storeCustom = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -317,7 +317,7 @@ storeCustom.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::storeCustom
-* @see app/Http/Controllers/PostController.php:153
+* @see Http/Controllers/PostController.php:153
 * @route '/posts/custom'
 */
 storeCustom.url = (options?: RouteQueryOptions) => {
@@ -326,7 +326,7 @@ storeCustom.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PostController::storeCustom
-* @see app/Http/Controllers/PostController.php:153
+* @see Http/Controllers/PostController.php:153
 * @route '/posts/custom'
 */
 storeCustom.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -336,7 +336,7 @@ storeCustom.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::storeCustom
-* @see app/Http/Controllers/PostController.php:153
+* @see Http/Controllers/PostController.php:153
 * @route '/posts/custom'
 */
 const storeCustomForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -346,7 +346,7 @@ const storeCustomForm = (options?: RouteQueryOptions): RouteFormDefinition<'post
 
 /**
 * @see \App\Http\Controllers\PostController::storeCustom
-* @see app/Http/Controllers/PostController.php:153
+* @see Http/Controllers/PostController.php:153
 * @route '/posts/custom'
 */
 storeCustomForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -358,7 +358,7 @@ storeCustom.form = storeCustomForm
 
 /**
 * @see \App\Http\Controllers\PostController::update
-* @see app/Http/Controllers/PostController.php:179
+* @see Http/Controllers/PostController.php:179
 * @route '/drafts/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -373,7 +373,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::update
-* @see app/Http/Controllers/PostController.php:179
+* @see Http/Controllers/PostController.php:179
 * @route '/drafts/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -400,7 +400,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\PostController::update
-* @see app/Http/Controllers/PostController.php:179
+* @see Http/Controllers/PostController.php:179
 * @route '/drafts/{id}'
 */
 update.patch = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -410,7 +410,7 @@ update.patch = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PostController::update
-* @see app/Http/Controllers/PostController.php:179
+* @see Http/Controllers/PostController.php:179
 * @route '/drafts/{id}'
 */
 const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -425,7 +425,7 @@ const updateForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\PostController::update
-* @see app/Http/Controllers/PostController.php:179
+* @see Http/Controllers/PostController.php:179
 * @route '/drafts/{id}'
 */
 updateForm.patch = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -442,7 +442,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\PostController::approve
-* @see app/Http/Controllers/PostController.php:200
+* @see Http/Controllers/PostController.php:200
 * @route '/drafts/{id}/approve'
 */
 export const approve = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -457,7 +457,7 @@ approve.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::approve
-* @see app/Http/Controllers/PostController.php:200
+* @see Http/Controllers/PostController.php:200
 * @route '/drafts/{id}/approve'
 */
 approve.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -484,7 +484,7 @@ approve.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\PostController::approve
-* @see app/Http/Controllers/PostController.php:200
+* @see Http/Controllers/PostController.php:200
 * @route '/drafts/{id}/approve'
 */
 approve.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -494,7 +494,7 @@ approve.post = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PostController::approve
-* @see app/Http/Controllers/PostController.php:200
+* @see Http/Controllers/PostController.php:200
 * @route '/drafts/{id}/approve'
 */
 const approveForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -504,7 +504,7 @@ const approveForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\PostController::approve
-* @see app/Http/Controllers/PostController.php:200
+* @see Http/Controllers/PostController.php:200
 * @route '/drafts/{id}/approve'
 */
 approveForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -516,7 +516,7 @@ approve.form = approveForm
 
 /**
 * @see \App\Http\Controllers\PostController::publish
-* @see app/Http/Controllers/PostController.php:212
+* @see Http/Controllers/PostController.php:212
 * @route '/drafts/{id}/publish'
 */
 export const publish = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -531,7 +531,7 @@ publish.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::publish
-* @see app/Http/Controllers/PostController.php:212
+* @see Http/Controllers/PostController.php:212
 * @route '/drafts/{id}/publish'
 */
 publish.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -558,7 +558,7 @@ publish.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\PostController::publish
-* @see app/Http/Controllers/PostController.php:212
+* @see Http/Controllers/PostController.php:212
 * @route '/drafts/{id}/publish'
 */
 publish.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -568,7 +568,7 @@ publish.post = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\PostController::publish
-* @see app/Http/Controllers/PostController.php:212
+* @see Http/Controllers/PostController.php:212
 * @route '/drafts/{id}/publish'
 */
 const publishForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -578,7 +578,7 @@ const publishForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\PostController::publish
-* @see app/Http/Controllers/PostController.php:212
+* @see Http/Controllers/PostController.php:212
 * @route '/drafts/{id}/publish'
 */
 publishForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -590,7 +590,7 @@ publish.form = publishForm
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:389
+* @see Http/Controllers/PostController.php:389
 * @route '/drafts/{id}/generate-caption'
 */
 export const generateCaption = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -605,7 +605,7 @@ generateCaption.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:389
+* @see Http/Controllers/PostController.php:389
 * @route '/drafts/{id}/generate-caption'
 */
 generateCaption.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -632,7 +632,7 @@ generateCaption.url = (args: { id: string | number } | [id: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:389
+* @see Http/Controllers/PostController.php:389
 * @route '/drafts/{id}/generate-caption'
 */
 generateCaption.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -642,7 +642,7 @@ generateCaption.post = (args: { id: string | number } | [id: string | number ] |
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:389
+* @see Http/Controllers/PostController.php:389
 * @route '/drafts/{id}/generate-caption'
 */
 const generateCaptionForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -652,7 +652,7 @@ const generateCaptionForm = (args: { id: string | number } | [id: string | numbe
 
 /**
 * @see \App\Http\Controllers\PostController::generateCaption
-* @see app/Http/Controllers/PostController.php:389
+* @see Http/Controllers/PostController.php:389
 * @route '/drafts/{id}/generate-caption'
 */
 generateCaptionForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -664,7 +664,7 @@ generateCaption.form = generateCaptionForm
 
 /**
 * @see \App\Http\Controllers\PostController::uploadMedia
-* @see app/Http/Controllers/PostController.php:449
+* @see Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 export const uploadMedia = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -679,7 +679,7 @@ uploadMedia.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::uploadMedia
-* @see app/Http/Controllers/PostController.php:449
+* @see Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 uploadMedia.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -706,7 +706,7 @@ uploadMedia.url = (args: { id: string | number } | [id: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\PostController::uploadMedia
-* @see app/Http/Controllers/PostController.php:449
+* @see Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 uploadMedia.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -716,7 +716,7 @@ uploadMedia.post = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\PostController::uploadMedia
-* @see app/Http/Controllers/PostController.php:449
+* @see Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 const uploadMediaForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -726,7 +726,7 @@ const uploadMediaForm = (args: { id: string | number } | [id: string | number ] 
 
 /**
 * @see \App\Http\Controllers\PostController::uploadMedia
-* @see app/Http/Controllers/PostController.php:449
+* @see Http/Controllers/PostController.php:449
 * @route '/drafts/{id}/media'
 */
 uploadMediaForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -738,7 +738,7 @@ uploadMedia.form = uploadMediaForm
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMedia
-* @see app/Http/Controllers/PostController.php:477
+* @see Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 export const deleteMedia = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -753,7 +753,7 @@ deleteMedia.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMedia
-* @see app/Http/Controllers/PostController.php:477
+* @see Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 deleteMedia.url = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions) => {
@@ -779,7 +779,7 @@ deleteMedia.url = (args: { id: string | number, filename: string | number } | [i
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMedia
-* @see app/Http/Controllers/PostController.php:477
+* @see Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 deleteMedia.delete = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -789,7 +789,7 @@ deleteMedia.delete = (args: { id: string | number, filename: string | number } |
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMedia
-* @see app/Http/Controllers/PostController.php:477
+* @see Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 const deleteMediaForm = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -804,7 +804,7 @@ const deleteMediaForm = (args: { id: string | number, filename: string | number 
 
 /**
 * @see \App\Http\Controllers\PostController::deleteMedia
-* @see app/Http/Controllers/PostController.php:477
+* @see Http/Controllers/PostController.php:477
 * @route '/drafts/{id}/media/{filename}'
 */
 deleteMediaForm.delete = (args: { id: string | number, filename: string | number } | [id: string | number, filename: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -821,7 +821,7 @@ deleteMedia.form = deleteMediaForm
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/drafts/{id}'
 */
 const destroy710c9cd3b91985fda9cac0eabb3d3885 = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -836,7 +836,7 @@ destroy710c9cd3b91985fda9cac0eabb3d3885.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/drafts/{id}'
 */
 destroy710c9cd3b91985fda9cac0eabb3d3885.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -863,7 +863,7 @@ destroy710c9cd3b91985fda9cac0eabb3d3885.url = (args: { id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/drafts/{id}'
 */
 destroy710c9cd3b91985fda9cac0eabb3d3885.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -873,7 +873,7 @@ destroy710c9cd3b91985fda9cac0eabb3d3885.delete = (args: { id: string | number } 
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/drafts/{id}'
 */
 const destroy710c9cd3b91985fda9cac0eabb3d3885Form = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -888,7 +888,7 @@ const destroy710c9cd3b91985fda9cac0eabb3d3885Form = (args: { id: string | number
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/drafts/{id}'
 */
 destroy710c9cd3b91985fda9cac0eabb3d3885Form.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -904,7 +904,7 @@ destroy710c9cd3b91985fda9cac0eabb3d3885Form.delete = (args: { id: string | numbe
 destroy710c9cd3b91985fda9cac0eabb3d3885.form = destroy710c9cd3b91985fda9cac0eabb3d3885Form
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/api/posts/{id}'
 */
 const destroybd0f2547ef8ce52742985460f62803fe = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -919,7 +919,7 @@ destroybd0f2547ef8ce52742985460f62803fe.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/api/posts/{id}'
 */
 destroybd0f2547ef8ce52742985460f62803fe.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -946,7 +946,7 @@ destroybd0f2547ef8ce52742985460f62803fe.url = (args: { id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/api/posts/{id}'
 */
 destroybd0f2547ef8ce52742985460f62803fe.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -956,7 +956,7 @@ destroybd0f2547ef8ce52742985460f62803fe.delete = (args: { id: string | number } 
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/api/posts/{id}'
 */
 const destroybd0f2547ef8ce52742985460f62803feForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -971,7 +971,7 @@ const destroybd0f2547ef8ce52742985460f62803feForm = (args: { id: string | number
 
 /**
 * @see \App\Http\Controllers\PostController::destroy
-* @see app/Http/Controllers/PostController.php:497
+* @see Http/Controllers/PostController.php:497
 * @route '/api/posts/{id}'
 */
 destroybd0f2547ef8ce52742985460f62803feForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -998,7 +998,7 @@ export const destroy = {
 
 /**
 * @see \App\Http\Controllers\PostController::history
-* @see app/Http/Controllers/PostController.php:29
+* @see Http/Controllers/PostController.php:29
 * @route '/history'
 */
 export const history = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1013,7 +1013,7 @@ history.definition = {
 
 /**
 * @see \App\Http\Controllers\PostController::history
-* @see app/Http/Controllers/PostController.php:29
+* @see Http/Controllers/PostController.php:29
 * @route '/history'
 */
 history.url = (options?: RouteQueryOptions) => {
@@ -1022,7 +1022,7 @@ history.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PostController::history
-* @see app/Http/Controllers/PostController.php:29
+* @see Http/Controllers/PostController.php:29
 * @route '/history'
 */
 history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -1032,7 +1032,7 @@ history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::history
-* @see app/Http/Controllers/PostController.php:29
+* @see Http/Controllers/PostController.php:29
 * @route '/history'
 */
 history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -1042,7 +1042,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PostController::history
-* @see app/Http/Controllers/PostController.php:29
+* @see Http/Controllers/PostController.php:29
 * @route '/history'
 */
 const historyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1052,7 +1052,7 @@ const historyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\PostController::history
-* @see app/Http/Controllers/PostController.php:29
+* @see Http/Controllers/PostController.php:29
 * @route '/history'
 */
 historyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1062,7 +1062,7 @@ historyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\PostController::history
-* @see app/Http/Controllers/PostController.php:29
+* @see Http/Controllers/PostController.php:29
 * @route '/history'
 */
 historyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

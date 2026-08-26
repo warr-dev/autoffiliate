@@ -7,7 +7,7 @@ import token from './token'
 import hashtags from './hashtags'
 /**
 * @see \App\Http\Controllers\SettingsController::app
-* @see app/Http/Controllers/SettingsController.php:18
+* @see Http/Controllers/SettingsController.php:18
 * @route '/settings/app'
 */
 export const app = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -22,7 +22,7 @@ app.definition = {
 
 /**
 * @see \App\Http\Controllers\SettingsController::app
-* @see app/Http/Controllers/SettingsController.php:18
+* @see Http/Controllers/SettingsController.php:18
 * @route '/settings/app'
 */
 app.url = (options?: RouteQueryOptions) => {
@@ -31,7 +31,7 @@ app.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SettingsController::app
-* @see app/Http/Controllers/SettingsController.php:18
+* @see Http/Controllers/SettingsController.php:18
 * @route '/settings/app'
 */
 app.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -41,7 +41,7 @@ app.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::app
-* @see app/Http/Controllers/SettingsController.php:18
+* @see Http/Controllers/SettingsController.php:18
 * @route '/settings/app'
 */
 app.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -51,7 +51,7 @@ app.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::app
-* @see app/Http/Controllers/SettingsController.php:18
+* @see Http/Controllers/SettingsController.php:18
 * @route '/settings/app'
 */
 const appForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -61,7 +61,7 @@ const appForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::app
-* @see app/Http/Controllers/SettingsController.php:18
+* @see Http/Controllers/SettingsController.php:18
 * @route '/settings/app'
 */
 appForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -71,7 +71,7 @@ appForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\SettingsController::app
-* @see app/Http/Controllers/SettingsController.php:18
+* @see Http/Controllers/SettingsController.php:18
 * @route '/settings/app'
 */
 appForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

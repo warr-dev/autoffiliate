@@ -63,8 +63,19 @@ export default defineConfig({
     },
     server: {
         host: '0.0.0.0',
+        port: process.env.VITE_PORT ? Number(process.env.VITE_PORT) : 5001,
+        strictPort: true,
+        cors: true,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
         hmr: {
-            host: 'warpc',
+            host: process.env.VITE_HMR_HOST || 'warpc',
+            port: process.env.VITE_PORT ? Number(process.env.VITE_PORT) : 5001,
+        },
+        watch: {
+            usePolling: true,
+            ignored: ['**/storage/framework/views/**'],
         },
     },
 });

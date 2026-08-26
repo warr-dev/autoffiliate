@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:19
+* @see Http/Controllers/AnalyticsController.php:19
 * @route '/analytics'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:19
+* @see Http/Controllers/AnalyticsController.php:19
 * @route '/analytics'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:19
+* @see Http/Controllers/AnalyticsController.php:19
 * @route '/analytics'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:19
+* @see Http/Controllers/AnalyticsController.php:19
 * @route '/analytics'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:19
+* @see Http/Controllers/AnalyticsController.php:19
 * @route '/analytics'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:19
+* @see Http/Controllers/AnalyticsController.php:19
 * @route '/analytics'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:19
+* @see Http/Controllers/AnalyticsController.php:19
 * @route '/analytics'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/analytics/export'
 */
 const exportMethoda17848a5597410ddb253ce53593ad27a = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ exportMethoda17848a5597410ddb253ce53593ad27a.definition = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/analytics/export'
 */
 exportMethoda17848a5597410ddb253ce53593ad27a.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ exportMethoda17848a5597410ddb253ce53593ad27a.url = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/analytics/export'
 */
 exportMethoda17848a5597410ddb253ce53593ad27a.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ exportMethoda17848a5597410ddb253ce53593ad27a.get = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/analytics/export'
 */
 exportMethoda17848a5597410ddb253ce53593ad27a.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ exportMethoda17848a5597410ddb253ce53593ad27a.head = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/analytics/export'
 */
 const exportMethoda17848a5597410ddb253ce53593ad27aForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const exportMethoda17848a5597410ddb253ce53593ad27aForm = (options?: RouteQueryOp
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/analytics/export'
 */
 exportMethoda17848a5597410ddb253ce53593ad27aForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ exportMethoda17848a5597410ddb253ce53593ad27aForm.get = (options?: RouteQueryOpti
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/analytics/export'
 */
 exportMethoda17848a5597410ddb253ce53593ad27aForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -162,7 +162,7 @@ exportMethoda17848a5597410ddb253ce53593ad27aForm.head = (options?: RouteQueryOpt
 exportMethoda17848a5597410ddb253ce53593ad27a.form = exportMethoda17848a5597410ddb253ce53593ad27aForm
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/api/analytics/ai/export'
 */
 const exportMethod0c52289e4c65daeebf19cd785126fba3 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -177,7 +177,7 @@ exportMethod0c52289e4c65daeebf19cd785126fba3.definition = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/api/analytics/ai/export'
 */
 exportMethod0c52289e4c65daeebf19cd785126fba3.url = (options?: RouteQueryOptions) => {
@@ -186,7 +186,7 @@ exportMethod0c52289e4c65daeebf19cd785126fba3.url = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/api/analytics/ai/export'
 */
 exportMethod0c52289e4c65daeebf19cd785126fba3.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -196,7 +196,7 @@ exportMethod0c52289e4c65daeebf19cd785126fba3.get = (options?: RouteQueryOptions)
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/api/analytics/ai/export'
 */
 exportMethod0c52289e4c65daeebf19cd785126fba3.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -206,7 +206,7 @@ exportMethod0c52289e4c65daeebf19cd785126fba3.head = (options?: RouteQueryOptions
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/api/analytics/ai/export'
 */
 const exportMethod0c52289e4c65daeebf19cd785126fba3Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -216,7 +216,7 @@ const exportMethod0c52289e4c65daeebf19cd785126fba3Form = (options?: RouteQueryOp
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/api/analytics/ai/export'
 */
 exportMethod0c52289e4c65daeebf19cd785126fba3Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -226,7 +226,7 @@ exportMethod0c52289e4c65daeebf19cd785126fba3Form.get = (options?: RouteQueryOpti
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::exportMethod
-* @see app/Http/Controllers/AnalyticsController.php:56
+* @see Http/Controllers/AnalyticsController.php:56
 * @route '/api/analytics/ai/export'
 */
 exportMethod0c52289e4c65daeebf19cd785126fba3Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -253,7 +253,7 @@ export const exportMethod = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::apiAnalytics
-* @see app/Http/Controllers/AnalyticsController.php:41
+* @see Http/Controllers/AnalyticsController.php:41
 * @route '/api/analytics/ai'
 */
 export const apiAnalytics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,7 +268,7 @@ apiAnalytics.definition = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::apiAnalytics
-* @see app/Http/Controllers/AnalyticsController.php:41
+* @see Http/Controllers/AnalyticsController.php:41
 * @route '/api/analytics/ai'
 */
 apiAnalytics.url = (options?: RouteQueryOptions) => {
@@ -277,7 +277,7 @@ apiAnalytics.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::apiAnalytics
-* @see app/Http/Controllers/AnalyticsController.php:41
+* @see Http/Controllers/AnalyticsController.php:41
 * @route '/api/analytics/ai'
 */
 apiAnalytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -287,7 +287,7 @@ apiAnalytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::apiAnalytics
-* @see app/Http/Controllers/AnalyticsController.php:41
+* @see Http/Controllers/AnalyticsController.php:41
 * @route '/api/analytics/ai'
 */
 apiAnalytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -297,7 +297,7 @@ apiAnalytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::apiAnalytics
-* @see app/Http/Controllers/AnalyticsController.php:41
+* @see Http/Controllers/AnalyticsController.php:41
 * @route '/api/analytics/ai'
 */
 const apiAnalyticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -307,7 +307,7 @@ const apiAnalyticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::apiAnalytics
-* @see app/Http/Controllers/AnalyticsController.php:41
+* @see Http/Controllers/AnalyticsController.php:41
 * @route '/api/analytics/ai'
 */
 apiAnalyticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -317,7 +317,7 @@ apiAnalyticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::apiAnalytics
-* @see app/Http/Controllers/AnalyticsController.php:41
+* @see Http/Controllers/AnalyticsController.php:41
 * @route '/api/analytics/ai'
 */
 apiAnalyticsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -334,7 +334,7 @@ apiAnalytics.form = apiAnalyticsForm
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::clear
-* @see app/Http/Controllers/AnalyticsController.php:165
+* @see Http/Controllers/AnalyticsController.php:165
 * @route '/api/analytics/ai/clear'
 */
 export const clear = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -349,7 +349,7 @@ clear.definition = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::clear
-* @see app/Http/Controllers/AnalyticsController.php:165
+* @see Http/Controllers/AnalyticsController.php:165
 * @route '/api/analytics/ai/clear'
 */
 clear.url = (options?: RouteQueryOptions) => {
@@ -358,7 +358,7 @@ clear.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::clear
-* @see app/Http/Controllers/AnalyticsController.php:165
+* @see Http/Controllers/AnalyticsController.php:165
 * @route '/api/analytics/ai/clear'
 */
 clear.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -368,7 +368,7 @@ clear.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::clear
-* @see app/Http/Controllers/AnalyticsController.php:165
+* @see Http/Controllers/AnalyticsController.php:165
 * @route '/api/analytics/ai/clear'
 */
 const clearForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -378,7 +378,7 @@ const clearForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::clear
-* @see app/Http/Controllers/AnalyticsController.php:165
+* @see Http/Controllers/AnalyticsController.php:165
 * @route '/api/analytics/ai/clear'
 */
 clearForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
